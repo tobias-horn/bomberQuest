@@ -9,8 +9,16 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 public class Textures {
     
-    public static final TextureRegion FLOWERS = SpriteSheet.BASIC_TILES.at(2, 5);
+    public static final TextureRegion INDESTRUCTABLEWALL = SpriteSheet.TILES.at(7, 2);
 
-    public static final TextureRegion CHEST = SpriteSheet.BASIC_TILES.at(5, 5);
+    public static final TextureRegion DESTRUCTABLEWALL = SpriteSheet.TILES.at(7, 3);
+
+    public static final TextureRegion ENTRANCE = SpriteSheet.TILES.at(8, 3);
+
+    public static final TextureRegion EXIT = SpriteSheet.TILES.at(9, 3);
+
+    public static final TextureRegion POWERUP_CONCURRENTBOMB = SpriteSheet.TILES.at(8, 3);
+
+    public static final TextureRegion BLASTRADIUS = SpriteSheet.TILES.at(8, 3);
     
 }

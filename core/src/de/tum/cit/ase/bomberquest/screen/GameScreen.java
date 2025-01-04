@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
-import de.tum.cit.ase.bomberquest.map.Flowers;
+import de.tum.cit.ase.bomberquest.map.GameObject;
 import de.tum.cit.ase.bomberquest.texture.Drawable;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 
@@ -101,14 +101,16 @@ public class GameScreen implements Screen {
         
         // Start drawing
         spriteBatch.begin();
-        
-        // Render everything in the map here, in order from lowest to highest (later things appear on top)
-        // You may want to add a method to GameMap to return all the drawables in the correct order
-        for (Flowers flowers : map.getFlowers()) {
-            draw(spriteBatch, flowers);
+
+        for (GameObject obj : map.getAllObjects()) {
+            if (obj instanceof Drawable drawableObj) {
+                draw(spriteBatch, drawableObj);
+            }
         }
-        draw(spriteBatch, map.getChest());
-        draw(spriteBatch, map.getPlayer());
+// if you have a map.getPlayer(), draw that separately:
+//        if (map.getPlayer() != null) {
+//            draw(spriteBatch, map.getPlayer());
+//        }
         
         // Finish drawing, i.e. send the drawn items to the graphics card
         spriteBatch.end();

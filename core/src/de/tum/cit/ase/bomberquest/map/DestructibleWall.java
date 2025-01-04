@@ -3,6 +3,7 @@ package de.tum.cit.ase.bomberquest.map;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.World;
 import de.tum.cit.ase.bomberquest.texture.Drawable;
+import de.tum.cit.ase.bomberquest.texture.Textures;
 
 public class DestructibleWall extends GameObject implements Drawable {
     private boolean exitUnderneath = false;
@@ -24,6 +25,6 @@ public class DestructibleWall extends GameObject implements Drawable {
 
     @Override
     public TextureRegion getCurrentAppearance(){
-        return Textures.MISSING;
+        return Textures.DESTRUCTABLEWALL;
     }
 }

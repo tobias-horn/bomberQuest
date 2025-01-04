@@ -7,10 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.map.MapParser;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Represents the game map.
@@ -75,23 +72,26 @@ public class GameMap {
      * Every dynamic object in the game should update its state here.
      * @param frameTime the time that has passed since the last update
      */
-//    public void tick(float frameTime) {
-//        this.player.tick(frameTime);
-//        doPhysicsStep(frameTime);
-//    }
+    public void tick(float frameTime) {
+        doPhysicsStep(frameTime);
+    }
     
     /**
      * Performs as many physics steps as necessary to catch up to the given frame time.
      * This will update the Box2D world by the given time step.
      * @param frameTime Time since last frame in seconds
      */
-//    private void doPhysicsStep(float frameTime) {
-//        this.physicsTime += frameTime;
-//        while (this.physicsTime >= TIME_STEP) {
-//            this.world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-//            this.physicsTime -= TIME_STEP;
-//        }
-//    }
+    private void doPhysicsStep(float frameTime) {
+        this.physicsTime += frameTime;
+        while (this.physicsTime >= TIME_STEP) {
+            this.world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+            this.physicsTime -= TIME_STEP;
+        }
+    }
+
+    public Collection<GameObject> getAllObjects() {
+        return map.values();
+    }
     
 //    /** Returns the player on the map. */
 //    public Player getPlayer() {
