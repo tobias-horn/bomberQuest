@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
 import de.tum.cit.ase.bomberquest.map.GameMap;
+import de.tum.cit.ase.bomberquest.map.MapParser;
 import de.tum.cit.ase.bomberquest.screen.GameScreen;
 import de.tum.cit.ase.bomberquest.screen.MenuScreen;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
@@ -119,4 +120,28 @@ public class BomberQuestGame extends Game {
         spriteBatch.dispose(); // Dispose the spriteBatch
         skin.dispose(); // Dispose the skin
     }
+
+    /**
+     * Loads a map file and transitions to the game screen with the loaded map.
+     *
+     * @param mapPath The path to the .properties file containing the map data.
+     */
+    public void loadMap(String mapPath) {
+        try {
+            // Use FileHandle to load the map file
+            FileHandle fileHandle = Gdx.files.internal(mapPath);
+
+            // Create the GameMap object with the required parameters
+            this.map = new GameMap(this, fileHandle);
+
+            // Transition to the GameScreen with the loaded map
+            goToGame();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to load map: " + mapPath);
+        }
+    }
+
+
+
 }

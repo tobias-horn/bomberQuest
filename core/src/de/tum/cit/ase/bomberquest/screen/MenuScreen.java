@@ -15,6 +15,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 
+import java.awt.*;
+
 /**
  * The MenuScreen class is responsible for displaying the main menu of the game.
  * It extends the LibGDX Screen class and sets up the UI components for the menu.
@@ -42,15 +44,26 @@ public class MenuScreen implements Screen {
         // Add a label as a title
         table.add(new Label("Hello World from the Menu!", game.getSkin(), "title")).padBottom(80).row();
 
-        // Create and add a button to go to the game screen
-        TextButton goToGameButton = new TextButton("Go To Game", game.getSkin());
-        table.add(goToGameButton).width(300).row();
-        goToGameButton.addListener(new ChangeListener() {
+//        // Create a button to go to the game screen
+//        TextButton goToGameButton = new TextButton("Go To Game", game.getSkin());
+//        table.add(goToGameButton).width(300).row();
+//        goToGameButton.addListener(new ChangeListener() {
+//            @Override
+//            public void changed(ChangeEvent event, Actor actor) {
+//                game.goToGame(); // Change to the game screen when button is pressed
+//            }
+//        });
+
+        //Create a button to load a map from
+        TextButton loadMapButton = new TextButton("Start Game", game.getSkin());
+        table.add(loadMapButton).width(300).row();
+        loadMapButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.goToGame(); // Change to the game screen when button is pressed
+                game.setScreen(new FileSelectionScreen(game));
             }
         });
+
     }
     
     /**
