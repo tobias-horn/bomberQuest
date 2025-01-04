@@ -12,7 +12,10 @@ public class IndestructibleWall extends GameObject implements Drawable {
     }
 
     @Override
-    public TextureRegion getCurrentAppearance(){
-        return Textures.INDESTRUCTABLEWALL;
+    public TextureRegion getCurrentAppearance() {
+        TextureRegion texture = Textures.INDESTRUCTABLEWALL; // Example for IndestructibleWall
+        System.out.println("Returning texture: " + texture);
+        return texture;
     }
+
 }

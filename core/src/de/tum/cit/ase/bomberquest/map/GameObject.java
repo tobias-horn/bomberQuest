@@ -2,8 +2,9 @@ package de.tum.cit.ase.bomberquest.map;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
+import de.tum.cit.ase.bomberquest.texture.Drawable;
 
-public abstract class GameObject {
+public abstract class GameObject implements Drawable {
     protected final float x;
     protected final float y;
     protected Body body;

@@ -67,7 +67,7 @@ public class BomberQuestGame extends Game {
         this.map = new GameMap(this, hardcodedMapFile);
 
 
-        goToGame();
+        goToMenu();
     }
 
     /**

@@ -12,6 +12,7 @@ import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.map.GameObject;
 import de.tum.cit.ase.bomberquest.texture.Drawable;
 import de.tum.cit.ase.bomberquest.map.GameMap;
+import de.tum.cit.ase.bomberquest.texture.Textures;
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
@@ -25,13 +26,13 @@ public class GameScreen implements Screen {
      * (e.g. x=1, y=1 is the bottom left corner of the map)
      * rather than absolute pixel coordinates.
      */
-    public static final int TILE_SIZE_PX = 16;
+    public static final int TILE_SIZE_PX = 32;
     
     /**
      * The scale of the game.
      * This is used to make everything in the game look bigger or smaller.
      */
-    public static final int SCALE = 4;
+    public static final int SCALE = 1;
 
     private final BomberQuestGame game;
     private final SpriteBatch spriteBatch;
@@ -53,37 +54,40 @@ public class GameScreen implements Screen {
         this.mapCamera = new OrthographicCamera();
         this.mapCamera.setToOrtho(false);
     }
-    
+
     /**
      * The render method is called every frame to render the game.
      * @param deltaTime The time in seconds since the last render.
      */
     @Override
     public void render(float deltaTime) {
-        // Check for escape key press to go back to the menu
+        // Handle Escape key press to go back to menu
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.goToMenu();
         }
-        
-        // Clear the previous frame from the screen, or else the picture smears
+
+        // Clear the previous frame (we will replace this with the tiled background)
         ScreenUtils.clear(Color.BLACK);
-        
-        // Cap frame time to 250ms to prevent spiral of death
-        float frameTime = Math.min(deltaTime, 0.250f);
-        
+
         // Update the map state
+        float frameTime = Math.min(deltaTime, 0.250f); // Cap frame time to prevent spiral of death
         map.tick(frameTime);
-        
+
         // Update the camera
         updateCamera();
-        
-        // Render the map on the screen
+
+        // Draw the tiled background
+        renderBackground();
+
+        // Render the map and objects
         renderMap();
-        
-        // Render the HUD on the screen
+
+        // Render the HUD
         hud.render();
     }
-    
+
+
+
     /**
      * Updates the camera to match the current state of the game.
      * Currently, this just centers the camera at the origin.
@@ -94,28 +98,50 @@ public class GameScreen implements Screen {
         mapCamera.position.y = 3.5f * TILE_SIZE_PX * SCALE;
         mapCamera.update(); // This is necessary to apply the changes
     }
-    
+
+
+
     private void renderMap() {
-        // This configures the spriteBatch to use the camera's perspective when rendering
-        spriteBatch.setProjectionMatrix(mapCamera.combined);
-        
-        // Start drawing
-        spriteBatch.begin();
+        spriteBatch.setProjectionMatrix(mapCamera.combined); // Ensure camera settings are applied
+
+        spriteBatch.begin(); // Begin the SpriteBatch
 
         for (GameObject obj : map.getAllObjects()) {
-            if (obj instanceof Drawable drawableObj) {
+            if (obj instanceof Drawable) {
+                Drawable drawableObj = (Drawable) obj;
+                System.out.println("Rendering object: " + drawableObj + " at (" + drawableObj.getX() + ", " + drawableObj.getY() + ")");
                 draw(spriteBatch, drawableObj);
             }
         }
-// if you have a map.getPlayer(), draw that separately:
+
+        // if you have a map.getPlayer(), draw that separately:
 //        if (map.getPlayer() != null) {
 //            draw(spriteBatch, map.getPlayer());
 //        }
-        
-        // Finish drawing, i.e. send the drawn items to the graphics card
+
+        spriteBatch.end(); // End the SpriteBatch
+    }
+
+    private void renderBackground() {
+        // Configure the SpriteBatch to use the camera
+        spriteBatch.setProjectionMatrix(mapCamera.combined);
+        spriteBatch.begin();
+
+        // Select the background tile
+        TextureRegion backgroundTile = Textures.BACKGROUND; // Replace with your desired tile
+        float tileSizeInWorldUnits = 0.5f; // Adjust based on your game scaling and grid size
+
+        // Fill the screen with the tile
+        for (float x = 0; x < mapCamera.viewportWidth; x += tileSizeInWorldUnits) {
+            for (float y = 0; y < mapCamera.viewportHeight; y += tileSizeInWorldUnits) {
+                spriteBatch.draw(backgroundTile, x, y, tileSizeInWorldUnits, tileSizeInWorldUnits);
+            }
+        }
+
         spriteBatch.end();
     }
-    
+
+
     /**
      * Draws this object on the screen.
      * The texture will be scaled by the game scale and the tile size.

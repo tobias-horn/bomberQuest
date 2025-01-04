@@ -2,6 +2,7 @@ package de.tum.cit.ase.bomberquest.map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
@@ -52,6 +53,15 @@ public class GameMap {
     }
 
 
+    // Value | Type
+    //
+    //  0     | Indestructible Wall
+    //  1     | Destructible Wall
+    //  2     | Entrance
+    //  3     | Enemy
+    //  4     | Exit
+    //  5     | Concurrent bomb power-up
+    //  6     | Blast radius power-up
     public void createObject(int x, int y, int objectType){
         switch(objectType){
             case 0 -> map.put(new Vector2(x, y), new IndestructibleWall(world, x, y));
@@ -88,6 +98,36 @@ public class GameMap {
             this.physicsTime -= TIME_STEP;
         }
     }
+
+    /**
+     * Renders all objects on the map.
+     * @param batch the SpriteBatch used for rendering
+     */
+
+    public void render(SpriteBatch batch) {
+        float tileSizeInWorldUnits = 32; // Match your game grid size (adjust as needed)
+
+        for (GameObject obj : getAllObjects()) {
+            if (obj != null) {
+                // Debug logs for troubleshooting
+                System.out.println("Rendering object: " + obj +
+                        " at (" + obj.getX() + ", " + obj.getY() +
+                        ") with texture: " + obj.getCurrentAppearance());
+
+                batch.draw(
+                        obj.getCurrentAppearance(),
+                        obj.getX() * tileSizeInWorldUnits,
+                        obj.getY() * tileSizeInWorldUnits,
+                        tileSizeInWorldUnits,
+                        tileSizeInWorldUnits
+                );
+                System.out.println("Object rendered at: (" + obj.getX() + ", " + obj.getY() + ")");
+
+            }
+        }
+    }
+
+
 
     public Collection<GameObject> getAllObjects() {
         return map.values();
