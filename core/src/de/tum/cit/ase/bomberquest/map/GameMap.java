@@ -43,6 +43,10 @@ public class GameMap {
     private final BomberQuestGame game;
     /** The Box2D world for physics simulation. */
     private final World world;
+    private Player player;
+
+    private int width = 0;
+    private int height = 0;
 
     private final Map<Vector2, GameObject> map = new HashMap<>();
 
@@ -53,26 +57,42 @@ public class GameMap {
     }
 
 
-    // Value | Type
-    //
-    //  0     | Indestructible Wall
-    //  1     | Destructible Wall
-    //  2     | Entrance
-    //  3     | Enemy
-    //  4     | Exit
-    //  5     | Concurrent bomb power-up
-    //  6     | Blast radius power-up
-    public void createObject(int x, int y, int objectType){
-        switch(objectType){
-            case 0 -> map.put(new Vector2(x, y), new IndestructibleWall(world, x, y));
-            case 1 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, null));
-            case 2 -> map.put(new Vector2(x, y), new Entrance(world, x, y));
-            case 3 -> map.put(new Vector2(x, y), null);
-            case 4 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, true, null));
-            case 5 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.CONCURRENTBOMB));
-            case 6 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.BLASTRADIUS));
+    public void createObject(int x, int y, int objectType) {
+        // Track maximum width/height, etc., if needed
+        if(x > width) width = x;
+        if(y > height) height = y;
+
+        switch (objectType) {
+            case 0 -> {
+                map.put(new Vector2(x, y), new IndestructibleWall(world, x, y));
+            }
+            case 1 -> {
+                map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, null));
+            }
+            case 2 -> {
+                map.put(new Vector2(x, y), new Entrance(world, x, y));
+
+                if (player == null) {
+                    player = new Player(world, x, y);
+                }
+            }
+            case 3 -> {
+                // Possibly empty tile
+                map.put(new Vector2(x, y), null);
+            }
+            case 4 -> {
+                map.put(new Vector2(x, y), new DestructibleWall(world, x, y, true, null));
+            }
+            case 5 -> {
+                map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.CONCURRENTBOMB));
+            }
+            case 6 -> {
+                map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.BLASTRADIUS));
+            }
         }
     }
+
+
 
 
 
@@ -133,18 +153,10 @@ public class GameMap {
         return map.values();
     }
     
-//    /** Returns the player on the map. */
-//    public Player getPlayer() {
-//        return player;
-//    }
-//
-//    /** Returns the chest on the map. */
-//    public Chest getChest() {
-//        return chest;
-//    }
-//
-//    /** Returns the flowers on the map. */
-//    public List<Flowers> getFlowers() {
-//        return Arrays.stream(flowers).flatMap(Arrays::stream).toList();
-//    }
+    /** Returns the player on the map. */
+    public Player getPlayer() {
+        return player;
+    }
+
+
 }

@@ -6,8 +6,10 @@ import java.util.*;
 
 public class MapParser {
 
+
     public static void parseMap(GameMap gameMap, FileHandle fileHandle){
         boolean containsExit = false;
+
 
         HashMap<String, Integer> tileMap = new HashMap<>();
 
@@ -34,6 +36,8 @@ public class MapParser {
         for(Map.Entry<String, Integer> entry : tileMap.entrySet()){
                 int x = Integer.parseInt(entry.getKey().split(",")[0]);
                 int y = Integer.parseInt(entry.getKey().split(",")[1]);
+
+
 
                 gameMap.createObject(x, y, entry.getValue());
         }

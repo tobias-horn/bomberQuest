@@ -114,10 +114,9 @@ public class GameScreen implements Screen {
             }
         }
 
-        // if you have a map.getPlayer(), draw that separately:
-//        if (map.getPlayer() != null) {
-//            draw(spriteBatch, map.getPlayer());
-//        }
+        if (map.getPlayer() != null) {
+            draw(spriteBatch, map.getPlayer());
+        }
 
         spriteBatch.end(); // End the SpriteBatch
     }
