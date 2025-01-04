@@ -54,13 +54,14 @@ public class GameMap {
         this.game = game;
         this.world = new World(Vector2.Zero, true);
         MapParser.parseMap(this, fileHandle);
+        markBorderWalls();
     }
 
 
     public void createObject(int x, int y, int objectType) {
         // Track maximum width/height, etc., if needed
-        if(x > width) width = x;
-        if(y > height) height = y;
+        if(x +1 > width) width = x +1;
+        if(y +1 > height) height = y +1;
 
         switch (objectType) {
             case 0 -> {
@@ -90,6 +91,26 @@ public class GameMap {
                 map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.BLASTRADIUS));
             }
         }
+    }
+
+
+
+    private void markBorderWalls() {
+        for (Map.Entry<Vector2, GameObject> entry : map.entrySet()) {
+            GameObject obj = entry.getValue();
+            if (obj instanceof IndestructibleWall wall) {
+                int x = (int) entry.getKey().x;
+                int y = (int) entry.getKey().y;
+                if (isOnBorder(x, y)) {
+                    wall.setBorderWall(true);
+                }
+            }
+        }
+    }
+
+
+    private boolean isOnBorder(int x, int y) {
+        return x == 0 || y == 0 || x == width - 1 || y == height - 1;
     }
 
 

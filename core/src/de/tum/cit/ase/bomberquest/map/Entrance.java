@@ -12,9 +12,7 @@ public class Entrance extends GameObject implements Drawable {
 
     @Override
     public TextureRegion getCurrentAppearance() {
-        TextureRegion texture = Textures.INDESTRUCTABLEWALL; // Example for IndestructibleWall
-        System.out.println("Returning texture: " + texture);
-        return texture;
+        return Textures.ENTRANCE;
     }
 
 }
