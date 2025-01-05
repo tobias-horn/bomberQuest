@@ -28,7 +28,8 @@ public class GameMap {
      * This is the amount of time that the physics simulation advances by in each frame.
      * It is set to 1/refreshRate, where refreshRate is the refresh rate of the monitor, e.g., 1/60 for 60 Hz.
      */
-    private static final float TIME_STEP = 1f / Gdx.graphics.getDisplayMode().refreshRate;
+    private static final float TIME_STEP = 1f / 120f;// Alternative: divide by Gdx.graphics.getDisplayMode().refreshRate;
+
     /** The number of velocity iterations for the physics simulation. */
     private static final int VELOCITY_ITERATIONS = 6;
     /** The number of position iterations for the physics simulation. */
@@ -134,11 +135,13 @@ public class GameMap {
      */
     private void doPhysicsStep(float frameTime) {
         this.physicsTime += frameTime;
+
         while (this.physicsTime >= TIME_STEP) {
             this.world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
             this.physicsTime -= TIME_STEP;
         }
     }
+
 
     /**
      * Renders all objects on the map.

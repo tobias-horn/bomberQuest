@@ -7,12 +7,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.map.GameObject;
 import de.tum.cit.ase.bomberquest.texture.Drawable;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.texture.Textures;
+
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
@@ -39,6 +41,25 @@ public class GameScreen implements Screen {
     private final GameMap map;
     private final Hud hud;
     private final OrthographicCamera mapCamera;
+    private boolean paused = false;
+    private Stage pauseStage;
+
+
+    public Stage getPauseStage() {
+        return pauseStage;
+    }
+
+    public void setPauseStage(Stage pauseStage) {
+        this.pauseStage = pauseStage;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
 
     /**
      * Constructor for GameScreen. Sets up the camera and font.
@@ -55,36 +76,57 @@ public class GameScreen implements Screen {
         this.mapCamera.setToOrtho(false);
     }
 
+
+
     /**
      * The render method is called every frame to render the game.
      * @param deltaTime The time in seconds since the last render.
      */
     @Override
     public void render(float deltaTime) {
-        // Handle Escape key press to go back to menu
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.goToMenu();
+        // Handle player movement
+        float moveSpeed = 3.0f; // Adjust speed as needed
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            map.getPlayer().getHitbox().setLinearVelocity(0, moveSpeed);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            map.getPlayer().getHitbox().setLinearVelocity(0, -moveSpeed);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            map.getPlayer().getHitbox().setLinearVelocity(-moveSpeed, 0);
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            map.getPlayer().getHitbox().setLinearVelocity(moveSpeed, 0);
+        } else {
+            map.getPlayer().getHitbox().setLinearVelocity(0, 0); // Stop movement if no key is pressed
         }
 
-        // Clear the previous frame (we will replace this with the tiled background)
+        // Handle Escape key press for pausing or resuming
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (paused) {
+                paused = false; // Resume the game
+            } else {
+                paused = true; // Pause the game
+            }
+        }
+
+        if (paused) {
+            // Draw a pause screen or simply stop updating the game state
+            spriteBatch.begin();
+            game.getSkin().getFont("font").draw(spriteBatch, "Game Paused. Press ESC to Resume!",
+                    mapCamera.position.x - mapCamera.viewportWidth / 2 + 50,
+                    mapCamera.position.y + mapCamera.viewportHeight / 2 - 50);
+            spriteBatch.end();
+            return; // Skip the rest of the rendering logic
+        }
+
+
+        // The rest of your render logic
         ScreenUtils.clear(Color.BLACK);
-
-        // Update the map state
-        float frameTime = Math.min(deltaTime, 0.250f); // Cap frame time to prevent spiral of death
-        map.tick(frameTime);
-
-        // Update the camera
+        map.tick(deltaTime);
         updateCamera();
-
-        // Draw the tiled background
         renderBackground();
-
-        // Render the map and objects
         renderMap();
-
-        // Render the HUD
         hud.render();
     }
+
 
 
 
