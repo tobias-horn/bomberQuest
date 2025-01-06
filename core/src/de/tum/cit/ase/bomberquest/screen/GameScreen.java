@@ -15,13 +15,12 @@ import de.tum.cit.ase.bomberquest.texture.Drawable;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.texture.Textures;
 
-
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
  * It handles the game logic and rendering of the game elements.
  */
 public class GameScreen implements Screen {
-    
+
     /**
      * The size of a grid cell in pixels.
      * This allows us to think of coordinates in terms of square grid tiles
@@ -29,7 +28,7 @@ public class GameScreen implements Screen {
      * rather than absolute pixel coordinates.
      */
     public static final int TILE_SIZE_PX = 32;
-    
+
     /**
      * The scale of the game.
      * This is used to make everything in the game look bigger or smaller.
@@ -76,8 +75,6 @@ public class GameScreen implements Screen {
         this.mapCamera.setToOrtho(false);
     }
 
-
-
     /**
      * The render method is called every frame to render the game.
      * @param deltaTime The time in seconds since the last render.
@@ -117,7 +114,6 @@ public class GameScreen implements Screen {
             return; // Skip the rest of the rendering logic
         }
 
-
         // The rest of your render logic
         ScreenUtils.clear(Color.BLACK);
         map.tick(deltaTime);
@@ -127,12 +123,8 @@ public class GameScreen implements Screen {
         hud.render();
     }
 
-
-
-
     /**
      * Updates the camera to match the current state of the game.
-     * Currently, this just centers the camera at the origin.
      */
     private void updateCamera() {
 
@@ -149,22 +141,17 @@ public class GameScreen implements Screen {
         float playerX = map.getPlayer().getX() * TILE_SIZE_PX * SCALE;
         float playerY = map.getPlayer().getY() * TILE_SIZE_PX * SCALE;
 
-
         if (playerX < cameraLeft + marginX) {
             mapCamera.position.x = playerX + (halfW - marginX);
-        }
-
-        else if (playerX > cameraRight - marginX) {
+        } else if (playerX > cameraRight - marginX) {
             mapCamera.position.x = playerX - (halfW - marginX);
         }
-
 
         if (playerY < cameraBottom + marginY) {
             mapCamera.position.y = playerY + (halfH - marginY);
         } else if (playerY > cameraTop - marginY) {
             mapCamera.position.y = playerY - (halfH - marginY);
         }
-
 
         float mapWidthInPx = map.getWidth() * TILE_SIZE_PX * SCALE;
         float mapHeightInPx = map.getHeight() * TILE_SIZE_PX * SCALE;
@@ -187,12 +174,8 @@ public class GameScreen implements Screen {
             mapCamera.position.y = maxCameraY;
         }
 
-        // 8) Finally, update the camera.
         mapCamera.update();
     }
-
-
-
 
     private void renderMap() {
         spriteBatch.setProjectionMatrix(mapCamera.combined); // Ensure camera settings are applied
@@ -215,15 +198,12 @@ public class GameScreen implements Screen {
     }
 
     private void renderBackground() {
-        // Configure the SpriteBatch to use the camera
         spriteBatch.setProjectionMatrix(mapCamera.combined);
         spriteBatch.begin();
 
-        // Select the background tile
         TextureRegion backgroundTile = Textures.BACKGROUND; // Replace with your desired tile
         float tileSizeInWorldUnits = 0.5f; // Adjust based on your game scaling and grid size
 
-        // Fill the screen with the tile
         for (float x = 0; x < mapCamera.viewportWidth; x += tileSizeInWorldUnits) {
             for (float y = 0; y < mapCamera.viewportHeight; y += tileSizeInWorldUnits) {
                 spriteBatch.draw(backgroundTile, x, y, tileSizeInWorldUnits, tileSizeInWorldUnits);
@@ -233,24 +213,28 @@ public class GameScreen implements Screen {
         spriteBatch.end();
     }
 
-
     /**
      * Draws this object on the screen.
      * The texture will be scaled by the game scale and the tile size.
-     * This should only be called between spriteBatch.begin() and spriteBatch.end(), e.g. in the renderMap() method.
+     * We subtract 0.5 tile so that Box2D center lines up with the sprite center.
      * @param spriteBatch The SpriteBatch to draw with.
      */
     private static void draw(SpriteBatch spriteBatch, Drawable drawable) {
         TextureRegion texture = drawable.getCurrentAppearance();
-        // Drawable coordinates are in tiles, so we need to scale them to pixels
-        float x = drawable.getX() * TILE_SIZE_PX * SCALE;
-        float y = drawable.getY() * TILE_SIZE_PX * SCALE;
-        // Additionally scale everything by the game scale
+
+        // Calculate sprite dimensions in world units
+        float spriteWidthInWorldUnits = (float)texture.getRegionWidth() / TILE_SIZE_PX;
+        float spriteHeightInWorldUnits = (float)texture.getRegionHeight() / TILE_SIZE_PX;
+
+        // Adjust position to align sprite's bottom center with the Box2D body
+        float x = (drawable.getX() - (spriteWidthInWorldUnits / 2)) * TILE_SIZE_PX * SCALE;
+        float y = (drawable.getY() - (spriteHeightInWorldUnits / 2)) * TILE_SIZE_PX * SCALE;
+
         float width = texture.getRegionWidth() * SCALE;
         float height = texture.getRegionHeight() * SCALE;
         spriteBatch.draw(texture, x, y, width, height);
     }
-    
+
     /**
      * Called when the window is resized.
      * This is where the camera is updated to match the new window size.
@@ -284,5 +268,4 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
     }
-
 }
