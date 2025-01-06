@@ -15,24 +15,12 @@ import de.tum.cit.ase.bomberquest.texture.Drawable;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.texture.Textures;
 
-/**
- * The GameScreen class is responsible for rendering the gameplay screen.
- * It handles the game logic and rendering of the game elements.
- */
+
 public class GameScreen implements Screen {
 
-    /**
-     * The size of a grid cell in pixels.
-     * This allows us to think of coordinates in terms of square grid tiles
-     * (e.g. x=1, y=1 is the bottom left corner of the map)
-     * rather than absolute pixel coordinates.
-     */
     public static final int TILE_SIZE_PX = 32;
 
-    /**
-     * The scale of the game.
-     * This is used to make everything in the game look bigger or smaller.
-     */
+
     public static final int SCALE = 1;
 
     private final BomberQuestGame game;
@@ -41,30 +29,9 @@ public class GameScreen implements Screen {
     private final Hud hud;
     private final OrthographicCamera mapCamera;
     private boolean paused = false;
-    private Stage pauseStage;
+    private PauseScreen pauseScreen;
 
 
-    public Stage getPauseStage() {
-        return pauseStage;
-    }
-
-    public void setPauseStage(Stage pauseStage) {
-        this.pauseStage = pauseStage;
-    }
-
-    public boolean isPaused() {
-        return paused;
-    }
-
-    public void setPaused(boolean paused) {
-        this.paused = paused;
-    }
-
-    /**
-     * Constructor for GameScreen. Sets up the camera and font.
-     *
-     * @param game The main game class, used to access global resources and methods.
-     */
     public GameScreen(BomberQuestGame game) {
         this.game = game;
         this.spriteBatch = game.getSpriteBatch();
@@ -73,16 +40,14 @@ public class GameScreen implements Screen {
         // Create and configure the camera for the game view
         this.mapCamera = new OrthographicCamera();
         this.mapCamera.setToOrtho(false);
+        // Initialize the PauseScreen
+        this.pauseScreen = new PauseScreen(game.getSkin().getFont("font"));
     }
 
-    /**
-     * The render method is called every frame to render the game.
-     * @param deltaTime The time in seconds since the last render.
-     */
+
     @Override
     public void render(float deltaTime) {
-        // Handle player movement
-        float moveSpeed = 3.0f; // Adjust speed as needed
+        float moveSpeed = 3.0f;
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             map.getPlayer().getHitbox().setLinearVelocity(0, moveSpeed);
         } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
@@ -95,26 +60,17 @@ public class GameScreen implements Screen {
             map.getPlayer().getHitbox().setLinearVelocity(0, 0); // Stop movement if no key is pressed
         }
 
-        // Handle Escape key press for pausing or resuming
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (paused) {
-                paused = false; // Resume the game
-            } else {
-                paused = true; // Pause the game
-            }
+            paused = !paused;
         }
 
         if (paused) {
-            // Draw a pause screen or simply stop updating the game state
-            spriteBatch.begin();
-            game.getSkin().getFont("font").draw(spriteBatch, "Game Paused. Press ESC to Resume!",
-                    mapCamera.position.x - mapCamera.viewportWidth / 2 + 50,
-                    mapCamera.position.y + mapCamera.viewportHeight / 2 - 50);
-            spriteBatch.end();
-            return; // Skip the rest of the rendering logic
+            pauseScreen.render();
+            return;
         }
 
-        // The rest of your render logic
+
         ScreenUtils.clear(Color.BLACK);
         map.tick(deltaTime);
         updateCamera();
@@ -123,9 +79,7 @@ public class GameScreen implements Screen {
         hud.render();
     }
 
-    /**
-     * Updates the camera to match the current state of the game.
-     */
+
     private void updateCamera() {
 
         float halfW = mapCamera.viewportWidth * 0.5f;
@@ -194,15 +148,15 @@ public class GameScreen implements Screen {
             draw(spriteBatch, map.getPlayer());
         }
 
-        spriteBatch.end(); // End the SpriteBatch
+        spriteBatch.end();
     }
 
     private void renderBackground() {
         spriteBatch.setProjectionMatrix(mapCamera.combined);
         spriteBatch.begin();
 
-        TextureRegion backgroundTile = Textures.BACKGROUND; // Replace with your desired tile
-        float tileSizeInWorldUnits = 0.5f; // Adjust based on your game scaling and grid size
+        TextureRegion backgroundTile = Textures.BACKGROUND;
+        float tileSizeInWorldUnits = 0.5f;
 
         for (float x = 0; x < mapCamera.viewportWidth; x += tileSizeInWorldUnits) {
             for (float y = 0; y < mapCamera.viewportHeight; y += tileSizeInWorldUnits) {
@@ -217,14 +171,15 @@ public class GameScreen implements Screen {
      * Draws this object on the screen.
      * The texture will be scaled by the game scale and the tile size.
      * We subtract 0.5 tile so that Box2D center lines up with the sprite center.
+     *
      * @param spriteBatch The SpriteBatch to draw with.
      */
     private static void draw(SpriteBatch spriteBatch, Drawable drawable) {
         TextureRegion texture = drawable.getCurrentAppearance();
 
         // Calculate sprite dimensions in world units
-        float spriteWidthInWorldUnits = (float)texture.getRegionWidth() / TILE_SIZE_PX;
-        float spriteHeightInWorldUnits = (float)texture.getRegionHeight() / TILE_SIZE_PX;
+        float spriteWidthInWorldUnits = (float) texture.getRegionWidth() / TILE_SIZE_PX;
+        float spriteHeightInWorldUnits = (float) texture.getRegionHeight() / TILE_SIZE_PX;
 
         // Adjust position to align sprite's bottom center with the Box2D body
         float x = (drawable.getX() - (spriteWidthInWorldUnits / 2)) * TILE_SIZE_PX * SCALE;
@@ -238,13 +193,15 @@ public class GameScreen implements Screen {
     /**
      * Called when the window is resized.
      * This is where the camera is updated to match the new window size.
-     * @param width The new window width.
+     *
+     * @param width  The new window width.
      * @param height The new window height.
      */
     @Override
     public void resize(int width, int height) {
         mapCamera.setToOrtho(false, width, height);
         hud.resize(width, height);
+        pauseScreen.resize(width, height); // Ensure the pause screen resizes accordingly
     }
 
     // Unused methods from the Screen interface
@@ -267,5 +224,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        pauseScreen.dispose(); // Dispose of the pause screen resources
     }
 }
