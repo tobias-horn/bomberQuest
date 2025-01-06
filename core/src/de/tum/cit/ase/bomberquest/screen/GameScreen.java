@@ -21,7 +21,7 @@ public class GameScreen implements Screen {
     public static final int TILE_SIZE_PX = 32;
 
 
-    public static final int SCALE = 1;
+    public static final int SCALE = 2;
 
     private final BomberQuestGame game;
     private final SpriteBatch spriteBatch;
@@ -156,16 +156,30 @@ public class GameScreen implements Screen {
         spriteBatch.begin();
 
         TextureRegion backgroundTile = Textures.BACKGROUND;
-        float tileSizeInWorldUnits = 0.5f;
+        // Use the same scaling as other game elements
+        float tileSizeInWorldUnits = TILE_SIZE_PX * SCALE; // e.g., 32 * 2 = 64 pixels
 
-        for (float x = 0; x < mapCamera.viewportWidth; x += tileSizeInWorldUnits) {
-            for (float y = 0; y < mapCamera.viewportHeight; y += tileSizeInWorldUnits) {
-                spriteBatch.draw(backgroundTile, x, y, tileSizeInWorldUnits, tileSizeInWorldUnits);
+        // Calculate the starting position based on the camera's position
+        float startX = mapCamera.position.x - (mapCamera.viewportWidth / 2);
+        float startY = mapCamera.position.y - (mapCamera.viewportHeight / 2);
+
+        // Determine the range of tiles to draw based on the camera's view
+        int startTileX = (int)(startX / tileSizeInWorldUnits);
+        int startTileY = (int)(startY / tileSizeInWorldUnits);
+        int endTileX = (int)((startX + mapCamera.viewportWidth) / tileSizeInWorldUnits) + 1;
+        int endTileY = (int)((startY + mapCamera.viewportHeight) / tileSizeInWorldUnits) + 1;
+
+        for (int x = startTileX; x <= endTileX; x++) {
+            for (int y = startTileY; y <= endTileY; y++) {
+                float drawX = x * tileSizeInWorldUnits;
+                float drawY = y * tileSizeInWorldUnits;
+                spriteBatch.draw(backgroundTile, drawX, drawY, tileSizeInWorldUnits, tileSizeInWorldUnits);
             }
         }
 
         spriteBatch.end();
     }
+
 
     /**
      * Draws this object on the screen.
