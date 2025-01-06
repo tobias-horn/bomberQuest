@@ -135,11 +135,62 @@ public class GameScreen implements Screen {
      * Currently, this just centers the camera at the origin.
      */
     private void updateCamera() {
-        mapCamera.setToOrtho(false);
-        mapCamera.position.x = 3.5f * TILE_SIZE_PX * SCALE;
-        mapCamera.position.y = 3.5f * TILE_SIZE_PX * SCALE;
-        mapCamera.update(); // This is necessary to apply the changes
+
+        float halfW = mapCamera.viewportWidth * 0.5f;
+        float halfH = mapCamera.viewportHeight * 0.5f;
+        float cameraLeft = mapCamera.position.x - halfW;
+        float cameraRight = mapCamera.position.x + halfW;
+        float cameraBottom = mapCamera.position.y - halfH;
+        float cameraTop = mapCamera.position.y + halfH;
+
+        float marginX = 0.1f * mapCamera.viewportWidth;
+        float marginY = 0.1f * mapCamera.viewportHeight;
+
+        float playerX = map.getPlayer().getX() * TILE_SIZE_PX * SCALE;
+        float playerY = map.getPlayer().getY() * TILE_SIZE_PX * SCALE;
+
+
+        if (playerX < cameraLeft + marginX) {
+            mapCamera.position.x = playerX + (halfW - marginX);
+        }
+
+        else if (playerX > cameraRight - marginX) {
+            mapCamera.position.x = playerX - (halfW - marginX);
+        }
+
+
+        if (playerY < cameraBottom + marginY) {
+            mapCamera.position.y = playerY + (halfH - marginY);
+        } else if (playerY > cameraTop - marginY) {
+            mapCamera.position.y = playerY - (halfH - marginY);
+        }
+
+
+        float mapWidthInPx = map.getWidth() * TILE_SIZE_PX * SCALE;
+        float mapHeightInPx = map.getHeight() * TILE_SIZE_PX * SCALE;
+
+        float minCameraX = halfW;
+        float maxCameraX = mapWidthInPx - halfW;
+        float minCameraY = halfH;
+        float maxCameraY = mapHeightInPx - halfH;
+
+        if (mapCamera.position.x < minCameraX) {
+            mapCamera.position.x = minCameraX;
+        }
+        if (mapCamera.position.x > maxCameraX) {
+            mapCamera.position.x = maxCameraX;
+        }
+        if (mapCamera.position.y < minCameraY) {
+            mapCamera.position.y = minCameraY;
+        }
+        if (mapCamera.position.y > maxCameraY) {
+            mapCamera.position.y = maxCameraY;
+        }
+
+        // 8) Finally, update the camera.
+        mapCamera.update();
     }
+
 
 
 
@@ -208,7 +259,7 @@ public class GameScreen implements Screen {
      */
     @Override
     public void resize(int width, int height) {
-        mapCamera.setToOrtho(false);
+        mapCamera.setToOrtho(false, width, height);
         hud.resize(width, height);
     }
 
