@@ -38,7 +38,7 @@ public class Hud {
      * Renders the HUD on the screen.
      * This uses a different OrthographicCamera so that the HUD is always fixed on the screen.
      */
-    public void render() {
+    public void render(String timer) {
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
 
@@ -61,8 +61,7 @@ public class Hud {
         spriteBatch.draw(panelTexture, panelX, panelY, newPanelWidth, newPanelHeight);
 
 
-        String message = "timer";
-        GlyphLayout layout = new GlyphLayout(font, message);
+        GlyphLayout layout = new GlyphLayout(font, timer);
 
 
         float textWidth = layout.width;

@@ -30,6 +30,8 @@ public class GameScreen implements Screen {
     private final OrthographicCamera mapCamera;
     private boolean paused = false;
     private PauseScreen pauseScreen;
+    private float remainingTime;
+    private final float initialTime = 5 * 60f;
 
 
     public GameScreen(BomberQuestGame game) {
@@ -42,6 +44,7 @@ public class GameScreen implements Screen {
         this.mapCamera.setToOrtho(false);
         // Initialize the PauseScreen
         this.pauseScreen = new PauseScreen(game.getSkin().getFont("font"));
+        this.remainingTime = initialTime;
     }
 
 
@@ -64,12 +67,26 @@ public class GameScreen implements Screen {
             paused = !paused;
         }
 
+
+        if (!paused) {
+            remainingTime -= deltaTime;
+            if (remainingTime < 0) {
+                remainingTime = 0; // prevent negative timer values
+            }
+        }
+
         ScreenUtils.clear(Color.BLACK);
         map.tick(deltaTime);
         updateCamera();
         renderBackground();
         renderMap();
-        hud.render();
+
+        int minutes = (int)(remainingTime / 60);
+        int seconds = (int)(remainingTime % 60);
+        String timerText = String.format("%02d:%02d", minutes, seconds);
+
+
+        hud.render(timerText);
 
         if (paused) {
             pauseScreen.render();
