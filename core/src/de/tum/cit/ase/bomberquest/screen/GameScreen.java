@@ -60,16 +60,9 @@ public class GameScreen implements Screen {
             map.getPlayer().getHitbox().setLinearVelocity(0, 0); // Stop movement if no key is pressed
         }
 
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             paused = !paused;
         }
-
-        if (paused) {
-            pauseScreen.render();
-            return;
-        }
-
 
         ScreenUtils.clear(Color.BLACK);
         map.tick(deltaTime);
@@ -77,6 +70,11 @@ public class GameScreen implements Screen {
         renderBackground();
         renderMap();
         hud.render();
+
+        if (paused) {
+            pauseScreen.render();
+            return;
+        }
     }
 
 
@@ -139,7 +137,7 @@ public class GameScreen implements Screen {
         for (GameObject obj : map.getAllObjects()) {
             if (obj instanceof Drawable) {
                 Drawable drawableObj = (Drawable) obj;
-                System.out.println("Rendering object: " + drawableObj + " at (" + drawableObj.getX() + ", " + drawableObj.getY() + ")");
+
                 draw(spriteBatch, drawableObj);
             }
         }
