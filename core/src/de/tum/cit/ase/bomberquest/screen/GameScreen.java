@@ -31,7 +31,9 @@ public class GameScreen implements Screen {
     private boolean paused = false;
     private PauseScreen pauseScreen;
     private float remainingTime;
-    private final float initialTime = 5 * 60f;
+    private final float initialTime = 2 * 60f;
+    private float blinkAccumulator = 0f;
+    private boolean blinkToggle = false;
 
 
     public GameScreen(BomberQuestGame game) {
@@ -85,7 +87,29 @@ public class GameScreen implements Screen {
         int seconds = (int)(remainingTime % 60);
         String timerText = String.format("%02d:%02d", minutes, seconds);
 
+        Hud.PanelState state = Hud.PanelState.BLACK;
+        if (remainingTime < 10) {
 
+            blinkAccumulator += deltaTime;
+            if (blinkAccumulator >= 0.5f) {
+                blinkToggle = !blinkToggle;
+                blinkAccumulator = 0f;
+            }
+            state = blinkToggle ? Hud.PanelState.RED : Hud.PanelState.BLACK;
+        } else if (remainingTime < 60) {
+            state = Hud.PanelState.RED;
+
+            blinkAccumulator = 0f;
+            blinkToggle = false;
+        } else {
+            state = Hud.PanelState.BLACK;
+
+            blinkAccumulator = 0f;
+            blinkToggle = false;
+        }
+
+
+        hud.setPanelState(state);
         hud.render(timerText);
 
         if (paused) {
