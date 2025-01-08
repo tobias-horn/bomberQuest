@@ -81,7 +81,7 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
-                game.setScreen(new FileSelectionScreen(game));
+                game.setScreen(new FileSelectionScreen(game, font));
             }
         });
 

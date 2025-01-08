@@ -7,6 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 
 public class MenuButton extends TextButton {
 
+    private float desiredWidth;
+    private float desiredHeight;
+
 
     public MenuButton(String text,
                         float desiredWidth, float desiredHeight,
@@ -15,8 +18,20 @@ public class MenuButton extends TextButton {
                         NinePatchDrawable overDrawable) {
 
         super(text, createStyle(font, upDrawable, overDrawable));
+        this.desiredWidth = desiredWidth;
+        this.desiredHeight = desiredHeight;
 
-        setSize(desiredWidth, desiredHeight);
+    }
+
+
+    @Override
+    public float getPrefWidth() {
+        return desiredWidth;
+    }
+
+    @Override
+    public float getPrefHeight() {
+        return desiredHeight;
     }
 
     private static TextButtonStyle createStyle(BitmapFont font,
