@@ -19,5 +19,33 @@ public class Animations {
             SpriteSheet.CHARACTER.at(1, 3),
             SpriteSheet.CHARACTER.at(1, 4)
     );
-    
+
+    public static final Animation<TextureRegion> ENEMY_WALK_LEFT = new Animation<>(0.1f,
+            SpriteSheet.ENEMY.at(16, 4),
+            SpriteSheet.ENEMY.at(16, 5),
+            SpriteSheet.ENEMY.at(16, 6)
+    );
+
+    public static final Animation<TextureRegion> ENEMY_WALK_RIGHT = new Animation<>(0.1f,
+            SpriteSheet.ENEMY.at(16, 1),
+            SpriteSheet.ENEMY.at(16, 2),
+            SpriteSheet.ENEMY.at(16, 3)
+    );
+
+    public static final Animation<TextureRegion> ENEMY_WALK_UP = new Animation<>(0.1f,
+            SpriteSheet.ENEMY.at(16, 1),
+            SpriteSheet.ENEMY.at(16, 2),
+            SpriteSheet.ENEMY.at(16, 3)
+    );
+
+    public static final Animation<TextureRegion> ENEMY_WALK_DOWN = new Animation<>(0.1f,
+            SpriteSheet.ENEMY.at(1, 4),
+            SpriteSheet.ENEMY.at(2, 4),
+            SpriteSheet.ENEMY.at(3, 4),
+            SpriteSheet.ENEMY.at(4, 4)
+    );
+
+
+
+
 }

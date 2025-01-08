@@ -52,23 +52,28 @@ public class GameScreen implements Screen {
 
         if (!paused) {
             float moveSpeed = 3.0f;
+            float vx = 0;
+            float vy = 0;
 
             if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                map.getPlayer().getHitbox().setLinearVelocity(0, moveSpeed);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                map.getPlayer().getHitbox().setLinearVelocity(0, -moveSpeed);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                map.getPlayer().getHitbox().setLinearVelocity(-moveSpeed, 0);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                map.getPlayer().getHitbox().setLinearVelocity(moveSpeed, 0);
-            } else {
-                map.getPlayer().getHitbox().setLinearVelocity(0, 0);
+                vy = moveSpeed;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                vy = -moveSpeed;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                vx = -moveSpeed;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                vx = moveSpeed;
             }
 
+            map.getPlayer().getBody().setLinearVelocity(vx, vy);
 
             map.tick(deltaTime);
 
             remainingTime -= deltaTime;
+
             if (remainingTime < 0) {
                 remainingTime = 0;
             }
@@ -117,6 +122,8 @@ public class GameScreen implements Screen {
         if (paused) {
             pauseScreen.render();
         }
+
+
     }
 
 
@@ -254,6 +261,14 @@ public class GameScreen implements Screen {
 
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void show() {}
+
+    //Show how many enemies you want to spawn
+    private int numberOfEnemies = 5;
+    @Override
+    public void show() {
+        // Spawn 5 enemies when the game starts
+        map.spawnEnemies(numberOfEnemies);
+    }
+
     @Override public void hide() {}
 }

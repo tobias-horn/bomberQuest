@@ -27,6 +27,8 @@ public class GameMap {
     private static final int VELOCITY_ITERATIONS = 6;
     private static final int POSITION_ITERATIONS = 2;
     private float physicsTime = 0;
+    private List<Enemy> enemies = new ArrayList<>();
+
 
     private final BomberQuestGame game;
     private final World world;
@@ -43,6 +45,47 @@ public class GameMap {
         MapParser.parseMap(this, fileHandle);
         markBorderWalls();
     }
+
+    public void spawnEnemies(int count) {
+        Random random = new Random();
+
+        // Get the player's position
+        Vector2 playerPosition = new Vector2(player.getX(), player.getY());
+        float minDistance = 5.0f; // Minimum distance from the player in tiles
+
+        int attempts = 0; // Limit retries to avoid infinite loops
+        int maxAttempts = 100; // Maximum number of retries for each enemy
+
+        for (int i = 0; i < count; i++) {
+            boolean validPositionFound = false;
+
+            while (!validPositionFound && attempts < maxAttempts) {
+                // Generate random x, y positions within the map bounds
+                int x = random.nextInt(width); // Ensure within map width
+                int y = random.nextInt(height); // Ensure within map height
+                Vector2 position = new Vector2(x, y);
+
+                // Check if the position is valid
+                if (!map.containsKey(position) && position.dst(playerPosition) >= minDistance) {
+                    // Spawn enemy if position is valid
+                    Enemy enemy = new Enemy(world, x, y);
+                    map.put(position, enemy); // Add enemy to the map
+                    enemies.add(enemy); // Add to the enemies list
+                    validPositionFound = true; // Exit the retry loop for this enemy
+                }
+
+                attempts++;
+            }
+
+            // If we couldn't find a valid position, log a warning
+            if (!validPositionFound) {
+                Gdx.app.log("SpawnEnemies", "Could not find a valid position for enemy " + i);
+            }
+        }
+    }
+
+
+
 
     public void createObject(int x, int y, int objectType) {
         // Track maximum width/height
@@ -63,8 +106,9 @@ public class GameMap {
                 }
             }
             case 3 -> {
-                // Possibly empty tile
-                map.put(new Vector2(x, y), null);
+                Enemy enemy = new Enemy(world, x, y);
+                map.put(new Vector2(x, y), enemy); // Add the enemy to the map
+                enemies.add(enemy); // Add to an enemies list for further game logic
             }
             case 4 -> {
                 map.put(new Vector2(x, y), new DestructibleWall(world, x, y, true, null));
@@ -100,6 +144,9 @@ public class GameMap {
      * @param frameTime the time that has passed since the last update
      */
     public void tick(float frameTime) {
+        for (Enemy enemy : enemies) {
+            enemy.tick(frameTime);
+        }
         doPhysicsStep(frameTime);
     }
 
@@ -145,5 +192,13 @@ public class GameMap {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public List<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    public void setEnemies(List<Enemy> enemies) {
+        this.enemies = enemies;
     }
 }
