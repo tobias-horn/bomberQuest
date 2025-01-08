@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
@@ -25,6 +26,7 @@ public class BomberQuestGame extends Game {
      * This eats a lot of memory, so we only want one of these.
      */
     private SpriteBatch spriteBatch;
+    private BitmapFont font;
 
     /** The game's UI skin. This is used to style the game's UI elements. */
     private Skin skin;
@@ -67,7 +69,7 @@ public class BomberQuestGame extends Game {
 
         FileHandle hardcodedMapFile = Gdx.files.internal("maps/map-1.properties");
         this.map = new GameMap(this, hardcodedMapFile);
-
+        this.font = skin.getFont("font");
 
         goToMenu();
     }
@@ -76,7 +78,7 @@ public class BomberQuestGame extends Game {
      * Switches to the menu screen.
      */
     public void goToMenu() {
-        this.setScreen(new MenuScreen(this)); // Set the current screen to MenuScreen
+        this.setScreen(new MenuScreen(this, font)); // Set the current screen to MenuScreen
     }
 
     /**
