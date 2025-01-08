@@ -7,20 +7,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
+import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.map.GameObject;
 import de.tum.cit.ase.bomberquest.texture.Drawable;
-import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.texture.Textures;
-
 
 public class GameScreen implements Screen {
 
     public static final int TILE_SIZE_PX = 32;
-
-
     public static final int SCALE = 2;
 
     private final BomberQuestGame game;
@@ -35,61 +31,69 @@ public class GameScreen implements Screen {
     private float blinkAccumulator = 0f;
     private boolean blinkToggle = false;
 
-
     public GameScreen(BomberQuestGame game) {
         this.game = game;
         this.spriteBatch = game.getSpriteBatch();
         this.map = game.getMap();
         this.hud = new Hud(spriteBatch, game.getSkin().getFont("font"));
-        // Create and configure the camera for the game view
+
         this.mapCamera = new OrthographicCamera();
         this.mapCamera.setToOrtho(false);
-        // Initialize the PauseScreen
-        this.pauseScreen = new PauseScreen(game.getSkin().getFont("font"));
+
+
+        this.pauseScreen = new PauseScreen(game, game.getSkin().getFont("font"));
+
         this.remainingTime = initialTime;
     }
 
-
     @Override
     public void render(float deltaTime) {
-        float moveSpeed = 3.0f;
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            map.getPlayer().getHitbox().setLinearVelocity(0, moveSpeed);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            map.getPlayer().getHitbox().setLinearVelocity(0, -moveSpeed);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            map.getPlayer().getHitbox().setLinearVelocity(-moveSpeed, 0);
-        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            map.getPlayer().getHitbox().setLinearVelocity(moveSpeed, 0);
-        } else {
-            map.getPlayer().getHitbox().setLinearVelocity(0, 0); // Stop movement if no key is pressed
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            paused = !paused;
-        }
 
 
         if (!paused) {
+            float moveSpeed = 3.0f;
+
+            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+                map.getPlayer().getHitbox().setLinearVelocity(0, moveSpeed);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                map.getPlayer().getHitbox().setLinearVelocity(0, -moveSpeed);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                map.getPlayer().getHitbox().setLinearVelocity(-moveSpeed, 0);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                map.getPlayer().getHitbox().setLinearVelocity(moveSpeed, 0);
+            } else {
+                map.getPlayer().getHitbox().setLinearVelocity(0, 0);
+            }
+
+
+            map.tick(deltaTime);
+
             remainingTime -= deltaTime;
             if (remainingTime < 0) {
-                remainingTime = 0; // prevent negative timer values
+                remainingTime = 0;
             }
         }
 
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            setPaused(!paused);
+        }
+
+
         ScreenUtils.clear(Color.BLACK);
-        map.tick(deltaTime);
+
+
         updateCamera();
         renderBackground();
         renderMap();
 
-        int minutes = (int)(remainingTime / 60);
-        int seconds = (int)(remainingTime % 60);
+
+        int minutes = (int) (remainingTime / 60);
+        int seconds = (int) (remainingTime % 60);
         String timerText = String.format("%02d:%02d", minutes, seconds);
 
         Hud.PanelState state = Hud.PanelState.BLACK;
         if (remainingTime < 10) {
-
             blinkAccumulator += deltaTime;
             if (blinkAccumulator >= 0.5f) {
                 blinkToggle = !blinkToggle;
@@ -98,29 +102,41 @@ public class GameScreen implements Screen {
             state = blinkToggle ? Hud.PanelState.RED : Hud.PanelState.BLACK;
         } else if (remainingTime < 60) {
             state = Hud.PanelState.RED;
-
             blinkAccumulator = 0f;
             blinkToggle = false;
         } else {
             state = Hud.PanelState.BLACK;
-
             blinkAccumulator = 0f;
             blinkToggle = false;
         }
 
-
         hud.setPanelState(state);
         hud.render(timerText);
 
+
         if (paused) {
             pauseScreen.render();
-            return;
         }
     }
 
 
-    private void updateCamera() {
+    public void setPaused(boolean shouldPause) {
+        this.paused = shouldPause;
+        if (paused) {
+            Gdx.app.log("Pause", "Pausing and setting input processor to PauseScreen stage");
+            Gdx.input.setInputProcessor(pauseScreen.getStage());
+        } else {
+            Gdx.app.log("Pause", "Unpausing; removing PauseScreen stage input processor");
+            Gdx.input.setInputProcessor(null);
+        }
+    }
 
+
+    public void resumeGame() {
+        setPaused(false);
+    }
+
+    private void updateCamera() {
         float halfW = mapCamera.viewportWidth * 0.5f;
         float halfH = mapCamera.viewportHeight * 0.5f;
         float cameraLeft = mapCamera.position.x - halfW;
@@ -171,22 +187,17 @@ public class GameScreen implements Screen {
     }
 
     private void renderMap() {
-        spriteBatch.setProjectionMatrix(mapCamera.combined); // Ensure camera settings are applied
-
-        spriteBatch.begin(); // Begin the SpriteBatch
-
+        spriteBatch.setProjectionMatrix(mapCamera.combined);
+        spriteBatch.begin();
         for (GameObject obj : map.getAllObjects()) {
             if (obj instanceof Drawable) {
                 Drawable drawableObj = (Drawable) obj;
-
                 draw(spriteBatch, drawableObj);
             }
         }
-
         if (map.getPlayer() != null) {
             draw(spriteBatch, map.getPlayer());
         }
-
         spriteBatch.end();
     }
 
@@ -195,18 +206,15 @@ public class GameScreen implements Screen {
         spriteBatch.begin();
 
         TextureRegion backgroundTile = Textures.BACKGROUND;
-        // Use the same scaling as other game elements
-        float tileSizeInWorldUnits = TILE_SIZE_PX * SCALE; // e.g., 32 * 2 = 64 pixels
+        float tileSizeInWorldUnits = TILE_SIZE_PX * SCALE;
 
-        // Calculate the starting position based on the camera's position
         float startX = mapCamera.position.x - (mapCamera.viewportWidth / 2);
         float startY = mapCamera.position.y - (mapCamera.viewportHeight / 2);
 
-        // Determine the range of tiles to draw based on the camera's view
-        int startTileX = (int)(startX / tileSizeInWorldUnits);
-        int startTileY = (int)(startY / tileSizeInWorldUnits);
-        int endTileX = (int)((startX + mapCamera.viewportWidth) / tileSizeInWorldUnits) + 1;
-        int endTileY = (int)((startY + mapCamera.viewportHeight) / tileSizeInWorldUnits) + 1;
+        int startTileX = (int) (startX / tileSizeInWorldUnits);
+        int startTileY = (int) (startY / tileSizeInWorldUnits);
+        int endTileX = (int) ((startX + mapCamera.viewportWidth) / tileSizeInWorldUnits) + 1;
+        int endTileY = (int) ((startY + mapCamera.viewportHeight) / tileSizeInWorldUnits) + 1;
 
         for (int x = startTileX; x <= endTileX; x++) {
             for (int y = startTileY; y <= endTileY; y++) {
@@ -215,26 +223,15 @@ public class GameScreen implements Screen {
                 spriteBatch.draw(backgroundTile, drawX, drawY, tileSizeInWorldUnits, tileSizeInWorldUnits);
             }
         }
-
         spriteBatch.end();
     }
 
-
-    /**
-     * Draws this object on the screen.
-     * The texture will be scaled by the game scale and the tile size.
-     * We subtract 0.5 tile so that Box2D center lines up with the sprite center.
-     *
-     * @param spriteBatch The SpriteBatch to draw with.
-     */
     private static void draw(SpriteBatch spriteBatch, Drawable drawable) {
         TextureRegion texture = drawable.getCurrentAppearance();
 
-        // Calculate sprite dimensions in world units
         float spriteWidthInWorldUnits = (float) texture.getRegionWidth() / TILE_SIZE_PX;
         float spriteHeightInWorldUnits = (float) texture.getRegionHeight() / TILE_SIZE_PX;
 
-        // Adjust position to align sprite's bottom center with the Box2D body
         float x = (drawable.getX() - (spriteWidthInWorldUnits / 2)) * TILE_SIZE_PX * SCALE;
         float y = (drawable.getY() - (spriteHeightInWorldUnits / 2)) * TILE_SIZE_PX * SCALE;
 
@@ -243,40 +240,20 @@ public class GameScreen implements Screen {
         spriteBatch.draw(texture, x, y, width, height);
     }
 
-    /**
-     * Called when the window is resized.
-     * This is where the camera is updated to match the new window size.
-     *
-     * @param width  The new window width.
-     * @param height The new window height.
-     */
     @Override
     public void resize(int width, int height) {
         mapCamera.setToOrtho(false, width, height);
         hud.resize(width, height);
-        pauseScreen.resize(width, height); // Ensure the pause screen resizes accordingly
-    }
-
-    // Unused methods from the Screen interface
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void hide() {
+        pauseScreen.resize(width, height);
     }
 
     @Override
     public void dispose() {
-        pauseScreen.dispose(); // Dispose of the pause screen resources
+        pauseScreen.dispose();
     }
+
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void show() {}
+    @Override public void hide() {}
 }

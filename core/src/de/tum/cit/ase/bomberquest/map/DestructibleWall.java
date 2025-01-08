@@ -8,6 +8,7 @@ import de.tum.cit.ase.bomberquest.texture.Textures;
 public class DestructibleWall extends GameObject implements Drawable {
     private boolean exitUnderneath = false;
     private PowerUpType powerUpUnderneath = null;
+    private boolean exitOpen = false;
 
     public DestructibleWall(World world, float x, float y, boolean exitUnderneath, PowerUpType powerUpUnderneath) {
         super(world, x, y);
