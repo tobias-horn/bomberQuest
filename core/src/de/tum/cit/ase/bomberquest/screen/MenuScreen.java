@@ -85,14 +85,38 @@ public class MenuScreen implements Screen {
             }
         });
 
+        //Quit Game button
+        TextButton quitButton = new MenuButton("Quit Game",
+                desiredWidth, desiredHeight,
+                font,
+                upDrawable,
+                overDrawable);
+        quitButton.setTouchable(Touchable.enabled);
+
+        quitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Quit Game clicked");
+                Gdx.app.log("PauseScreen", "Quit Game clicked");
+                // Exit the application
+                Gdx.app.exit();
+            }
+        });
+
+
         table.row();
 
         table.add(startButton)
                 .size(desiredWidth, desiredHeight)
                 .center()
-                .padBottom(20);
+                .padBottom(10);
+        table.row();
 
-
+        table.add(quitButton)
+                .size(desiredWidth, desiredHeight)
+                .center()
+                .padBottom(10);
+        table.row();
     }
 
     @Override

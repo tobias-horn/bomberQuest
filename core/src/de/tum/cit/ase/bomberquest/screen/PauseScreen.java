@@ -105,17 +105,16 @@ public class PauseScreen {
         table.add(pauseLabel).center().padBottom(50);
         table.row();
 
-
         table.add(resumeButton)
                 .size(desiredWidth, desiredHeight)
                 .center()
-                .padBottom(20);
+                .padBottom(10);
         table.row();
 
         table.add(menuButton)
                 .size(desiredWidth, desiredHeight)
                 .center()
-                .padBottom(20);
+                .padBottom(10);
         table.row();
 
         table.add(quitButton)
