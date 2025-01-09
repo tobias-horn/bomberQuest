@@ -1,5 +1,5 @@
 package de.tum.cit.ase.bomberquest.screen;
-
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -17,12 +17,10 @@ public class MenuScreen extends BaseScreen {
     private Stage uiStage;
 
     public MenuScreen(BomberQuestGame game, BitmapFont font) {
-
         super(game, font, "assets/startScreen/start_background.jpg");
 
-
-        uiStage = new Stage(backgroundStage.getViewport(), game.getSpriteBatch());
-
+        // Use a separate ScreenViewport for UI
+        uiStage = new Stage(new ScreenViewport(), game.getSpriteBatch());
 
         Table table = new Table();
         table.setFillParent(true);
@@ -86,20 +84,23 @@ public class MenuScreen extends BaseScreen {
 
     @Override
     public void show() {
-
         Gdx.input.setInputProcessor(uiStage);
     }
 
     @Override
     protected void renderContent(float deltaTime) {
-
         uiStage.act(deltaTime);
         uiStage.draw();
     }
 
     @Override
-    public void dispose() {
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        uiStage.getViewport().update(width, height, true);
+    }
 
+    @Override
+    public void dispose() {
         uiStage.dispose();
         super.dispose();
     }
