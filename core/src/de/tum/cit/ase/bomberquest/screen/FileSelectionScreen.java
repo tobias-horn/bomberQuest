@@ -26,9 +26,7 @@ public class FileSelectionScreen implements Screen {
     private final Stage stage;
     private final BitmapFont font;
 
-
     private Texture backgroundTexture;
-
 
     private ShapeRenderer shapeRenderer;
 
