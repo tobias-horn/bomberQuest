@@ -31,7 +31,6 @@ public class Enemy extends GameObject implements Drawable {
      * @param world The Box2D world to add the enemy to.
      * @param x The initial x-coordinate (in tiles).
      * @param y The initial y-coordinate (in tiles).
-     * @param speed The movement speed of the enemy.
      */
     public Enemy(World world, float x, float y) {
         super(world, x, y); // Call the GameObject constructor to initialize the hitbox.

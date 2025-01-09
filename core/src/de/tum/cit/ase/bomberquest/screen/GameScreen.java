@@ -68,6 +68,13 @@ public class GameScreen implements Screen {
                 vx = moveSpeed;
             }
 
+            // Normalize the velocity vector if moving diagonally
+            float magnitude = (float) Math.sqrt(vx * vx + vy * vy);
+            if (magnitude > 0) {
+                vx = (vx / magnitude) * moveSpeed;
+                vy = (vy / magnitude) * moveSpeed;
+            }
+
             map.getPlayer().getBody().setLinearVelocity(vx, vy);
 
             map.tick(deltaTime);
@@ -78,6 +85,7 @@ public class GameScreen implements Screen {
                 remainingTime = 0;
             }
         }
+
 
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
