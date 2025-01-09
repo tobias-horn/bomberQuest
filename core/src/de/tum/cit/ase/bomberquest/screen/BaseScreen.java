@@ -1,0 +1,106 @@
+package de.tum.cit.ase.bomberquest.screen;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.crashinvaders.vfx.VfxManager;
+import com.crashinvaders.vfx.effects.OldTvEffect;
+import de.tum.cit.ase.bomberquest.BomberQuestGame;
+
+public abstract class BaseScreen implements Screen {
+
+    protected final BomberQuestGame game;
+    protected final BitmapFont font;
+
+    protected Stage backgroundStage;
+    protected VfxManager vfxManager;
+    protected OldTvEffect oldTvEffect;
+    protected Texture backgroundTexture;
+
+    public BaseScreen(BomberQuestGame game, BitmapFont font, String backgroundImagePath) {
+        this.game = game;
+        this.font = font;
+
+
+        OrthographicCamera camera = new OrthographicCamera();
+        Viewport viewport = new FillViewport(1024, 768, camera);
+
+
+        backgroundStage = new Stage(viewport, game.getSpriteBatch());
+
+
+        backgroundTexture = new Texture(Gdx.files.internal(backgroundImagePath));
+        backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        Image backgroundImage = new Image(new TextureRegionDrawable(new TextureRegion(backgroundTexture)));
+        backgroundImage.setFillParent(true);
+        backgroundImage.setScaling(Scaling.fill);
+        backgroundStage.addActor(backgroundImage);
+
+
+        vfxManager = new VfxManager(Pixmap.Format.RGBA8888);
+        oldTvEffect = new OldTvEffect();
+
+        vfxManager.addEffect(oldTvEffect);
+    }
+
+    @Override
+    public void render(float deltaTime) {
+        float frameTime = Math.min(deltaTime, 0.25f);
+        ScreenUtils.clear(Color.BLACK);
+
+
+        vfxManager.cleanUpBuffers();
+        vfxManager.beginInputCapture();
+        backgroundStage.act(frameTime);
+        backgroundStage.draw();
+        vfxManager.endInputCapture();
+
+
+        vfxManager.applyEffects();
+        vfxManager.renderToScreen();
+
+
+        renderContent(frameTime);
+    }
+
+    /**
+     * Subclasses implement this method to render their specific UI or actors.
+     * This is called after the background and VFX have been rendered.
+     */
+    protected abstract void renderContent(float deltaTime);
+
+    @Override
+    public void resize(int width, int height) {
+        backgroundStage.getViewport().update(width, height, true);
+        vfxManager.resize(width, height);
+    }
+
+    @Override
+    public void pause() { }
+    @Override
+    public void resume() { }
+    @Override
+    public void hide() { }
+
+    @Override
+    public void dispose() {
+        backgroundStage.dispose();
+        vfxManager.dispose();
+        oldTvEffect.dispose();
+        if (backgroundTexture != null) {
+            backgroundTexture.dispose();
+        }
+    }
+}

@@ -13,6 +13,8 @@ repositories {
 }
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'com.crashinvaders.vfx:gdx-vfx-core:0.5.4'
+    implementation 'com.crashinvaders.vfx:gdx-vfx-effects:0.5.4'
 }
 kotlin {
     jvmToolchain(17)
