@@ -16,7 +16,10 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.crashinvaders.vfx.VfxManager;
+import com.crashinvaders.vfx.effects.CrtEffect;
+import com.crashinvaders.vfx.effects.FilmGrainEffect;
 import com.crashinvaders.vfx.effects.OldTvEffect;
+import com.crashinvaders.vfx.effects.VignettingEffect;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 
 public abstract class BaseScreen implements Screen {
@@ -28,6 +31,9 @@ public abstract class BaseScreen implements Screen {
     protected VfxManager vfxManager;
     protected OldTvEffect oldTvEffect;
     protected Texture backgroundTexture;
+    protected VignettingEffect vignettingEffect;
+    protected CrtEffect crtEffect;
+    protected FilmGrainEffect filmGrainEffect;
 
     public BaseScreen(BomberQuestGame game, BitmapFont font, String backgroundImagePath) {
         this.game = game;
@@ -51,8 +57,14 @@ public abstract class BaseScreen implements Screen {
 
         vfxManager = new VfxManager(Pixmap.Format.RGBA8888);
         oldTvEffect = new OldTvEffect();
+        vignettingEffect = new VignettingEffect(false);
+        crtEffect = new CrtEffect();
+
 
         vfxManager.addEffect(oldTvEffect);
+        vfxManager.addEffect(vignettingEffect);
+        vfxManager.addEffect(crtEffect);
+
     }
 
     @Override
