@@ -77,6 +77,27 @@ public class PauseScreen {
             }
         });
 
+        //Settings Button
+        //Settings Button
+        MenuButton settingsButton = new MenuButton(
+                "Settings",
+                desiredWidth, desiredHeight,
+                font,
+                upDrawable,
+                overDrawable
+        );
+
+        settingsButton.setTouchable(Touchable.enabled);
+
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Settings button clicked!");
+                game.setScreen(new SettingsScreen(game, font));
+            }
+        });
+
+
         //Quit Game button
         TextButton quitButton = new MenuButton("Quit Game",
                 desiredWidth, desiredHeight,
@@ -112,6 +133,12 @@ public class PauseScreen {
         table.row();
 
         table.add(menuButton)
+                .size(desiredWidth, desiredHeight)
+                .center()
+                .padBottom(10);
+        table.row();
+
+        table.add(settingsButton)
                 .size(desiredWidth, desiredHeight)
                 .center()
                 .padBottom(10);

@@ -65,7 +65,13 @@ public class BomberQuestGame extends Game {
     public void create() {
         this.spriteBatch = new SpriteBatch(); // Create SpriteBatch for rendering
         this.skin = new Skin(Gdx.files.internal("skin/craftacular/craftacular-ui.json")); // Load UI skin
-       // MusicTrack.BACKGROUND.play(); // Play some background music
+        if (MusicTrack.BACKGROUND != null) {
+            MusicTrack.BACKGROUND.play();
+        } else {
+            Gdx.app.error("BomberQuestGame", "MusicTrack.BACKGROUND is null!");
+        }
+
+
 
         FileHandle hardcodedMapFile = Gdx.files.internal("maps/map-1.properties");
         this.map = new GameMap(this, hardcodedMapFile);

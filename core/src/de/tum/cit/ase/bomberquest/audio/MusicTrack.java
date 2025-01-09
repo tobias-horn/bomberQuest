@@ -11,24 +11,42 @@ import com.badlogic.gdx.audio.Music;
  * See the assets/audio folder for the actual music files.
  * Feel free to add your own music tracks and use them in the game!
  */
+
 public enum MusicTrack {
-    
     BACKGROUND("background.mp3", 0.2f);
-    
-    /** The music file owned by this variant. */
+
     private final Music music;
-    
+    private final float originalVolume;
+    private boolean isMuted = false;
+
     MusicTrack(String fileName, float volume) {
         this.music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + fileName));
         this.music.setLooping(true);
         this.music.setVolume(volume);
+        this.originalVolume = volume;
     }
-    
-    /**
-     * Play this music track.
-     * This will not stop other music from playing - if you add more tracks, you will have to handle that yourself.
-     */
+
     public void play() {
         this.music.play();
     }
+
+    public void mute() {
+        if (!isMuted) {
+            music.setVolume(0);
+            isMuted = true;
+        }
+    }
+
+    public void unmute() {
+        if (isMuted) {
+            music.setVolume(originalVolume);
+            isMuted = false;
+        }
+    }
+
+    public boolean isMuted() {
+        return isMuted;
+    }
 }
+
+
