@@ -1,4 +1,4 @@
-package de.tum.cit.ase.bomberquest.texture;
+package de.tum.cit.ase.bomberquest.textures;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;

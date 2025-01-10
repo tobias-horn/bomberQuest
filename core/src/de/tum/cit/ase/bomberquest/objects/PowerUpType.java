@@ -1,4 +1,4 @@
-package de.tum.cit.ase.bomberquest.map;
+package de.tum.cit.ase.bomberquest.objects;
 
 public enum PowerUpType {
     CONCURRENTBOMB,
