@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.map.MapParser;
 
@@ -44,6 +44,41 @@ public class GameMap {
         this.world = new World(Vector2.Zero, true);
         MapParser.parseMap(this, fileHandle);
         markBorderWalls();
+
+        world.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+                // Get both fixtures involved in the collision
+                Fixture fixA = contact.getFixtureA();
+                Fixture fixB = contact.getFixtureB();
+
+                // Retrieve user data (the actual game objects)
+                Object dataA = fixA.getBody().getUserData();
+                Object dataB = fixB.getBody().getUserData();
+
+                // Check if one is Player and the other is Enemy
+                boolean isPlayerEnemyCollision =
+                        (dataA instanceof Player && dataB instanceof Enemy)
+                                || (dataB instanceof Player && dataA instanceof Enemy);
+
+                if (isPlayerEnemyCollision) {
+                    Gdx.app.log("Collision", "Player collided with an Enemy!");
+                    game.goToGameOver();
+                }
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {
+            }
+        });
     }
 
     public void spawnEnemies(int count) {

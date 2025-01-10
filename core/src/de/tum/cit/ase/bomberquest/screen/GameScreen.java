@@ -30,6 +30,7 @@ public class GameScreen implements Screen {
     private final float initialTime = 2 * 60f;
     private float blinkAccumulator = 0f;
     private boolean blinkToggle = false;
+    private boolean isGameOver = false; // Tracks game over state
 
     public GameScreen(BomberQuestGame game) {
         this.game = game;
@@ -279,4 +280,11 @@ public class GameScreen implements Screen {
     }
 
     @Override public void hide() {}
+
+    public void setGameOver(boolean b) {
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
 }

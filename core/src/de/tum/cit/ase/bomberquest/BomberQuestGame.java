@@ -9,8 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
 import de.tum.cit.ase.bomberquest.map.GameMap;
-import de.tum.cit.ase.bomberquest.map.MapParser;
 import de.tum.cit.ase.bomberquest.map.Player;
+import de.tum.cit.ase.bomberquest.screen.GameOverScreen;
 import de.tum.cit.ase.bomberquest.screen.GameScreen;
 import de.tum.cit.ase.bomberquest.screen.MenuScreen;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
@@ -45,18 +45,18 @@ public class BomberQuestGame extends Game {
      */
     private GameMap map;
     private Player player;
+    private String selectedMap;
 
-    /**
-     * Constructor for BomberQuestGame.
-     *
-     * @param fileChooser The file chooser for the game, typically used in desktop environment.
-     */
+
+    // Main Constructor
+
     public BomberQuestGame(NativeFileChooser fileChooser) {
         this.fileChooser = fileChooser;
     }
 
     /**
-     * Called when the game is created. Initializes the SpriteBatch and Skin.
+     * Called when the game is created.
+     * Initializes the SpriteBatch and Skin.
      * During the class constructor, libGDX is not fully initialized yet.
      * Therefore this method serves as a second constructor for the game,
      * and we can use libGDX resources here.
@@ -79,26 +79,22 @@ public class BomberQuestGame extends Game {
         goToMenu();
     }
 
-    /**
-     * Switches to the menu screen.
-     */
+    // Switches to the menu screen.
     public void goToMenu() {
         this.setScreen(new MenuScreen(this, font)); // Set the current screen to MenuScreen
     }
 
-    /**
-     * Switches to the game screen.
-     */
+    // Switches to the game screen.
     public void goToGame() {
         this.setScreen(new GameScreen(this)); // Set the current screen to GameScreen
     }
 
-    /** Returns the skin for UI elements. */
+    // Returns the skin for UI elements.
     public Skin getSkin() {
         return skin;
     }
 
-    /** Returns the main SpriteBatch for rendering. */
+    // Returns the main SpriteBatch for rendering.
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
     }
@@ -152,5 +148,21 @@ public class BomberQuestGame extends Game {
     }
 
 
+    public void goToGameOver() {
+        setScreen(new GameOverScreen(this, this.skin));
+    }
 
+    public void restartGame() {
+        Screen currentScreen = getScreen();
+        if (currentScreen instanceof GameScreen) {
+            ((GameScreen) currentScreen).setGameOver(false);
+            currentScreen.dispose();
+        }
+
+        if (selectedMap != null) {
+            loadMap(selectedMap);
+        } else {
+            Gdx.app.error("BomberQuestGame", "No map selected to restart the game.");
+        }
+    }
 }
