@@ -1,12 +1,15 @@
 package de.tum.cit.ase.bomberquest.screen;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.crashinvaders.vfx.effects.OldTvEffect;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.texture.Textures;
@@ -19,7 +22,7 @@ public class MenuScreen extends BaseScreen {
     public MenuScreen(BomberQuestGame game, BitmapFont font) {
         super(game, font, "assets/startScreen/start_background.jpg");
 
-        // Use a separate ScreenViewport for UI
+
         uiStage = new Stage(new ScreenViewport(), game.getSpriteBatch());
 
         Table table = new Table();
@@ -38,11 +41,12 @@ public class MenuScreen extends BaseScreen {
                 upDrawable,
                 overDrawable
         );
-        startButton.addListener(event -> {
-            if (event.toString().equals("touchDown")) {
+        startButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new FileSelectionScreen(game, font));
+                super.clicked(event, x, y);
             }
-            return false;
         });
 
         MenuButton settingsButton = new MenuButton(
@@ -52,11 +56,12 @@ public class MenuScreen extends BaseScreen {
                 upDrawable,
                 overDrawable
         );
-        settingsButton.addListener(event -> {
-            if (event.toString().equals("touchDown")) {
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new SettingsScreen(game, font));
+                super.clicked(event, x, y);
             }
-            return false;
         });
 
         MenuButton quitButton = new MenuButton(
@@ -66,12 +71,13 @@ public class MenuScreen extends BaseScreen {
                 upDrawable,
                 overDrawable
         );
-        quitButton.addListener(event -> {
-            if (event.toString().equals("touchDown")) {
+        quitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Quit Game clicked");
                 Gdx.app.exit();
+                super.clicked(event, x, y);
             }
-            return false;
         });
 
         table.row();
