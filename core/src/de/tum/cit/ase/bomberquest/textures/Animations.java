@@ -45,6 +45,12 @@ public class Animations {
             SpriteSheet.ENEMY.at(4, 4)
     );
 
+    public static final Animation<TextureRegion> BOMB_GOING_OFF = new Animation<>(0.1f,
+            SpriteSheet.BOMB.at(4, 3),
+            SpriteSheet.BOMB.at(4, 2),
+            SpriteSheet.BOMB.at(4, 1)
+    );
+
 
 
 

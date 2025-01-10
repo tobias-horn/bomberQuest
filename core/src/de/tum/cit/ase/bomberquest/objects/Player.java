@@ -15,6 +15,7 @@ public class Player extends GameObject implements Drawable {
 
     /** Time elapsed for animation purposes. */
     private float elapsedTime;
+    private int maxBombs = 1; //This should update to 3 when the poweup to lay multiple bopmbs is obtained.
 
     /**
      * Constructs a Player object at the specified tile coordinates.

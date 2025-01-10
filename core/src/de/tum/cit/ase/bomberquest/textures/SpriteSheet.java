@@ -21,8 +21,12 @@ public enum SpriteSheet {
     //The enemy spritesheet, which has a grid size of 16x32.
     ENEMY("original-bomberman.png", 16, 16),
 
+    //The bomb spritesheet, which has a grid size of 16x32.
+    BOMB("original-bomberman.png", 16, 16),
+
     // The basic tiles spritesheet, which has a grid size of 16x16.
     TILES("tileset.png", 32, 32);
+
 
     private final Texture spritesheet;
     private final int width;
