@@ -22,7 +22,7 @@ public enum MusicTrack {
     MusicTrack(String fileName, float volume) {
         this.music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + fileName));
         this.music.setLooping(true);
-        this.music.setVolume(volume);
+        this.music.setVolume(0);
         this.originalVolume = volume;
     }
 

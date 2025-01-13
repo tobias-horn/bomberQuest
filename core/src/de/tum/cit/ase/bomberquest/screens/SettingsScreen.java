@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
@@ -30,18 +30,18 @@ public class SettingsScreen extends BaseScreen {
 
     public SettingsScreen(BomberQuestGame game, BitmapFont font) {
 
-        super(game, font, "assets/startScreen/start_background.jpg");
+
+        super(game, font, "assets/startScreen/start_background.jpg", true);
 
         this.game = game;
         this.font = font;
 
 
-        Viewport viewport = new FillViewport(1024, 768);
+        Viewport viewport = new ScreenViewport();
         this.stage = new Stage(viewport, game.getSpriteBatch());
 
         NinePatchDrawable upDrawable = new NinePatchDrawable(Textures.BUTTON_LONG_NINEPATCH_OFF);
         NinePatchDrawable overDrawable = new NinePatchDrawable(Textures.BUTTON_LONG_NINEPATCH_HOVER);
-
 
         Skin skin = new Skin(Gdx.files.internal("skin/craftacular/craftacular-ui.json"));
 
@@ -53,7 +53,6 @@ public class SettingsScreen extends BaseScreen {
         checkBoxStyle.checkboxOff = checkOff;
         checkBoxStyle.font = skin.getFont("font");
         skin.add("customCheckBox", checkBoxStyle);
-
 
         CheckBox muteButton = new CheckBox("Mute Music", skin, "customCheckBox");
         muteButton.setChecked(MusicTrack.BACKGROUND.isMuted());
@@ -75,7 +74,6 @@ public class SettingsScreen extends BaseScreen {
                 upDrawable,
                 overDrawable
         );
-
         backButton.setTouchable(Touchable.enabled);
         backButton.addListener(new ClickListener() {
             @Override
@@ -83,7 +81,6 @@ public class SettingsScreen extends BaseScreen {
                 game.setScreen(new MenuScreen(game, font));
             }
         });
-
 
         Table table = new Table();
         table.setFillParent(true);
@@ -101,7 +98,7 @@ public class SettingsScreen extends BaseScreen {
 
     @Override
     protected void renderContent(float deltaTime) {
-        // Clear depth buffer if needed
+
         Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
 
         stage.act(deltaTime);

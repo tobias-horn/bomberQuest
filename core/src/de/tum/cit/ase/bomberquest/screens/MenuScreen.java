@@ -17,7 +17,7 @@ public class MenuScreen extends BaseScreen {
     private Stage uiStage;
 
     public MenuScreen(BomberQuestGame game, BitmapFont font) {
-        super(game, font, "assets/startScreen/start_background.jpg");
+        super(game, font, "assets/startScreen/start_background.jpg", false);
 
 
         uiStage = new Stage(new ScreenViewport(), game.getSpriteBatch());

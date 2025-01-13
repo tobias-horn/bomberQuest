@@ -3,9 +3,8 @@ package de.tum.cit.ase.bomberquest.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -13,32 +12,33 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.textures.Textures;
 import de.tum.cit.ase.bomberquest.ui.MenuButton;
 
+/**
+ * Screen for selecting the map files.
+ * We enable the overlay in BaseScreen by passing 'true' to the constructor.
+ * Uses a ScreenViewport for the UI stage (like in the MenuScreen) to avoid squishing.
+ */
 public class FileSelectionScreen extends BaseScreen {
 
     private final Stage stage;
     private final BitmapFont font;
     private final BomberQuestGame game;
-    private ShapeRenderer shapeRenderer;
 
     public FileSelectionScreen(BomberQuestGame game, BitmapFont font) {
 
-        super(game, font, "assets/startScreen/start_background.jpg");
+        super(game, font, "assets/startScreen/start_background.jpg", true);
+
         this.game = game;
         this.font = font;
 
 
-        Viewport viewport = new FillViewport(1024, 768, new OrthographicCamera());
+        Viewport viewport = new ScreenViewport(new OrthographicCamera());
         this.stage = new Stage(viewport, game.getSpriteBatch());
-
-        shapeRenderer = new ShapeRenderer();
-
 
         Table rootTable = new Table();
         rootTable.setFillParent(true);
@@ -58,7 +58,7 @@ public class FileSelectionScreen extends BaseScreen {
         Table mapTable = new Table();
         mapTable.defaults().pad(5);
 
-        NinePatchDrawable upDrawable   = new NinePatchDrawable(Textures.BUTTON_LONG_NINEPATCH_OFF);
+        NinePatchDrawable upDrawable = new NinePatchDrawable(Textures.BUTTON_LONG_NINEPATCH_OFF);
         NinePatchDrawable overDrawable = new NinePatchDrawable(Textures.BUTTON_LONG_NINEPATCH_HOVER);
 
         FileHandle mapsDirectory = Gdx.files.internal("maps");
@@ -130,21 +130,13 @@ public class FileSelectionScreen extends BaseScreen {
         Gdx.input.setInputProcessor(stage);
     }
 
+    /**
+     * renderContent is called AFTER the background and overlay are rendered.
+     * Just draw the stage here (buttons, labels, etc.).
+     */
     @Override
     protected void renderContent(float deltaTime) {
-
         stage.act(deltaTime);
-
-
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0, 0, 0, 0.4f); // 40% opacity black
-        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
-
-
         stage.draw();
     }
 
@@ -157,7 +149,6 @@ public class FileSelectionScreen extends BaseScreen {
     @Override
     public void dispose() {
         stage.dispose();
-        shapeRenderer.dispose();
         super.dispose();
     }
 }

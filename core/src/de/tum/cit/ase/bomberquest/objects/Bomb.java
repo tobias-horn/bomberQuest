@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import de.tum.cit.ase.bomberquest.textures.Animations;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
 
-public class Bomb extends GameObject implements Drawable {
+public class  Bomb extends GameObject implements Drawable {
     private float remainingTime; // Countdown (seconds)
     private float radius; // Explosion radius
     private boolean hasExploded; // Explosion state
