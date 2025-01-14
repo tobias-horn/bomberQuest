@@ -1,129 +1,153 @@
 package de.tum.cit.ase.bomberquest.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
+import de.tum.cit.ase.bomberquest.textures.Textures;
+import de.tum.cit.ase.bomberquest.ui.MenuButton;
+
+import java.util.Random;
 
 /**
- * GameOverScreen displays a "Game Over" message and provides options to restart or return to the main menu.
+ * GameOverScreen displays a "Game Over" message and a random sub-message.
+ * It also provides options to restart or return to the main menu.
  */
-public class GameOverScreen implements Screen {
-    private final BomberQuestGame game;
-    private final Skin skin;
-    private Stage stage;
+public class GameOverScreen extends BaseScreen {
+
+    private final Stage uiStage;
+    private final String gameOverMessage;
+
+
+    private static final String[] MESSAGES = {
+            "Boom! And just like that... Game Over.",
+            "Out of lives, but not out of spirit!",
+            "You got blown away—literally!",
+            "The explosion was the easy part... surviving wasn't.",
+            "You went out with a bang... Game Over.",
+            "Better luck next time, demolition expert.",
+            "Kaboom! That's all for now.",
+            "Looks like you dropped the bomb... on yourself.",
+            "Game Over. You just couldn't handle the pressure.",
+            "The fuse ran out... and so did you.",
+            "Boom, bust, and back to the start.",
+            "You’re toast. Literally.",
+            "No guts, no glory. You had the guts—just not the glory.",
+            "Your plans backfired... explosively.",
+            "That was dynamite! But also... Game Over.",
+            "Another try? Or are you just blown away?",
+            "Your bombing skills need some defusing.",
+            "Looks like you were caught in the crossfire.",
+            "Your adventure ends here. For now...",
+            "Explosive ending, but not the one you wanted."
+    };
 
     /**
-     * Constructor for GameOverScreen.
+     * Constructs the GameOverScreen with the provided game instance and font.
      *
-     * @param bomberQuestGame The main game instance.
-     * @param skin            The UI skin.
+     * @param game The main game instance.
+     * @param font The BitmapFont to use for text rendering.
      */
-    public GameOverScreen(BomberQuestGame bomberQuestGame, Skin skin) {
-        this.game = bomberQuestGame;
-        this.skin = skin;
-        this.stage = new Stage();
+    public GameOverScreen(BomberQuestGame game, BitmapFont font) {
 
-        // Create a table to layout UI elements
+        super(game, font, "assets/startScreen/start_background.jpg", true);
+
+
+        Random random = new Random();
+        this.gameOverMessage = MESSAGES[random.nextInt(MESSAGES.length)];
+
+
+        this.uiStage = new Stage(new ScreenViewport(), game.getSpriteBatch());
+
+
         Table table = new Table();
         table.setFillParent(true);
         table.center();
 
-        // Create "Game Over" label
-        Label gameOverLabel = new Label("Game Over", skin);
-        gameOverLabel.setFontScale(2);
-        table.add(gameOverLabel).padBottom(50);
+
+        Label gameOverLabel = new Label("GAME OVER", new Label.LabelStyle(font, font.getColor()));
+        gameOverLabel.setFontScale(2.0f);
+        table.add(gameOverLabel).padBottom(40f);
         table.row();
 
-        // Create "Restart Game" button
-        TextButton restartButton = new TextButton("Restart Game", skin);
-        restartButton.setSize(200, 50);
-        table.add(restartButton).size(200, 50).padBottom(20);
+
+        Label messageLabel = new Label(gameOverMessage, new Label.LabelStyle(font, font.getColor()));
+        table.add(messageLabel).padBottom(50f);
         table.row();
 
-        // Create "Return to Menu" button
-        TextButton menuButton = new TextButton("Return to Menu", skin);
-        menuButton.setSize(200, 50);
-        table.add(menuButton).size(200, 50);
 
-        // Add listeners to buttons
+        float desiredWidth = 400f;
+        float desiredHeight = 70f;
+        NinePatchDrawable upDrawable   = new NinePatchDrawable(Textures.BUTTON_LONG_NINEPATCH_OFF);
+        NinePatchDrawable overDrawable = new NinePatchDrawable(Textures.BUTTON_LONG_NINEPATCH_HOVER);
+
+
+        MenuButton restartButton = new MenuButton(
+                "Restart Game",
+                desiredWidth, desiredHeight,
+                font,
+                upDrawable,
+                overDrawable
+        );
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.restartGame(); // Ensure this method resets the game correctly
+                game.restartGame();  // Make sure this method resets the game properly
+                super.clicked(event, x, y);
             }
         });
+        table.add(restartButton).size(desiredWidth, desiredHeight).padBottom(15f);
+        table.row();
 
+
+        MenuButton menuButton = new MenuButton(
+                "Return to Menu",
+                desiredWidth, desiredHeight,
+                font,
+                upDrawable,
+                overDrawable
+        );
         menuButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.goToMenu();
+                super.clicked(event, x, y);
             }
         });
+        table.add(menuButton).size(desiredWidth, desiredHeight);
 
-        // Add the table to the stage
-        stage.addActor(table);
+
+        uiStage.addActor(table);
     }
 
-    /**
-     * Called when this screen becomes the current screen for a Game.
-     */
+
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(stage);
+        Gdx.input.setInputProcessor(uiStage);
     }
 
-    /**
-     * Renders the screen. Clears the screen with a solid color and draws UI elements.
-     *
-     * @param delta The time in seconds since the last render.
-     */
+
     @Override
-    public void render(float delta) {
-        // Clear the screen with a dark gray color
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // Update and draw the stage
-        stage.act(delta);
-        stage.draw();
+    protected void renderContent(float deltaTime) {
+        uiStage.act(deltaTime);
+        uiStage.draw();
     }
 
-    /**
-     * Handles the resizing of the game window.
-     *
-     * @param width  The new width in pixels.
-     * @param height The new height in pixels.
-     */
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
+        super.resize(width, height);
+        uiStage.getViewport().update(width, height, true);
     }
 
-    @Override
-    public void pause() {
-        // Handle game pause if necessary
-    }
-
-    @Override
-    public void resume() {
-        // Handle game resume if necessary
-    }
-
-    @Override
-    public void hide() {
-        // Called when this screen is no longer the current screen
-    }
-
-    /**
-     * Releases all resources of this screen.
-     */
     @Override
     public void dispose() {
-        stage.dispose();
+        uiStage.dispose();
+        super.dispose();
     }
 }
