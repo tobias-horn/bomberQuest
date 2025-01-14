@@ -13,7 +13,7 @@ import com.badlogic.gdx.audio.Music;
  */
 
 public enum MusicTrack {
-    BACKGROUND("nokia.mp3", 0.2f);
+    BACKGROUND("background.mp3", 0.2f);
 
     private final Music music;
     private final float originalVolume;
