@@ -180,7 +180,9 @@ public class GameMap {
      * @param bomb The bomb to add.
      */
     public void addBomb(Bomb bomb) {
-        bombs.add(bomb);
+        // Check if the bombs list already has one element
+        if (bombs.size() >= 1) return;
+        else bombs.add(bomb);
     }
 
     /**
