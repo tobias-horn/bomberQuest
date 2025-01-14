@@ -52,4 +52,8 @@ public abstract class GameObject {
     public Body getBody() {
         return body;
     }
+
+    public void setBody(Body body) {
+        this.body = body;
+    }
 }

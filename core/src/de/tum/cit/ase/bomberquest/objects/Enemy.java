@@ -121,12 +121,14 @@ public class Enemy extends GameObject implements Drawable {
         }
     }
 
-
     /**
      * @return The current x-position of this enemy (from the body).
      */
     @Override
     public float getX() {
+        if (body == null) {
+            throw new IllegalStateException("Enemy body has been destroyed, but the object is still in use.");
+        }
         return body.getPosition().x;
     }
 

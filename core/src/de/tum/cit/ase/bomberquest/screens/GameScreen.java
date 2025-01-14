@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.map.GameMap;
+import de.tum.cit.ase.bomberquest.objects.Bomb;
+import de.tum.cit.ase.bomberquest.objects.Enemy;
 import de.tum.cit.ase.bomberquest.objects.GameObject;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
 import de.tum.cit.ase.bomberquest.textures.Textures;
@@ -41,7 +43,6 @@ public class GameScreen implements Screen {
         this.mapCamera = new OrthographicCamera();
         this.mapCamera.setToOrtho(false);
 
-
         this.pauseScreen = new PauseScreen(game, game.getSkin().getFont("font"));
 
         this.remainingTime = initialTime;
@@ -49,7 +50,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float deltaTime) {
-
 
         if (!paused) {
             float moveSpeed = 3.0f;
@@ -76,6 +76,20 @@ public class GameScreen implements Screen {
                 vy = (vy / magnitude) * moveSpeed;
             }
 
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                // Get player's coordinates
+                float px = map.getPlayer().getX();
+                float py = map.getPlayer().getY();
+
+                // Floor player's coordinates
+                int tileX = (int) Math.floor(px);
+                int tileY = (int) Math.floor(py);
+                Bomb bomb = new Bomb(map.getWorld(), tileX, tileY, 1, map);
+
+                bomb.startTimer();
+                map.addBomb(bomb);
+            }
+
             map.getPlayer().getBody().setLinearVelocity(vx, vy);
 
             map.tick(deltaTime);
@@ -87,20 +101,15 @@ public class GameScreen implements Screen {
             }
         }
 
-
-
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             setPaused(!paused);
         }
 
-
         ScreenUtils.clear(Color.BLACK);
-
 
         updateCamera();
         renderBackground();
         renderMap();
-
 
         int minutes = (int) (remainingTime / 60);
         int seconds = (int) (remainingTime % 60);
@@ -127,14 +136,11 @@ public class GameScreen implements Screen {
         hud.setPanelState(state);
         hud.render(timerText);
 
-
         if (paused) {
             pauseScreen.render();
         }
 
-
     }
-
 
     public void setPaused(boolean shouldPause) {
         this.paused = shouldPause;
@@ -146,7 +152,6 @@ public class GameScreen implements Screen {
             Gdx.input.setInputProcessor(null);
         }
     }
-
 
     public void resumeGame() {
         setPaused(false);
@@ -205,15 +210,29 @@ public class GameScreen implements Screen {
     private void renderMap() {
         spriteBatch.setProjectionMatrix(mapCamera.combined);
         spriteBatch.begin();
+
+        // 1) Draw static objects in the map (walls, etc.)
         for (GameObject obj : map.getAllObjects()) {
-            if (obj instanceof Drawable) {
-                Drawable drawableObj = (Drawable) obj;
+            if (obj instanceof Drawable drawableObj) {
                 draw(spriteBatch, drawableObj);
             }
         }
+
+        // 2) Draw enemies from enemies list:
+        for (Enemy enemy : map.getEnemies()) {
+            draw(spriteBatch, enemy);
+        }
+
+        // 3) Draw bombs
+        for (Bomb bomb : map.getBombs()) {
+            draw(spriteBatch, bomb);
+        }
+
+        // 4) Draw player
         if (map.getPlayer() != null) {
             draw(spriteBatch, map.getPlayer());
         }
+
         spriteBatch.end();
     }
 
@@ -243,8 +262,11 @@ public class GameScreen implements Screen {
     }
 
     private static void draw(SpriteBatch spriteBatch, Drawable drawable) {
-        TextureRegion texture = drawable.getCurrentAppearance();
+        if (drawable instanceof GameObject gameObject) {
+            if (gameObject.getBody() == null) return; // Skip drawing if the body is null.
+        }
 
+        TextureRegion texture = drawable.getCurrentAppearance();
         float spriteWidthInWorldUnits = (float) texture.getRegionWidth() / TILE_SIZE_PX;
         float spriteHeightInWorldUnits = (float) texture.getRegionHeight() / TILE_SIZE_PX;
 

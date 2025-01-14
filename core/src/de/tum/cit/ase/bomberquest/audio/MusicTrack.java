@@ -13,7 +13,7 @@ import com.badlogic.gdx.audio.Music;
  */
 
 public enum MusicTrack {
-    BACKGROUND("background.mp3", 0.2f);
+    BACKGROUND("nokia.mp3", 0.2f);
 
     private final Music music;
     private final float originalVolume;
@@ -22,7 +22,7 @@ public enum MusicTrack {
     MusicTrack(String fileName, float volume) {
         this.music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + fileName));
         this.music.setLooping(true);
-        this.music.setVolume(0);
+        this.music.setVolume(volume);
         this.originalVolume = volume;
     }
 
