@@ -182,12 +182,11 @@ public class Bomb extends GameObject implements Drawable {
      * Ends the game if the player is hit.
      */
     private void damagePlayerIfPresent(int tileX, int tileY) {
-        float px = gameMap.getPlayer().getX();
-        float py = gameMap.getPlayer().getY();
-        float distance = Vector2.dst(px, py, getX(), getY());
+        int playerTileX = (int) Math.floor(gameMap.getPlayer().getX());
+        int playerTileY = (int) Math.floor(gameMap.getPlayer().getY());
 
-        if (distance <= radius) {
-            gameMap.getGame().goToGameOver(); // End the game if the player is hit.
+        if (playerTileX == tileX && playerTileY == tileY) {
+            gameMap.getGame().goToGameOver(); // End the game if the player is on the tile.
         }
     }
 

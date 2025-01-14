@@ -3,9 +3,12 @@ package de.tum.cit.ase.bomberquest.objects;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import de.tum.cit.ase.bomberquest.textures.Animations;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
+
+import java.awt.*;
 
 /**
  * Represents the player character in the game.
@@ -15,7 +18,6 @@ public class Player extends GameObject implements Drawable {
 
     /** Time elapsed for animation purposes. */
     private float elapsedTime;
-    private int maxBombs = 1; //This should update to 3 when the poweup to lay multiple bopmbs is obtained.
 
     /**
      * Constructs a Player object at the specified tile coordinates.
@@ -44,11 +46,11 @@ public class Player extends GameObject implements Drawable {
 
         body = world.createBody(bodyDef);
 
-        CircleShape circle = new CircleShape();
-        circle.setRadius(0.3f); // Radius of the player's circular hitbox
+        PolygonShape rectangle = new PolygonShape();
+        rectangle.setAsBox(0.16f,0.32f);
 
-        body.createFixture(circle, 1.0f);
-        circle.dispose();
+        body.createFixture(rectangle, 1.0f);
+        rectangle.dispose();
 
         body.setUserData(this); // Link the player object to its body
     }
