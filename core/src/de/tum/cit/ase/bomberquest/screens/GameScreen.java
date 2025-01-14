@@ -56,16 +56,16 @@ public class GameScreen implements Screen {
             float vx = 0;
             float vy = 0;
 
-            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
                 vy = moveSpeed;
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
                 vy = -moveSpeed;
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
                 vx = -moveSpeed;
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            if (Gdx.input.isKeyPressed(Input.Keys.D)) {
                 vx = moveSpeed;
             }
 

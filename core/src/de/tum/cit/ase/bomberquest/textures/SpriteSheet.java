@@ -25,7 +25,9 @@ public enum SpriteSheet {
     BOMB("original-bomberman.png", 16, 16),
 
     // The basic tiles spritesheet, which has a grid size of 16x16.
-    TILES("tileset.png", 32, 32);
+    TILES("tileset.png", 32, 32),
+
+    ORIGINAL_BOMBERMAN("original-bomberman.png", 16, 16);
 
 
     private final Texture spritesheet;
