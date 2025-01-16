@@ -80,8 +80,6 @@ public class GameScreen implements Screen {
                 vy = (vy / magnitude) * moveSpeed;
             }
 
-
-
             if (Gdx.input.isKeyJustPressed(KeyBindings.getKey(KeyBindings.PLACE_BOMB))) {
                 // Get player's coordinates
                 float px = map.getPlayer().getX();
@@ -98,11 +96,9 @@ public class GameScreen implements Screen {
 
             map.getPlayer().getBody().setLinearVelocity(vx, vy);
 
-
             map.tick(deltaTime);
 
             remainingTime -= deltaTime;
-
             if (remainingTime < 0) {
                 remainingTime = 0;
             }
