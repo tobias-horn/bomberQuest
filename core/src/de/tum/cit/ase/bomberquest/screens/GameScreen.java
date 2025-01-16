@@ -58,17 +58,20 @@ public class GameScreen implements Screen {
             float vy = 0;
 
             if (Gdx.input.isKeyPressed(KeyBindings.getKey(KeyBindings.MOVE_UP))) {
-                vy = moveSpeed;
+                vy += moveSpeed;
             }
             if (Gdx.input.isKeyPressed(KeyBindings.getKey(KeyBindings.MOVE_DOWN))) {
-                vy = -moveSpeed;
+                vy -= moveSpeed;
             }
             if (Gdx.input.isKeyPressed(KeyBindings.getKey(KeyBindings.MOVE_LEFT))) {
-                vx = -moveSpeed;
+                vx -= moveSpeed;
             }
             if (Gdx.input.isKeyPressed(KeyBindings.getKey(KeyBindings.MOVE_RIGHT))) {
-                vx = moveSpeed;
+                vx += moveSpeed;
             }
+
+            map.getPlayer().updateDirection(vx, vy);
+            map.getPlayer().update(deltaTime);
 
             // Normalize the velocity vector if moving diagonally
             float magnitude = (float) Math.sqrt(vx * vx + vy * vy);
@@ -94,6 +97,7 @@ public class GameScreen implements Screen {
             }
 
             map.getPlayer().getBody().setLinearVelocity(vx, vy);
+
 
             map.tick(deltaTime);
 

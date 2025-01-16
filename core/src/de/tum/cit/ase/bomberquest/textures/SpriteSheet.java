@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public enum SpriteSheet {
     
     //The character spritesheet, which has a grid size of 16x32.
-    CHARACTER("character.png", 15, 32),
+    CHARACTER("character.png", 16, 32),
 
     //The enemy spritesheet, which has a grid size of 16x32.
     ENEMY("original-bomberman.png", 16, 16),

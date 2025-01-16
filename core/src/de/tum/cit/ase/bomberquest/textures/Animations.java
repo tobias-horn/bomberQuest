@@ -14,18 +14,6 @@ public class Animations {
      * The animation for the character walking down.
      */
 
-
-
-
-
-    // CHARACTER WALKING UP
-    public static final Animation<TextureRegion> CHARACTER_WALK_UP = new Animation<>(0.1f,
-            SpriteSheet.CHARACTER.at(1, 1),
-            SpriteSheet.CHARACTER.at(1, 2),
-            SpriteSheet.CHARACTER.at(1, 3),
-            SpriteSheet.CHARACTER.at(1, 4)
-    );
-
     // CHARACTER WALKING DOWN
     public static final Animation<TextureRegion> CHARACTER_WALK_DOWN = new Animation<>(0.1f,
             SpriteSheet.CHARACTER.at(1, 1),
@@ -36,20 +24,32 @@ public class Animations {
 
     // CHARACTER WALKING RIGHT
     public static final Animation<TextureRegion> CHARACTER_WALK_RIGHT = new Animation<>(0.1f,
-            SpriteSheet.CHARACTER.at(1, 1),
-            SpriteSheet.CHARACTER.at(1, 2),
-            SpriteSheet.CHARACTER.at(1, 3),
-            SpriteSheet.CHARACTER.at(1, 4)
+            SpriteSheet.CHARACTER.at(2, 1),
+            SpriteSheet.CHARACTER.at(2, 2),
+            SpriteSheet.CHARACTER.at(2, 3),
+            SpriteSheet.CHARACTER.at(2, 4)
+    );
+
+    // CHARACTER WALKING UP
+    public static final Animation<TextureRegion> CHARACTER_WALK_UP = new Animation<>(0.1f,
+            SpriteSheet.CHARACTER.at(3, 1),
+            SpriteSheet.CHARACTER.at(3, 2),
+            SpriteSheet.CHARACTER.at(3, 3),
+            SpriteSheet.CHARACTER.at(3, 4)
     );
 
     // CHARACTER WALKING LEFT
     public static final Animation<TextureRegion> CHARACTER_WALK_LEFT = new Animation<>(0.1f,
-            SpriteSheet.CHARACTER.at(1, 1),
-            SpriteSheet.CHARACTER.at(1, 2),
-            SpriteSheet.CHARACTER.at(1, 3),
-            SpriteSheet.CHARACTER.at(1, 4)
+            SpriteSheet.CHARACTER.at(4, 1),
+            SpriteSheet.CHARACTER.at(4, 2),
+            SpriteSheet.CHARACTER.at(4, 3),
+            SpriteSheet.CHARACTER.at(4, 4)
     );
 
+    public static final Animation<TextureRegion> CHARACTER_IDLE = new Animation<>(0.1f,
+            SpriteSheet.CHARACTER.at(1, 10),
+            SpriteSheet.CHARACTER.at(1, 11)
+    );
 
 
 

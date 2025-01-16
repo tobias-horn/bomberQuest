@@ -18,6 +18,14 @@ public class Player extends GameObject implements Drawable {
 
     /** Time elapsed for animation purposes. */
     private float elapsedTime;
+    // Fields in the Player class
+    private PlayerDirection currentDirection = PlayerDirection.DOWN;
+    private float vx = 0, vy = 0; // Velocity components
+
+    // player directions
+    public enum PlayerDirection {
+        UP, DOWN, LEFT, RIGHT, IDLE
+    }
 
     /**
      * Constructs a Player object at the specified tile coordinates.
@@ -65,6 +73,27 @@ public class Player extends GameObject implements Drawable {
         // Add other player-specific updates here (e.g., power-ups, health checks)
     }
 
+    public void updateDirection(float vx, float vy) {
+        this.vx = vx;
+        this.vy = vy;
+
+        // If there is no movement, set currentDirection to IDLE
+        if (vx == 0 && vy == 0) {
+            currentDirection = PlayerDirection.IDLE;
+            return;
+        }
+
+        if (Math.abs(vx) > Math.abs(vy)) {
+            currentDirection = (vx > 0) ? PlayerDirection.RIGHT : PlayerDirection.LEFT;
+        } else {
+            currentDirection = (vy > 0) ? PlayerDirection.UP : PlayerDirection.DOWN;
+        }
+    }
+
+    public void update(float deltaTime) {
+        this.elapsedTime += deltaTime;
+    }
+
     /**
      * Provides the current appearance of the player based on its state and animation.
      *
@@ -72,6 +101,19 @@ public class Player extends GameObject implements Drawable {
      */
     @Override
     public TextureRegion getCurrentAppearance() {
-        return Animations.CHARACTER_WALK_DOWN.getKeyFrame(this.elapsedTime, true); // Example animation
+        switch (currentDirection) {
+            case UP:
+                return Animations.CHARACTER_WALK_UP.getKeyFrame(elapsedTime, true);
+            case DOWN:
+                return Animations.CHARACTER_WALK_DOWN.getKeyFrame(elapsedTime, true);
+            case LEFT:
+                return Animations.CHARACTER_WALK_LEFT.getKeyFrame(elapsedTime, true);
+            case RIGHT:
+                return Animations.CHARACTER_WALK_RIGHT.getKeyFrame(elapsedTime, true);
+            case IDLE:
+                return Animations.CHARACTER_IDLE.getKeyFrame(elapsedTime, true);
+            default:
+                throw new IllegalStateException("Unexpected direction: " + currentDirection);
+        }
     }
 }
