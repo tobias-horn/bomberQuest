@@ -15,6 +15,7 @@ import de.tum.cit.ase.bomberquest.objects.Enemy;
 import de.tum.cit.ase.bomberquest.objects.GameObject;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
 import de.tum.cit.ase.bomberquest.textures.Textures;
+import de.tum.cit.ase.bomberquest.ui.KeyBindings;
 
 public class GameScreen implements Screen {
 
@@ -56,16 +57,16 @@ public class GameScreen implements Screen {
             float vx = 0;
             float vy = 0;
 
-            if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            if (Gdx.input.isKeyPressed(KeyBindings.getKey(KeyBindings.MOVE_UP))) {
                 vy = moveSpeed;
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            if (Gdx.input.isKeyPressed(KeyBindings.getKey(KeyBindings.MOVE_DOWN))) {
                 vy = -moveSpeed;
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            if (Gdx.input.isKeyPressed(KeyBindings.getKey(KeyBindings.MOVE_LEFT))) {
                 vx = -moveSpeed;
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            if (Gdx.input.isKeyPressed(KeyBindings.getKey(KeyBindings.MOVE_RIGHT))) {
                 vx = moveSpeed;
             }
 
@@ -76,7 +77,9 @@ public class GameScreen implements Screen {
                 vy = (vy / magnitude) * moveSpeed;
             }
 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+
+
+            if (Gdx.input.isKeyJustPressed(KeyBindings.getKey(KeyBindings.PLACE_BOMB))) {
                 // Get player's coordinates
                 float px = map.getPlayer().getX();
                 float py = map.getPlayer().getY();
@@ -101,7 +104,7 @@ public class GameScreen implements Screen {
             }
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        if (Gdx.input.isKeyJustPressed(KeyBindings.getKey(KeyBindings.PAUSE_GAME))) {
             setPaused(!paused);
         }
 
