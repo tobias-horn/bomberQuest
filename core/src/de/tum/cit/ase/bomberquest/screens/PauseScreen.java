@@ -92,6 +92,7 @@ public class PauseScreen {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("PauseScreen", "Settings button clicked");
                 game.setScreen(new SettingsScreen(game, font));
+                game.setScreenWithState(ScreenState.SETTINGS);
             }
         });
 

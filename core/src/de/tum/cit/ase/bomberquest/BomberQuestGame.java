@@ -13,29 +13,21 @@ import de.tum.cit.ase.bomberquest.objects.Player;
 import de.tum.cit.ase.bomberquest.screens.GameOverScreen;
 import de.tum.cit.ase.bomberquest.screens.GameScreen;
 import de.tum.cit.ase.bomberquest.screens.MenuScreen;
+import de.tum.cit.ase.bomberquest.screens.ScreenState;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 
 public class BomberQuestGame extends Game {
 
 
     private SpriteBatch spriteBatch;
-
-
     private BitmapFont font;
-
-
     private Skin skin;
-
-
     private final NativeFileChooser fileChooser;
-
-
     private GameMap map;
-
-
     private Player player;
-
     private String selectedMap;
+    private ScreenState currentScreenState;
+    private ScreenState previousScreenState;
 
 
     public BomberQuestGame(NativeFileChooser fileChooser) {
@@ -64,12 +56,11 @@ public class BomberQuestGame extends Game {
 
 
     public void goToMenu() {
-        this.setScreen(new MenuScreen(this, font));
+        setScreenWithState(ScreenState.MENU);
     }
 
-
     public void goToGame() {
-        this.setScreen(new GameScreen(this));
+        setScreenWithState(ScreenState.GAME);
     }
 
 
@@ -134,7 +125,7 @@ public class BomberQuestGame extends Game {
 
 
     public void goToGameOver() {
-        setScreen(new GameOverScreen(this, font));
+        setScreenWithState(ScreenState.GAME_OVER);
     }
 
 
@@ -153,4 +144,47 @@ public class BomberQuestGame extends Game {
             Gdx.app.error("BomberQuestGame", "No map selected to restart the game.");
         }
     }
+
+    public void setScreenWithState(ScreenState newState) {
+        // Record previous screen state:
+        if (currentScreenState != null) {
+            previousScreenState = currentScreenState;
+        }
+
+        // Update current screen state:
+        currentScreenState = newState;
+
+        System.out.println("Transitioning to: " + currentScreenState + ", Previous: " + previousScreenState);
+
+        // Instantiate the correct Screen based on newState:
+        switch (newState) {
+            case MENU -> setScreen(new MenuScreen(this, font));
+            case GAME -> setScreen(new GameScreen(this));
+            case GAME_OVER -> setScreen(new GameOverScreen(this, font));
+            // case PAUSE -> setScreen(new PauseScreen(this, font));
+            // case SETTINGS -> setScreen(new SettingsScreen(this, font));
+            // etc...
+        }
+    }
+
+    public void goBack() {
+        if (previousScreenState != null) {
+            System.out.println("Going back to: " + previousScreenState + " from: " + currentScreenState);
+
+            // Grab the previous state to go back to
+            ScreenState targetState = previousScreenState;
+
+            // Clear previousScreenState to avoid bouncing back and forth
+            previousScreenState = null;
+
+            // Now set our screen to that previous state
+            setScreenWithState(targetState);
+        } else {
+            System.out.println("No previous state found. Returning to MENU.");
+            // If we have no recorded previous screen, let's default to the menu
+            setScreenWithState(ScreenState.MENU);
+        }
+    }
+
+
 }
