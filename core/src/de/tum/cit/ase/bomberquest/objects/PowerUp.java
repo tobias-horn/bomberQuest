@@ -13,11 +13,21 @@ import de.tum.cit.ase.bomberquest.textures.Textures;
 public class PowerUp extends GameObject implements Drawable {
     private final PowerUpType type;
     private static final Sound clickSound = Gdx.audio.newSound(Gdx.files.internal("assets/audio/powerUp.mp3"));
+    private boolean markedForRemoval = false;
+
+    public void markForRemoval() {
+        this.markedForRemoval = true;
+    }
+
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
+    }
 
     public PowerUp(World world, float x, float y, PowerUpType type) {
         super(world, x, y);
         this.type = type;
     }
+
 
     @Override
     protected void createHitbox(World world, float tileX, float tileY) {
@@ -55,5 +65,10 @@ public class PowerUp extends GameObject implements Drawable {
         clickSound.play();
     }
 
+    public PowerUpType getType() {
+        return this.type;
     }
+
+
+}
 

@@ -19,9 +19,17 @@ public class Textures {
     public static final TextureRegion EXIT = SpriteSheet.TILES.at(9, 3);
     public static final TextureRegion BACKGROUND = SpriteSheet.TILES.at(7, 4);
     public static final TextureRegion BORDERWALL = SpriteSheet.TILES.at(9, 3);
-    public static final TextureRegion POWERUP_CONCURRENTBOMB = SpriteSheet.TILES.at(8, 4);
     public static final TextureRegion BLASTRADIUS = new TextureRegion(
             new Texture(new FileHandle("assets/texture/blastRadiusPU.png")));
+
+    public static final TextureRegion POWERUP_CONCURRENTBOMB = new TextureRegion(
+            new Texture(new FileHandle("assets/texture/concurrentBombPU.png")));
+
+    public static final TextureRegion BLASTRADIOUS_HUD = new TextureRegion(
+            new Texture(new FileHandle("assets/texture/blastRadiusBombPuHUD.png")));
+
+    public static final TextureRegion CONCURRENTBOMB_HUD = new TextureRegion(
+            new Texture(new FileHandle("assets/texture/concurrentBombPuHUD.png")));
 
 
     // Menu button textures

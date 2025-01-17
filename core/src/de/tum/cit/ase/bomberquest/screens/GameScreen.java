@@ -39,7 +39,7 @@ public class GameScreen implements Screen {
         this.game = game;
         this.spriteBatch = game.getSpriteBatch();
         this.map = game.getMap();
-        this.hud = new Hud(spriteBatch, game.getSkin().getFont("font"));
+        this.hud = game.getHud();
 
         this.mapCamera = new OrthographicCamera();
         this.mapCamera.setToOrtho(false);
@@ -51,7 +51,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float deltaTime) {
-
         if (!paused) {
             float moveSpeed = 2f;
             float vx = 0;
@@ -81,14 +80,17 @@ public class GameScreen implements Screen {
             }
 
             if (Gdx.input.isKeyJustPressed(KeyBindings.getKey(KeyBindings.PLACE_BOMB))) {
-                // Get player's coordinates
                 float px = map.getPlayer().getX();
                 float py = map.getPlayer().getY();
 
-                // Floor player's coordinates
                 int tileX = (int) Math.floor(px);
                 int tileY = (int) Math.floor(py);
                 Bomb bomb = new Bomb(map.getWorld(), tileX, tileY, 1, map);
+
+
+                if (map.isBlastRadiusActive()) {
+                    bomb.setRadius(5f);
+                }
 
                 bomb.startTimer();
                 map.addBomb(bomb);
@@ -113,6 +115,9 @@ public class GameScreen implements Screen {
         updateCamera();
         renderBackground();
         renderMap();
+
+
+        hud.update(deltaTime);
 
         int minutes = (int) (remainingTime / 60);
         int seconds = (int) (remainingTime % 60);
@@ -142,7 +147,6 @@ public class GameScreen implements Screen {
         if (paused) {
             pauseScreen.render();
         }
-
     }
 
     public void setPaused(boolean shouldPause) {
@@ -214,24 +218,20 @@ public class GameScreen implements Screen {
         spriteBatch.setProjectionMatrix(mapCamera.combined);
         spriteBatch.begin();
 
-        // 1) Draw static objects in the map (walls, etc.)
         for (GameObject obj : map.getAllObjects()) {
             if (obj instanceof Drawable drawableObj) {
                 draw(spriteBatch, drawableObj);
             }
         }
 
-        // 2) Draw enemies from enemies list:
         for (Enemy enemy : map.getEnemies()) {
             draw(spriteBatch, enemy);
         }
 
-        // 3) Draw bombs
         for (Bomb bomb : map.getBombs()) {
             draw(spriteBatch, bomb);
         }
 
-        // 4) Draw player
         if (map.getPlayer() != null) {
             draw(spriteBatch, map.getPlayer());
         }
@@ -266,7 +266,7 @@ public class GameScreen implements Screen {
 
     private static void draw(SpriteBatch spriteBatch, Drawable drawable) {
         if (drawable instanceof GameObject gameObject) {
-            if (gameObject.getBody() == null) return; // Skip drawing if the body is null.
+            if (gameObject.getBody() == null) return;
         }
 
         TextureRegion texture = drawable.getCurrentAppearance();
@@ -297,13 +297,12 @@ public class GameScreen implements Screen {
     @Override public void resume() {}
 
     @Override
-    public void show() {
-    }
+    public void show() {}
 
-    @Override public void hide() {}
+    @Override
+    public void hide() {}
 
-    public void setGameOver(boolean b) {
-    }
+    public void setGameOver(boolean b) {}
 
     public boolean isGameOver() {
         return isGameOver;

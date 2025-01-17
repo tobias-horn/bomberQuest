@@ -10,10 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.objects.Player;
-import de.tum.cit.ase.bomberquest.screens.GameOverScreen;
-import de.tum.cit.ase.bomberquest.screens.GameScreen;
-import de.tum.cit.ase.bomberquest.screens.MenuScreen;
-import de.tum.cit.ase.bomberquest.screens.ScreenState;
+import de.tum.cit.ase.bomberquest.screens.*;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 
 public class BomberQuestGame extends Game {
@@ -29,6 +26,7 @@ public class BomberQuestGame extends Game {
     private ScreenState currentScreenState;
     private ScreenState previousScreenState;
     private MusicTrack currentMusicTrack;
+    private Hud hud;
 
 
     public BomberQuestGame(NativeFileChooser fileChooser) {
@@ -47,10 +45,12 @@ public class BomberQuestGame extends Game {
             MusicTrack.BACKGROUND.play();
         }
 
+        this.font = skin.getFont("font");
 
         FileHandle hardcodedMapFile = Gdx.files.internal("maps/map-1.properties");
-        this.map = new GameMap(this, hardcodedMapFile);
-        this.font = skin.getFont("font");
+        this.hud = new Hud(spriteBatch, font);
+        this.map = new GameMap(this, hardcodedMapFile, hud);
+
 
 
         goToMenu();
@@ -115,7 +115,7 @@ public class BomberQuestGame extends Game {
             this.selectedMap = mapPath;
 
 
-            this.map = new GameMap(this, fileHandle);
+            this.map = new GameMap(this, fileHandle, hud);
 
 
             goToGame();
@@ -219,4 +219,7 @@ public class BomberQuestGame extends Game {
     }
 
 
+    public Hud getHud() {
+        return hud;
+    }
 }
