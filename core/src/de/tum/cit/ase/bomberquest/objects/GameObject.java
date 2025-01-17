@@ -4,10 +4,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 
 public abstract class GameObject {
-    protected Body body; // The Box2D body for collisions
+    protected Body body;
+    protected World world;
 
     public GameObject(World world, float tileX, float tileY) {
         createHitbox(world, tileX, tileY);
+        this.world = world;
     }
 
     /**
@@ -55,5 +57,9 @@ public abstract class GameObject {
 
     public void setBody(Body body) {
         this.body = body;
+    }
+
+    public World getWorld() {
+        return world;
     }
 }

@@ -6,5 +6,6 @@ public enum ScreenState {
     PAUSE,
     SETTINGS,
     FILE_SELECTION,
-    GAME_OVER
+    GAME_OVER,
+    GAME_WON
 }

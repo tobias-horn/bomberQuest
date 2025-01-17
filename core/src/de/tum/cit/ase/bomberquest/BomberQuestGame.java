@@ -3,6 +3,7 @@ package de.tum.cit.ase.bomberquest;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -27,7 +28,7 @@ public class BomberQuestGame extends Game {
     private ScreenState previousScreenState;
     private MusicTrack currentMusicTrack;
     private Hud hud;
-
+    private Sound gameWonSound;
 
     public BomberQuestGame(NativeFileChooser fileChooser) {
         this.fileChooser = fileChooser;
@@ -42,8 +43,10 @@ public class BomberQuestGame extends Game {
 
 
         if (MusicTrack.BACKGROUND != null) {
-            MusicTrack.BACKGROUND.play();
+            // MusicTrack.BACKGROUND.play();
         }
+
+        gameWonSound = Gdx.audio.newSound(Gdx.files.internal("audio/gameWon.mp3"));
 
         this.font = skin.getFont("font");
 
@@ -147,6 +150,10 @@ public class BomberQuestGame extends Game {
         }
     }
 
+    public void goToGameWon() {
+        setScreenWithState(ScreenState.GAME_WON);
+    }
+
     public void setScreenWithState(ScreenState newState) {
         // Record previous screen state:
         if (currentScreenState != null) {
@@ -172,7 +179,10 @@ public class BomberQuestGame extends Game {
                 setScreen(new GameOverScreen(this, font));
                 playMusic(MusicTrack.BACKGROUND);
             }
-            // Add cases for other states as needed
+            case GAME_WON -> {
+                setScreen(new GameWonScreen(this, font));
+                gameWonSound.play();
+            }
         }
     }
 

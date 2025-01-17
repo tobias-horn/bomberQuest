@@ -265,9 +265,9 @@ public class GameScreen implements Screen {
     }
 
     private static void draw(SpriteBatch spriteBatch, Drawable drawable) {
-        if (drawable instanceof GameObject gameObject) {
-            if (gameObject.getBody() == null) return;
-        }
+//        if (drawable instanceof GameObject gameObject) {
+//            if (gameObject.getBody() == null) return;
+//        }
 
         TextureRegion texture = drawable.getCurrentAppearance();
         float spriteWidthInWorldUnits = (float) texture.getRegionWidth() / TILE_SIZE_PX;

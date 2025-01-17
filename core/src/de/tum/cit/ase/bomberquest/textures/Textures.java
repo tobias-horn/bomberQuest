@@ -16,7 +16,8 @@ public class Textures {
     public static final TextureRegion INDESTRUCTABLEWALL = SpriteSheet.TILES.at(7, 2);
     public static final TextureRegion DESTRUCTABLEWALL = SpriteSheet.TILES.at(7, 1);
     public static final TextureRegion ENTRANCE = SpriteSheet.TILES.at(8, 3);
-    public static final TextureRegion EXIT = SpriteSheet.TILES.at(9, 3);
+    public static final TextureRegion EXIT_INACTIVE = SpriteSheet.TILES.at(9, 2);
+    public static final TextureRegion EXIT_ACTIVE = SpriteSheet.TILES.at(9, 3);
     public static final TextureRegion BACKGROUND = SpriteSheet.TILES.at(7, 4);
     public static final TextureRegion BORDERWALL = SpriteSheet.TILES.at(9, 3);
     public static final TextureRegion BLASTRADIUS = new TextureRegion(

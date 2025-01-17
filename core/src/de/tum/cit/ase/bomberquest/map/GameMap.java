@@ -181,6 +181,24 @@ public class GameMap {
 
 
         removeMarkedPowerUps();
+
+        boolean allEnemiesDead = enemies.isEmpty();
+        for (GameObject obj : map.values()) {
+            if (obj instanceof Exit exitObj) {
+                exitObj.setActive(allEnemiesDead);
+            }
+        }
+
+
+        if (player != null) {
+            int px = (int) Math.floor(player.getX());
+            int py = (int) Math.floor(player.getY());
+            GameObject below = getObjectAt(px, py);
+            if (below instanceof Exit exit && exit.isActive()) {
+
+                game.goToGameWon();
+            }
+        }
     }
 
     /**
@@ -266,6 +284,13 @@ public class GameMap {
                 removedObj.getBody().getWorld().destroyBody(removedObj.getBody());
                 removedObj.setBody(null);
             }
+        }
+
+        if (removedObj instanceof DestructibleWall dw && dw.isExitUnderneath()) {
+
+            boolean activeState = enemies.isEmpty();
+            Exit exit = new Exit(world, x, y, activeState);
+            map.put(new Vector2(x, y), exit);
         }
     }
 
