@@ -32,7 +32,11 @@ public class Animations {
             SpriteSheet.PLAYER.at(5, 1, 1, 2),
             SpriteSheet.PLAYER.at(5, 2, 1, 2),
             SpriteSheet.PLAYER.at(5, 3, 1, 2),
-            SpriteSheet.PLAYER.at(5, 4, 1, 2)
+            SpriteSheet.PLAYER.at(5, 4, 1, 2),
+            SpriteSheet.PLAYER.at(5, 5, 1, 2),
+            SpriteSheet.PLAYER.at(5, 6, 1, 2),
+            SpriteSheet.PLAYER.at(5, 7, 1, 2),
+            SpriteSheet.PLAYER.at(5, 8, 1, 2)
     );
 
     // CHARACTER WALKING UP
@@ -40,7 +44,11 @@ public class Animations {
             SpriteSheet.PLAYER.at(8, 1, 1, 2),
             SpriteSheet.PLAYER.at(8, 2, 1, 2),
             SpriteSheet.PLAYER.at(8, 3, 1, 2),
-            SpriteSheet.PLAYER.at(8, 4, 1, 2)
+            SpriteSheet.PLAYER.at(8, 4, 1, 2),
+            SpriteSheet.PLAYER.at(8, 5, 1, 2),
+            SpriteSheet.PLAYER.at(8, 6, 1, 2),
+            SpriteSheet.PLAYER.at(8, 7, 1, 2),
+            SpriteSheet.PLAYER.at(8, 8, 1, 2)
     );
 
     // CHARACTER WALKING LEFT
@@ -53,7 +61,11 @@ public class Animations {
                 SpriteSheet.PLAYER.at(5, 1, 1, 2),
                 SpriteSheet.PLAYER.at(5, 2, 1, 2),
                 SpriteSheet.PLAYER.at(5, 3, 1, 2),
-                SpriteSheet.PLAYER.at(5, 4, 1, 2)
+                SpriteSheet.PLAYER.at(5, 4, 1, 2),
+                SpriteSheet.PLAYER.at(5, 5, 1, 2),
+                SpriteSheet.PLAYER.at(5, 6, 1, 2),
+                SpriteSheet.PLAYER.at(5, 7, 1, 2),
+                SpriteSheet.PLAYER.at(5, 8, 1, 2)
         }) {
             TextureRegion flippedFrame = new TextureRegion(frame);
             flippedFrame.flip(true, false);
