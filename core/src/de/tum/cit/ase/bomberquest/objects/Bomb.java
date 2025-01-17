@@ -168,13 +168,32 @@ public class Bomb extends GameObject implements Drawable {
         GameObject obj = gameMap.getObjectAt(tileX, tileY);
 
         if (obj instanceof IndestructibleWall) {
-            return true; // Indestructible walls block the explosion.
-        } else if (obj instanceof DestructibleWall) {
-            gameMap.removeObjectAt(tileX, tileY); // Destroy destructible walls.
-            return true; // Explosion stops here.
+            return true;
+        } else if (obj instanceof DestructibleWall destructibleWall) {
+
+            gameMap.removeObjectAt(tileX, tileY);
+
+
+            if (destructibleWall.getPowerUpUnderneath() != null) {
+                PowerUpType powerUpType = destructibleWall.getPowerUpUnderneath();
+
+
+                PowerUp powerUp = new PowerUp(
+                        gameMap.getWorld(),
+                        tileX,
+                        tileY,
+                        powerUpType
+                );
+
+                gameMap.getMap().put(new Vector2(tileX, tileY), powerUp);
+            }
+
+
+            return true;
         }
 
-        return false; // No wall => keep expanding.
+
+        return false;
     }
 
     /**

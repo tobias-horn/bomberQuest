@@ -84,6 +84,22 @@ public class GameMap {
                     Gdx.app.log("Collision", "Player collided with an Enemy!");
                     game.goToGameOver(); // Trigger game-over state.
                 }
+
+
+                boolean isPlayerPowerUpCollision =
+                        (objData1 instanceof Player && objData2 instanceof PowerUp) ||
+                                (objData2 instanceof Player && objData1 instanceof PowerUp);
+
+                if (isPlayerPowerUpCollision) {
+                    Gdx.app.log("Collision", "Player collided with a PowerUp!");
+
+                    PowerUp.playSound();
+
+
+                    PowerUp powerUp = (objData1 instanceof PowerUp) ? (PowerUp) objData1 : (PowerUp) objData2;
+
+
+                }
             }
 
             // Unused collision methods that need to be overridden (from ContactListener).

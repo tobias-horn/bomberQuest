@@ -24,6 +24,14 @@ public class DestructibleWall extends GameObject implements Drawable {
         this.exitUnderneath = exitUnderneath;
     }
 
+    public PowerUpType getPowerUpUnderneath() {
+        return powerUpUnderneath;
+    }
+
+    public boolean isExitOpen() {
+        return exitOpen;
+    }
+
     @Override
     public TextureRegion getCurrentAppearance() {
         return Textures.DESTRUCTABLEWALL; // Example for IndestructibleWall

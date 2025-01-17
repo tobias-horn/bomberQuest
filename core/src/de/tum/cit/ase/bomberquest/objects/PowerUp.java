@@ -1,16 +1,41 @@
 package de.tum.cit.ase.bomberquest.objects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
 import de.tum.cit.ase.bomberquest.textures.Textures;
 
 public class PowerUp extends GameObject implements Drawable {
     private final PowerUpType type;
+    private static final Sound clickSound = Gdx.audio.newSound(Gdx.files.internal("assets/audio/powerUp.mp3"));
 
     public PowerUp(World world, float x, float y, PowerUpType type) {
         super(world, x, y);
         this.type = type;
+    }
+
+    @Override
+    protected void createHitbox(World world, float tileX, float tileY) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set(tileX + 0.5f, tileY + 0.5f);
+
+        body = world.createBody(bodyDef);
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(0.5f, 0.5f);
+
+        // Create the fixture as a SENSOR so it doesn't block movement
+        Fixture fixture = body.createFixture(shape, 0f);
+        fixture.setSensor(true);
+
+        shape.dispose();
+        body.setUserData(this);
     }
 
     @Override
@@ -23,6 +48,11 @@ public class PowerUp extends GameObject implements Drawable {
             default:
                 throw new IllegalStateException("Unexpected type: " + type);
         }
+    }
+
+
+    public static void playSound() {
+        clickSound.play();
     }
 
     }
