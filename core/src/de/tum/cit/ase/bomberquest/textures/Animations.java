@@ -2,6 +2,7 @@ package de.tum.cit.ase.bomberquest.textures;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Contains all animation constants used in the game.
@@ -16,39 +17,54 @@ public class Animations {
 
     // CHARACTER WALKING DOWN
     public static final Animation<TextureRegion> CHARACTER_WALK_DOWN = new Animation<>(0.1f,
-            SpriteSheet.CHARACTER.at(1, 1),
-            SpriteSheet.CHARACTER.at(1, 2),
-            SpriteSheet.CHARACTER.at(1, 3),
-            SpriteSheet.CHARACTER.at(1, 4)
+            SpriteSheet.PLAYER.at(2, 1, 1, 2),
+            SpriteSheet.PLAYER.at(2, 2, 1, 2),
+            SpriteSheet.PLAYER.at(2, 3, 1, 2),
+            SpriteSheet.PLAYER.at(2, 4, 1, 2),
+            SpriteSheet.PLAYER.at(2, 5, 1, 2),
+            SpriteSheet.PLAYER.at(2, 6, 1, 2),
+            SpriteSheet.PLAYER.at(2, 7, 1, 2),
+            SpriteSheet.PLAYER.at(2, 8, 1, 2)
     );
 
     // CHARACTER WALKING RIGHT
     public static final Animation<TextureRegion> CHARACTER_WALK_RIGHT = new Animation<>(0.1f,
-            SpriteSheet.CHARACTER.at(2, 1),
-            SpriteSheet.CHARACTER.at(2, 2),
-            SpriteSheet.CHARACTER.at(2, 3),
-            SpriteSheet.CHARACTER.at(2, 4)
+            SpriteSheet.PLAYER.at(5, 1, 1, 2),
+            SpriteSheet.PLAYER.at(5, 2, 1, 2),
+            SpriteSheet.PLAYER.at(5, 3, 1, 2),
+            SpriteSheet.PLAYER.at(5, 4, 1, 2)
     );
 
     // CHARACTER WALKING UP
     public static final Animation<TextureRegion> CHARACTER_WALK_UP = new Animation<>(0.1f,
-            SpriteSheet.CHARACTER.at(3, 1),
-            SpriteSheet.CHARACTER.at(3, 2),
-            SpriteSheet.CHARACTER.at(3, 3),
-            SpriteSheet.CHARACTER.at(3, 4)
+            SpriteSheet.PLAYER.at(8, 1, 1, 2),
+            SpriteSheet.PLAYER.at(8, 2, 1, 2),
+            SpriteSheet.PLAYER.at(8, 3, 1, 2),
+            SpriteSheet.PLAYER.at(8, 4, 1, 2)
     );
 
     // CHARACTER WALKING LEFT
-    public static final Animation<TextureRegion> CHARACTER_WALK_LEFT = new Animation<>(0.1f,
-            SpriteSheet.CHARACTER.at(4, 1),
-            SpriteSheet.CHARACTER.at(4, 2),
-            SpriteSheet.CHARACTER.at(4, 3),
-            SpriteSheet.CHARACTER.at(4, 4)
-    );
+    public static final Animation<TextureRegion> CHARACTER_WALK_LEFT;
+
+    static {
+        Array<TextureRegion> walkLeftFrames = new Array<>();
+        // Iterate through the frames of the "walking right" animation and flip them
+        for (TextureRegion frame : new TextureRegion[]{
+                SpriteSheet.PLAYER.at(5, 1, 1, 2),
+                SpriteSheet.PLAYER.at(5, 2, 1, 2),
+                SpriteSheet.PLAYER.at(5, 3, 1, 2),
+                SpriteSheet.PLAYER.at(5, 4, 1, 2)
+        }) {
+            TextureRegion flippedFrame = new TextureRegion(frame);
+            flippedFrame.flip(true, false);
+            walkLeftFrames.add(flippedFrame);
+        }
+        CHARACTER_WALK_LEFT = new Animation<>(0.1f, walkLeftFrames);
+    }
+
 
     public static final Animation<TextureRegion> CHARACTER_IDLE = new Animation<>(0.1f,
-            SpriteSheet.CHARACTER.at(1, 10),
-            SpriteSheet.CHARACTER.at(1, 11)
+            SpriteSheet.PLAYER.at(2, 4, 1, 2)
     );
 
 

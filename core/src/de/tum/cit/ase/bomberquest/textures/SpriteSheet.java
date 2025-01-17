@@ -18,6 +18,8 @@ public enum SpriteSheet {
     //The character spritesheet, which has a grid size of 16x32.
     CHARACTER("character.png", 16, 32),
 
+    PLAYER("player.png", 32, 16),
+
     //The enemy spritesheet, which has a grid size of 16x32.
     ENEMY("mobs.png", 16, 16),
 
@@ -27,7 +29,7 @@ public enum SpriteSheet {
     // The basic tiles spritesheet, which has a grid size of 16x16.
     TILES("tileset.png", 32, 32),
 
-    ORIGINAL_BOMBERMAN("original-bomberman.png", 16, 16);
+    ORIGINAL_BOMBERMAN("original-bomberman.png", 32, 16);
 
 
     private final Texture spritesheet;
@@ -60,12 +62,16 @@ public enum SpriteSheet {
      * @return the texture
      */
     public TextureRegion at(int row, int column) {
+        return at(row, column, 1, 1); // Default multipliers
+    }
+
+    public TextureRegion at(int row, int column, int tileWidthMultiplier, int tileHeightMultiplier) {
         return new TextureRegion(
                 spritesheet,
-                (column - 1) * this.width,
-                (row - 1) * this.height,
-                this.width,
-                this.height
+                (column - 1) * this.width,               // X position
+                (row - 1) * this.height,                // Y position
+                this.width * tileWidthMultiplier,       // Region width
+                this.height * tileHeightMultiplier      // Region height
         );
     }
     

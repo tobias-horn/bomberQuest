@@ -55,7 +55,7 @@ public class Player extends GameObject implements Drawable {
         body = world.createBody(bodyDef);
 
         PolygonShape rectangle = new PolygonShape();
-        rectangle.setAsBox(0.16f,0.32f);
+        rectangle.setAsBox(0.23f,0.47f);
 
         body.createFixture(rectangle, 1.0f);
         rectangle.dispose();
