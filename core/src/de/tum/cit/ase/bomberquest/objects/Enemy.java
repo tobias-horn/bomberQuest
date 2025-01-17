@@ -5,8 +5,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.World;
+import de.tum.cit.ase.bomberquest.map.AStarPathFinder;
+import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.textures.Animations;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
+
+import java.util.List;
 
 /**
  * Represents an enemy in the game.
@@ -16,8 +20,16 @@ public class Enemy extends GameObject implements Drawable {
     /** The elapsed time since the game started, used for animations. */
     private float elapsedTime;
 
+    /** Reference to the GameMap for pathfinding. */
+    private GameMap gameMap;
+
     /** The movement speed of the enemy. */
-    private final float speed = 2.0f;
+    private final float speed = 2f;
+
+    // Random wandering
+    private float randomWalkTimer = 0f; // Timer for how long to move in one random direction
+    private Vector2 randomDirectionVector = new Vector2(0, 0); // Current random direction
+    private final float MAX_RANDOM_DIRECTION_TIME = 2.0f; // Max time to move in one random direction
 
     private enum Direction {
         LEFT, RIGHT, UP, DOWN
@@ -32,10 +44,18 @@ public class Enemy extends GameObject implements Drawable {
      * @param x The initial x-coordinate (in tiles).
      * @param y The initial y-coordinate (in tiles).
      */
-    public Enemy(World world, float x, float y) {
-        super(world, x, y); // Call the GameObject constructor to initialize the hitbox.
+    /**
+     * Constructor for creating an enemy.
+     * @param world The Box2D world to add the enemy to.
+     * @param x The initial x-coordinate (in tiles).
+     * @param y The initial y-coordinate (in tiles).
+     * @param gameMap Reference to the game map (for pathfinding).
+     */
+    public Enemy(World world, float x, float y, GameMap gameMap) {
+        super(world, x, y);
+        this.gameMap = gameMap;
         this.elapsedTime = 0;
-        setDynamicBody(); // Set the body type to dynamic since enemies move.
+        setDynamicBody();
     }
 
     /**
@@ -68,43 +88,104 @@ public class Enemy extends GameObject implements Drawable {
     public void tick(float deltaTime) {
         elapsedTime += deltaTime;
 
-        // Enemy movement pattern: Alternate between horizontal and vertical movement.
-        // Use elapsedTime to decide direction changes.
-        float vx = 0; // Default no horizontal movement
-        float vy = 0; // Default no vertical movement
+        // 1) Safety checks
+        if (gameMap == null || gameMap.getPlayer() == null) {
+            body.setLinearVelocity(0, 0);
+            return;
+        }
 
-        // Alternate movement directions based on elapsed time
-        if ((int) (elapsedTime % 4) < 2) { // First 2 seconds: Horizontal movement
-            if (currentDirection == Direction.LEFT || currentDirection == Direction.RIGHT) {
-                vx = (currentDirection == Direction.LEFT ? -speed : speed);
-            } else {
-                currentDirection = Direction.LEFT; // Default to LEFT if no horizontal direction is set
-                vx = -speed;
-            }
-        } else { // Next 2 seconds: Vertical movement
-            if (currentDirection == Direction.UP || currentDirection == Direction.DOWN) {
-                vy = (currentDirection == Direction.UP ? speed : -speed);
-            } else {
-                currentDirection = Direction.UP; // Default to UP if no vertical direction is set
-                vy = speed;
+        // 2) Get the enemy's current tile (floored, since A* works on tiles)
+        int ex = (int) Math.floor(getX());
+        int ey = (int) Math.floor(getY());
+
+        // 3) Get the player's exact position
+        float px = gameMap.getPlayer().getX();
+        float py = gameMap.getPlayer().getY();
+
+        // 4) Calculate distance to player
+        float distToPlayer = new Vector2(getX(), getY()).dst(px, py);
+
+        // 5) Define the chase range in tiles
+        float chaseRange = 6f;
+
+        // 6) Only activate A* if the player is within the chase range
+        if (distToPlayer <= chaseRange) {
+            // Use A* to find a path to the player's current tile
+            List<Vector2> path = AStarPathFinder.calculatePath(
+                    gameMap,
+                    new Vector2(ex, ey),                 // Enemy's current tile
+                    new Vector2((int) Math.floor(px), (int) Math.floor(py)) // Player's current tile (fallback for pathfinding)
+            );
+
+            if (path.size() > 1) {
+                // Follow the next step in the path
+                Vector2 nextTile = path.get(1); // The next step in the path
+                Vector2 targetPos = new Vector2(nextTile.x + 0.5f, nextTile.y + 0.5f); // Center of the next tile
+                Vector2 currentPos = new Vector2(getX(), getY());
+
+                // Move toward the center of the tile
+                Vector2 direction = targetPos.sub(currentPos).nor(); // Calculate normalized direction
+                body.setLinearVelocity(direction.scl(speed));
+
+                // Update animation direction based on velocity
+                updateAnimationDirection(direction.x, direction.y);
+                return;
             }
         }
 
-        // Set the velocity for the enemy
-        body.setLinearVelocity(new Vector2(vx, vy));
+        // 7) Fallback to random wandering if the player is out of range or no path was found
+        doRandomWander(deltaTime);
+    }
 
-        // Update currentDirection for animation based on velocity
-        if (vx < 0) {
-            currentDirection = Direction.LEFT;
-        } else if (vx > 0) {
-            currentDirection = Direction.RIGHT;
-        } else if (vy > 0) {
-            currentDirection = Direction.UP;
-        } else if (vy < 0) {
-            currentDirection = Direction.DOWN;
+    /**
+     * Moves the enemy in a random direction, changing direction every few seconds.
+     */
+    private void doRandomWander(float deltaTime) {
+        randomWalkTimer -= deltaTime;
+        if (randomWalkTimer <= 0) {
+            // Pick a new random direction
+            pickRandomDirection();
+            // Reset timer
+            randomWalkTimer = MAX_RANDOM_DIRECTION_TIME;
+        }
+
+        // Move in that random direction
+        float speed = this.speed;
+        body.setLinearVelocity(randomDirectionVector.x * speed, randomDirectionVector.y * speed);
+
+        // Update animation direction
+        updateAnimationDirection(randomDirectionVector.x, randomDirectionVector.y);
+    }
+
+    /** Chooses a random direction among up/down/left/right (or you can do fully any angle). */
+    private void pickRandomDirection() {
+        // Simple 4-direction approach:
+        int dir = (int) (Math.random() * 4);
+        switch (dir) {
+            case 0: randomDirectionVector.set(1, 0);  break; // right
+            case 1: randomDirectionVector.set(-1, 0); break; // left
+            case 2: randomDirectionVector.set(0, 1);  break; // up
+            default: randomDirectionVector.set(0, -1); // down
         }
     }
 
+    /** Updates the currentDirection enum (used for animations) given a velocity. */
+    private void updateAnimationDirection(float vx, float vy) {
+        // If x velocity is bigger in magnitude than y velocity
+        if (Math.abs(vx) > Math.abs(vy)) {
+            if (vx < 0) {
+                currentDirection = Direction.LEFT;
+            } else {
+                currentDirection = Direction.RIGHT;
+            }
+        } else {
+            if (vy > 0) {
+                currentDirection = Direction.UP;
+            } else {
+                currentDirection = Direction.DOWN;
+            }
+        }
+    }
 
     @Override
     public TextureRegion getCurrentAppearance() {

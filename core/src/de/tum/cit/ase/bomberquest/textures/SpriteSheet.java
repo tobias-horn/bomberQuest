@@ -19,7 +19,7 @@ public enum SpriteSheet {
     CHARACTER("character.png", 16, 32),
 
     //The enemy spritesheet, which has a grid size of 16x32.
-    ENEMY("original-bomberman.png", 16, 16),
+    ENEMY("mobs.png", 16, 16),
 
     //The bomb spritesheet, which has a grid size of 16x32.
     BOMB("original-bomberman.png", 16, 16),

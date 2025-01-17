@@ -53,7 +53,7 @@ public class GameScreen implements Screen {
     public void render(float deltaTime) {
 
         if (!paused) {
-            float moveSpeed = 3.0f;
+            float moveSpeed = 2f;
             float vx = 0;
             float vy = 0;
 
@@ -296,12 +296,8 @@ public class GameScreen implements Screen {
     @Override public void pause() {}
     @Override public void resume() {}
 
-    //Show how many enemies you want to spawn
-    private int numberOfEnemies = 5;
     @Override
     public void show() {
-        // Spawn 5 enemies when the game starts
-        map.spawnEnemies(numberOfEnemies);
     }
 
     @Override public void hide() {}

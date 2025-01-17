@@ -56,31 +56,30 @@ public class Animations {
 
     // ENEMY WALKING UP
     public static final Animation<TextureRegion> ENEMY_WALK_UP = new Animation<>(0.1f,
-            SpriteSheet.ENEMY.at(16, 1),
-            SpriteSheet.ENEMY.at(16, 2),
-            SpriteSheet.ENEMY.at(16, 3)
+            SpriteSheet.ENEMY.at(4, 10),
+            SpriteSheet.ENEMY.at(4, 11),
+            SpriteSheet.ENEMY.at(4, 12)
     );
 
     // ENEMY WALKING DOWN
     public static final Animation<TextureRegion> ENEMY_WALK_DOWN = new Animation<>(0.1f,
-            SpriteSheet.ENEMY.at(1, 4),
-            SpriteSheet.ENEMY.at(2, 4),
-            SpriteSheet.ENEMY.at(3, 4),
-            SpriteSheet.ENEMY.at(4, 4)
+            SpriteSheet.ENEMY.at(1, 10),
+            SpriteSheet.ENEMY.at(1, 11),
+            SpriteSheet.ENEMY.at(1, 12)
     );
 
     // ENEMY WALKING RIGHT
     public static final Animation<TextureRegion> ENEMY_WALK_RIGHT = new Animation<>(0.1f,
-            SpriteSheet.ENEMY.at(16, 1),
-            SpriteSheet.ENEMY.at(16, 2),
-            SpriteSheet.ENEMY.at(16, 3)
+            SpriteSheet.ENEMY.at(3, 10),
+            SpriteSheet.ENEMY.at(3, 11),
+            SpriteSheet.ENEMY.at(3, 12)
     );
 
     // ENEMY WALKING LEFT
     public static final Animation<TextureRegion> ENEMY_WALK_LEFT = new Animation<>(0.1f,
-            SpriteSheet.ENEMY.at(16, 4),
-            SpriteSheet.ENEMY.at(16, 5),
-            SpriteSheet.ENEMY.at(16, 6)
+            SpriteSheet.ENEMY.at(2, 10),
+            SpriteSheet.ENEMY.at(2, 11),
+            SpriteSheet.ENEMY.at(2, 12)
     );
 
     //ENEMY DYING

@@ -13,7 +13,8 @@ import com.badlogic.gdx.audio.Music;
  */
 
 public enum MusicTrack {
-    BACKGROUND("mainMenuTrack.mp3", 0.2f);
+    BACKGROUND("mainMenuTrack.mp3", 1f),
+    TWO_MINUTE_TRACK("twoMinuteTrack.mp3", 1f);
 
     private final Music music;
     private final float originalVolume;
@@ -24,10 +25,15 @@ public enum MusicTrack {
         this.music.setLooping(true);
         this.music.setVolume(volume);
         this.originalVolume = volume;
+
     }
 
     public void play() {
         this.music.play();
+    }
+
+    public void stop() {
+        this.music.stop();
     }
 
     public void mute() {
@@ -47,6 +53,15 @@ public enum MusicTrack {
     public boolean isMuted() {
         return isMuted;
     }
+
+    public void setLooping(boolean shouldLoop) {
+        this.music.setLooping(shouldLoop);
+    }
+
+    public void setOnCompletionListener(Music.OnCompletionListener listener) {
+        this.music.setOnCompletionListener(listener);
+    }
+
 }
 
 

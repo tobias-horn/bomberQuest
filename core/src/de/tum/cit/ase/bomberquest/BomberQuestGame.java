@@ -28,10 +28,12 @@ public class BomberQuestGame extends Game {
     private String selectedMap;
     private ScreenState currentScreenState;
     private ScreenState previousScreenState;
+    private MusicTrack currentMusicTrack;
 
 
     public BomberQuestGame(NativeFileChooser fileChooser) {
         this.fileChooser = fileChooser;
+        currentMusicTrack = null;
     }
 
 
@@ -156,14 +158,44 @@ public class BomberQuestGame extends Game {
 
         System.out.println("Transitioning to: " + currentScreenState + ", Previous: " + previousScreenState);
 
-        // Instantiate the correct Screen based on newState:
+        // Play appropriate music for the new state
         switch (newState) {
-            case MENU -> setScreen(new MenuScreen(this, font));
-            case GAME -> setScreen(new GameScreen(this));
-            case GAME_OVER -> setScreen(new GameOverScreen(this, font));
-            // case PAUSE -> setScreen(new PauseScreen(this, font));
-            // case SETTINGS -> setScreen(new SettingsScreen(this, font));
-            // etc...
+            case MENU -> {
+                setScreen(new MenuScreen(this, font));
+                playMusic(MusicTrack.BACKGROUND);
+            }
+            case GAME -> {
+                setScreen(new GameScreen(this));
+                playMusic(MusicTrack.TWO_MINUTE_TRACK);
+            }
+            case GAME_OVER -> {
+                setScreen(new GameOverScreen(this, font));
+                playMusic(MusicTrack.BACKGROUND);
+            }
+            // Add cases for other states as needed
+        }
+    }
+
+    private void playMusic(MusicTrack track) {
+        if (currentMusicTrack != track) {
+            // Stop the current track if it's playing
+            if (currentMusicTrack != null) {
+                currentMusicTrack.stop();
+            }
+
+            // Set the two-minute track's specific behavior
+            if (track == MusicTrack.TWO_MINUTE_TRACK) {
+                track.setLooping(false); // Ensure the track doesn't loop
+                track.setOnCompletionListener(music -> {
+                    System.out.println("Two-minute track finished playing!");
+                    // Additional logic after the track finishes
+                    // Example: Transition to a new state or stop music
+                });
+            }
+
+            // Play the new track
+            track.play();
+            currentMusicTrack = track; // Update the reference
         }
     }
 

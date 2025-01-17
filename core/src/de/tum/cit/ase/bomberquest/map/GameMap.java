@@ -94,44 +94,6 @@ public class GameMap {
     }
 
     /**
-     * Spawns a specific number of enemies.
-     * Ensures they are far enough from the player.
-     *
-     * @param count The number of enemies to spawn.
-     */
-    public void spawnEnemies(int count) {
-        Random random = new Random();
-        Vector2 playerPosition = new Vector2(player.getX(), player.getY());
-        float minDistance = 5.0f; // Enemies must spawn at least 5 tiles away from player.
-
-        int attempts = 0; // Keeps track of attempts used to place enemies on map.
-        int maxAttempts = 100; // Upper limit to avoids infinite loops.
-
-        for (int i = 0; i < count; i++) {
-            boolean validPositionFound = false;
-
-            while (!validPositionFound && attempts < maxAttempts) {
-                // Randomly pick a position on the map.
-                int x = random.nextInt(width);
-                int y = random.nextInt(height);
-                Vector2 position = new Vector2(x, y);
-
-                // Only place enemies on empty tiles far from the player.
-                if (!map.containsKey(position) && position.dst(playerPosition) >= minDistance) {
-                    enemies.add(new Enemy(world, x, y));
-                    validPositionFound = true;
-                }
-                attempts++;
-            }
-
-            // Warning if we couldn't place an enemy.
-            if (!validPositionFound) {
-                Gdx.app.log("SpawnEnemies", "Failed to place enemy " + i);
-            }
-        }
-    }
-
-    /**
      * Creates a game object at the specified position.
      *
      * @param x          X-coordinate of the object.
@@ -152,7 +114,7 @@ public class GameMap {
                 if (player == null) player = new Player(world, x, y);
             }
             case 3 -> {
-                Enemy enemy = new Enemy(world, x, y);
+                Enemy enemy = new Enemy(world, x, y, this);
                 map.put(new Vector2(x, y), enemy);
                 enemies.add(enemy);
             }
@@ -318,5 +280,32 @@ public class GameMap {
                 removedObj.setBody(null);
             }
         }
+    }
+
+    /**
+     * Checks if a given tile is walkable (no walls or other blocking objects).
+     * @param x The x-coordinate of the tile.
+     * @param y The y-coordinate of the tile.
+     * @return True if walkable, false otherwise.
+     */
+    public boolean isTileWalkable(int x, int y) {
+        // If outside the map bounds, not walkable
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            return false;
+        }
+        GameObject obj = getObjectAt(x, y);
+        if (obj == null) {
+            // No object means it's free
+            return true;
+        }
+
+        // If it's a wall or destructible wall, it's blocked.
+        // You may add more conditions if certain objects are not passable.
+        // Currently, we treat anything that isn't null as blocked, except for an Enemy or a Player
+        // (Up to you how you want to handle collisions between enemies themselves.)
+        if (obj instanceof IndestructibleWall || obj instanceof DestructibleWall) {
+            return false;
+        }
+        return true;
     }
 }
