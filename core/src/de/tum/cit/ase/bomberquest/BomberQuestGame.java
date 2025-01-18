@@ -232,4 +232,9 @@ public class BomberQuestGame extends Game {
     public Hud getHud() {
         return hud;
     }
+
+
+    public NativeFileChooser getFileChooser() {
+        return fileChooser;
+    }
 }

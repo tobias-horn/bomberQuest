@@ -15,6 +15,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation 'com.crashinvaders.vfx:gdx-vfx-core:0.5.4'
     implementation 'com.crashinvaders.vfx:gdx-vfx-effects:0.5.4'
+    implementation "games.spooky.gdx:gdx-nativefilechooser:$gdxNativefilechooserVersion"
 }
 kotlin {
     jvmToolchain(17)

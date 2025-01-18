@@ -18,10 +18,17 @@ tasks.register('run', JavaExec) {
     ignoreExitValue = true
 
     if (OperatingSystem.current() == OperatingSystem.MAC_OS) {
-        // Required to run on macOS
+
         jvmArgs += "-XstartOnFirstThread"
     }
 }
+
+
+dependencies {
+    implementation project(":core")
+    implementation "games.spooky.gdx:gdx-nativefilechooser-desktop:$gdxNativefilechooserVersion"
+}
+
 
 tasks.register('debug', JavaExec) {
     dependsOn classes
