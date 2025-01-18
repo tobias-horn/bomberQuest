@@ -72,7 +72,10 @@ public class Bomb extends GameObject implements Drawable {
         Fixture fixture = body.createFixture(shape, 1f);
         fixture.setSensor(true); // Sensors detect collisions without affecting physics.
 
-        shape.dispose(); // Clean up to prevent memory leaks.
+        // We call dispose() in here because this is where we create the temporary Shape used to define the physical boundaries of the object.
+        // The shape is used immediately when you call createFixture()
+        // Once the shape has been used to create a fixture for the Box2D body, it is no longer needed, and we dispose of it to free up the memory.
+        shape.dispose();
         body.setUserData(this); // Link the body back to this Bomb object.
     }
 
