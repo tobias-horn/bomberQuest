@@ -2,18 +2,11 @@ package de.tum.cit.ase.bomberquest.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
-import de.tum.cit.ase.bomberquest.map.ActivePowerUp;
+import de.tum.cit.ase.bomberquest.textures.Textures;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-/**
- * A Heads-Up Display (HUD) that displays information on the screen.
- * It uses a separate camera so that it is always fixed on the screen.
- */
 public class Hud {
 
     private final SpriteBatch spriteBatch;
@@ -23,58 +16,58 @@ public class Hud {
     private Texture blackPanelTexture;
     private Texture redPanelTexture;
     private Texture bluePanelTexture;
-    private Texture panelTexture;  // Current texture to draw
+    private Texture panelTexture;
+
+    private Texture transparentBlackTexture; // For underlay
 
     private final float panelWidth;
     private final float panelHeight;
 
-    // List of currently active power-ups to be shown in the HUD
-    private final List<ActivePowerUp> activePowerUps = new ArrayList<>();
-
+    private int concurrentBombCount = 1;
+    private int blastRadiusCount = 1;
 
     public Hud(SpriteBatch spriteBatch, BitmapFont font) {
         this.spriteBatch = spriteBatch;
         this.font = font;
         this.camera = new OrthographicCamera();
 
-        // Load all panel textures
         blackPanelTexture = new Texture(Gdx.files.internal("assets/menu/hudPanelBlack.png"));
-        redPanelTexture = new Texture(Gdx.files.internal("assets/menu/hudPanelRed.png"));
-        bluePanelTexture = new Texture(Gdx.files.internal("assets/menu/hudPanelBlue.png"));
+        redPanelTexture   = new Texture(Gdx.files.internal("assets/menu/hudPanelRed.png"));
+        bluePanelTexture  = new Texture(Gdx.files.internal("assets/menu/hudPanelBlue.png"));
 
-        // Initialize with the normal (black) state
         panelTexture = blackPanelTexture;
 
-        // Use one of the textures to get dimensions
         panelWidth = panelTexture.getWidth();
         panelHeight = panelTexture.getHeight();
+
+
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(0, 0, 0, 0.3f); // Black with 0.3 opacity
+        pixmap.fill();
+        transparentBlackTexture = new Texture(pixmap);
+        pixmap.dispose();
     }
 
-
     /**
-     * Call this once per frame (in your main game loop) to reduce
-     * each power-up’s time by deltaTime and remove any expired ones.
+     * Removed update(float deltaTime) that was subtracting power-up time.
      */
-    public void update(float deltaTime) {
-        Iterator<ActivePowerUp> itr = activePowerUps.iterator();
-        while (itr.hasNext()) {
-            ActivePowerUp pu = itr.next();
-            pu.timeRemaining -= deltaTime;
-            if (pu.timeRemaining <= 0) {
-                itr.remove();
-            }
-        }
+
+    /**
+     * Instead, we call this each frame to set the current number of
+     * concurrent bombs & blast radius from the game map.
+     */
+    public void setCounts(int concurrentBombs, int blastRadius) {
+        this.concurrentBombCount = concurrentBombs;
+        this.blastRadiusCount = blastRadius;
     }
 
     /**
-     * Renders the HUD elements: the panel with text, and any active power-ups.
-     * @param timerText A string to show on the panel (e.g. countdown or score).
+     * Renders the HUD panel (center) plus the permanent power-up counts.
      */
     public void render(String timerText) {
-        // Set camera
+
         spriteBatch.setProjectionMatrix(camera.combined);
 
-        // Begin drawing
         spriteBatch.begin();
 
         float screenWidth  = Gdx.graphics.getWidth();
@@ -89,27 +82,77 @@ public class Hud {
         float panelX = (screenWidth - newPanelWidth) / 2f;
         float panelY = screenHeight - newPanelHeight;
 
-        // Draw the panel texture
         spriteBatch.draw(panelTexture, panelX, panelY, newPanelWidth, newPanelHeight);
 
-        // Draw the timer text in the middle of the panel
         GlyphLayout layout = new GlyphLayout(font, timerText);
-        float textWidth = layout.width;
+        float textWidth  = layout.width;
         float textHeight = layout.height;
 
         float textX = panelX + (newPanelWidth  - textWidth) / 2f;
         float textY = panelY + (newPanelHeight + textHeight) / 2f;
-
         font.draw(spriteBatch, layout, textX, textY);
 
-        drawActivePowerUps();
+        float iconSize = 45f;
+        float margin   = 15f;
+        float padding  = 10f;
 
-        // End drawing
+
+        GlyphLayout blastLayout = new GlyphLayout(font, String.valueOf(blastRadiusCount));
+        float blastTextWidth  = blastLayout.width;
+        float blastTextHeight = blastLayout.height;
+
+
+        float leftOverlayWidth = iconSize + 5 + blastTextWidth + 2 * padding;
+        float leftOverlayHeight = iconSize + 2 * padding;
+
+
+        float leftOverlayX = margin;
+        float leftOverlayY = screenHeight - margin - leftOverlayHeight;
+
+
+        spriteBatch.draw(transparentBlackTexture, leftOverlayX, leftOverlayY, leftOverlayWidth, leftOverlayHeight);
+
+
+        float leftIconX = leftOverlayX + padding;
+        float leftIconY = leftOverlayY + padding;
+        spriteBatch.draw(Textures.BLASTRADIOUS_HUD, leftIconX, leftIconY, iconSize, iconSize);
+
+
+        float blastTextX = leftIconX + iconSize + 5;
+
+        float blastTextY = leftIconY + (iconSize + blastTextHeight) / 2f;
+        font.draw(spriteBatch, blastLayout, blastTextX, blastTextY);
+
+        GlyphLayout bombLayout = new GlyphLayout(font, String.valueOf(concurrentBombCount));
+        float bombTextWidth  = bombLayout.width;
+        float bombTextHeight = bombLayout.height;
+
+
+        float rightOverlayWidth = iconSize + 5 + bombTextWidth + 2 * padding;
+        float rightOverlayHeight = iconSize + 2 * padding;
+
+
+        float rightOverlayX = screenWidth - margin - rightOverlayWidth;
+        float rightOverlayY = screenHeight - margin - rightOverlayHeight;
+
+
+        spriteBatch.draw(transparentBlackTexture, rightOverlayX, rightOverlayY, rightOverlayWidth, rightOverlayHeight);
+
+
+        float rightIconX = rightOverlayX + padding;
+        float rightIconY = rightOverlayY + padding;
+        spriteBatch.draw(Textures.CONCURRENTBOMB_HUD, rightIconX, rightIconY, iconSize, iconSize);
+
+
+        float bombTextX = rightIconX + iconSize + 5;
+        float bombTextY = rightIconY + (iconSize + bombTextHeight) / 2f;
+        font.draw(spriteBatch, bombLayout, bombTextX, bombTextY);
+
         spriteBatch.end();
     }
 
     /**
-     * Optional convenience method: returns the scaled height of the HUD panel.
+     * Returns the scaled height of the HUD panel if needed by other code.
      */
     public float getScaledHeight() {
         float screenWidth  = Gdx.graphics.getWidth();
@@ -119,24 +162,11 @@ public class Hud {
         return newPanelWidth * aspectRatio;
     }
 
-    /**
-     * Resizes the HUD camera (call when your game window is resized).
-     */
+
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);
     }
 
-    /**
-     * Adds a new power-up to display for 15s.
-     * Typically called by the game code after a player picks up a power-up.
-     */
-    public void addActivePowerUp(ActivePowerUp powerUp) {
-        activePowerUps.add(powerUp);
-    }
-
-    /**
-     * For completeness, lets you directly set the panel's color state.
-     */
     public void setPanelState(PanelState state) {
         switch (state) {
             case BLACK -> panelTexture = blackPanelTexture;
@@ -145,39 +175,9 @@ public class Hud {
         }
     }
 
-
-
-    /**
-     * Draws the active power-up icons in the top-right corner, side-by-side.
-     */
-    private void drawActivePowerUps() {
-        float iconSize = 64f;
-        float margin   = 10f;
-        float spacing  = 5f;
-
-
-        float xPos = Gdx.graphics.getWidth()  - margin - iconSize;
-        float yPos = Gdx.graphics.getHeight() - margin - iconSize;
-
-        for (ActivePowerUp pu : activePowerUps) {
-
-            spriteBatch.draw(pu.icon, xPos, yPos, iconSize, iconSize);
-
-
-            xPos -= (iconSize + spacing);
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    // Enums and other data
-    // ------------------------------------------------------------------------
-
     public enum PanelState {
         BLACK,
         RED,
         BLUE
     }
-
-
-
 }

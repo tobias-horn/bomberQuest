@@ -30,6 +30,9 @@ public class GameMap {
     private final World world;
     private final Hud hud;
 
+    private int concurrentBombCount = 1;
+    private int blastRadius = 1;
+
     // Player, enemies, bombs, map of all objects:
     private Player player;
     private List<Enemy> enemies = new ArrayList<>();
@@ -46,13 +49,12 @@ public class GameMap {
     public GameMap(BomberQuestGame game, FileHandle fileHandle, Hud hud) {
         this.game = game;
         this.hud = hud;
-        this.world = new World(Vector2.Zero, true); // no gravity
-
+        this.world = new World(Vector2.Zero, true);
 
         MapParser.parseMap(this, fileHandle);
-
-
         markBorderWalls();
+
+
 
 
         world.setContactListener(new ContactListener() {
@@ -60,11 +62,10 @@ public class GameMap {
             public void beginContact(Contact contact) {
                 Fixture fixtureA = contact.getFixtureA();
                 Fixture fixtureB = contact.getFixtureB();
-
                 Object objData1 = fixtureA.getBody().getUserData();
                 Object objData2 = fixtureB.getBody().getUserData();
 
-                // If a Player collides with an Enemy -> Game Over
+                // If Player collides with Enemy -> game over
                 boolean isPlayerEnemyCollision =
                         (objData1 instanceof Player && objData2 instanceof Enemy) ||
                                 (objData2 instanceof Player && objData1 instanceof Enemy);
@@ -74,58 +75,43 @@ public class GameMap {
                     game.goToGameOver();
                 }
 
-                // If a Player collides with a PowerUp -> pick up
+                // If Player collides with a PowerUp -> pick it up
                 boolean isPlayerPowerUpCollision =
                         (objData1 instanceof Player && objData2 instanceof PowerUp) ||
                                 (objData2 instanceof Player && objData1 instanceof PowerUp);
 
                 if (isPlayerPowerUpCollision) {
                     Gdx.app.log("Collision", "Player collided with a PowerUp!");
-
-                    PowerUp.playSound();
-
-                    // Identify which fixture is the PowerUp
                     PowerUp powerUp = (objData1 instanceof PowerUp)
                             ? (PowerUp) objData1
                             : (PowerUp) objData2;
 
-                    switch (powerUp.getType()) {
-                        case BLASTRADIUS -> hud.addActivePowerUp(new ActivePowerUp(Textures.BLASTRADIOUS_HUD, 15f));
-                        case CONCURRENTBOMB -> hud.addActivePowerUp(new ActivePowerUp(Textures.CONCURRENTBOMB_HUD, 15f));
-                        default -> Gdx.app.error("GameMap", "Unknown PowerUpType: " + powerUp.getType());
-                    }
 
+                    PowerUp.playSound();
                     powerUp.markForRemoval();
 
 
-                    addActivePowerUp(powerUp.getType());
+                    switch (powerUp.getType()) {
+                        case BLASTRADIUS -> {
+                            blastRadius++;
+                            Gdx.app.log("PowerUp", "Blast radius is now " + blastRadius);
+                        }
+                        case CONCURRENTBOMB -> {
+                            concurrentBombCount++;  // Allow one more bomb at once
+                            Gdx.app.log("PowerUp", "Concurrent bombs is now " + concurrentBombCount);
+                        }
+                        default ->
+                                Gdx.app.error("GameMap", "Unknown PowerUpType: " + powerUp.getType());
+                    }
                 }
             }
-
-            // Unused methods
             @Override public void endContact(Contact contact) {}
             @Override public void preSolve(Contact contact, Manifold oldManifold) {}
             @Override public void postSolve(Contact contact, ContactImpulse impulse) {}
         });
     }
 
-    /**
-     * Called when a PowerUp is collected to add it to our active list for 15s.
-     */
-    private void addActivePowerUp(PowerUpType type) {
-        // Decide which icon to show based on type
-        switch (type) {
-            case BLASTRADIUS -> {
-                activePowerUps.add(new ActivePowerUp(Textures.BLASTRADIOUS_HUD, 15f));
-            }
-            case CONCURRENTBOMB -> {
-                activePowerUps.add(new ActivePowerUp(Textures.CONCURRENTBOMB_HUD, 15f));
-            }
-            default -> {
-                Gdx.app.error("GameMap", "Unknown PowerUpType: " + type);
-            }
-        }
-    }
+
 
     /**
      * Called each frame to remove power-ups that have been used or have expired.
@@ -147,16 +133,6 @@ public class GameMap {
      * Decrements the timeRemaining on active power-ups and removes expired ones.
      * Call this as part of your per-frame updates (in tick).
      */
-    private void updateActivePowerUps(float deltaTime) {
-        Iterator<ActivePowerUp> itr = activePowerUps.iterator();
-        while (itr.hasNext()) {
-            ActivePowerUp apu = itr.next();
-            apu.timeRemaining -= deltaTime;
-            if (apu.timeRemaining <= 0) {
-                itr.remove();
-            }
-        }
-    }
 
     /**
      * Update the game logic (called every frame).
@@ -176,7 +152,7 @@ public class GameMap {
         });
 
 
-        updateActivePowerUps(frameTime);
+
 
 
         doPhysicsStep(frameTime);
@@ -259,11 +235,16 @@ public class GameMap {
      * Adds a bomb to the game
      */
     public void addBomb(Bomb bomb) {
-        if (!isConcurrentBombActive()) {
 
-            if (bombs.size() >= 1) {
-                return;
+        int bombsActive = 0;
+        for (Bomb b : bombs) {
+            if (!b.isHasExploded()) {
+                bombsActive++;
             }
+        }
+
+        if (bombsActive >= concurrentBombCount) {
+            return;
         }
         bombs.add(bomb);
     }
@@ -407,5 +388,13 @@ public class GameMap {
 
     public Map<Vector2, GameObject> getMap() {
         return map;
+    }
+
+    public int getConcurrentBombCount() {
+        return concurrentBombCount;
+    }
+
+    public int getBlastRadius() {
+        return blastRadius;
     }
 }

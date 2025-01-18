@@ -85,13 +85,10 @@ public class GameScreen implements Screen {
 
                 int tileX = (int) Math.floor(px);
                 int tileY = (int) Math.floor(py);
+
+
                 Bomb bomb = new Bomb(map.getWorld(), tileX, tileY, 1, map);
-
-
-                if (map.isBlastRadiusActive()) {
-                    bomb.setRadius(5f);
-                }
-
+                bomb.setRadius(map.getBlastRadius());
                 bomb.startTimer();
                 map.addBomb(bomb);
             }
@@ -117,7 +114,7 @@ public class GameScreen implements Screen {
         renderMap();
 
 
-        hud.update(deltaTime);
+
 
         int minutes = (int) (remainingTime / 60);
         int seconds = (int) (remainingTime % 60);
@@ -142,6 +139,7 @@ public class GameScreen implements Screen {
         }
 
         hud.setPanelState(state);
+        hud.setCounts(map.getConcurrentBombCount(), map.getBlastRadius());
         hud.render(timerText);
 
         if (paused) {
