@@ -24,7 +24,7 @@ public class Enemy extends GameObject implements Drawable {
     private GameMap gameMap;
 
     /** The movement speed of the enemy. */
-    private final float speed = 2f;
+    private final float speed = 1f;
 
     // Random wandering
     private float randomWalkTimer = 0f; // Timer for how long to move in one random direction
@@ -208,16 +208,16 @@ public class Enemy extends GameObject implements Drawable {
     @Override
     public float getX() {
         if (body == null) {
-            throw new IllegalStateException("Enemy body has been destroyed, but the object is still in use.");
+            return 0f;
         }
         return body.getPosition().x;
     }
 
-    /**
-     * @return The current y-position of this enemy (from the body).
-     */
     @Override
     public float getY() {
+        if (body == null) {
+            return 0f;
+        }
         return body.getPosition().y;
     }
 }

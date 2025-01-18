@@ -52,7 +52,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float deltaTime) {
         if (!paused) {
-            float moveSpeed = 2f;
+            float moveSpeed = 2.5f;
             float vx = 0;
             float vy = 0;
 

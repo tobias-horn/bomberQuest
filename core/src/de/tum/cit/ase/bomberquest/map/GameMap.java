@@ -163,6 +163,8 @@ public class GameMap {
      */
     public void tick(float frameTime) {
 
+        enemies.removeIf(enemy -> enemy.getBody() == null);
+
         for (Enemy enemy : enemies) {
             enemy.tick(frameTime);
         }
@@ -280,6 +282,12 @@ public class GameMap {
 
         if (removedObj != null) {
             System.out.println("Removed object: " + removedObj);
+
+
+            if (removedObj instanceof Enemy) {
+                enemies.remove(removedObj);
+            }
+
             if (removedObj.getBody() != null) {
                 removedObj.getBody().getWorld().destroyBody(removedObj.getBody());
                 removedObj.setBody(null);
@@ -287,7 +295,6 @@ public class GameMap {
         }
 
         if (removedObj instanceof DestructibleWall dw && dw.isExitUnderneath()) {
-
             boolean activeState = enemies.isEmpty();
             Exit exit = new Exit(world, x, y, activeState);
             map.put(new Vector2(x, y), exit);
