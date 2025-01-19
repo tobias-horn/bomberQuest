@@ -1,6 +1,7 @@
 package de.tum.cit.ase.bomberquest.map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -42,9 +43,10 @@ public class GameMap {
     // Dimensions in tiles
     private int width = 0;
     private int height = 0;
+    private Sound bombPlacedSound = Gdx.audio.newSound(Gdx.files.internal("assets/audio/bombPlaced.mp3"));
 
 
-    private final List<ActivePowerUp> activePowerUps = new ArrayList<>();
+
 
     public GameMap(BomberQuestGame game, FileHandle fileHandle, Hud hud) {
         this.game = game;
@@ -93,11 +95,11 @@ public class GameMap {
 
                     switch (powerUp.getType()) {
                         case BLASTRADIUS -> {
-                            blastRadius++;
+                            blastRadius = (blastRadius <= 8) ? blastRadius++ : 8;
                             Gdx.app.log("PowerUp", "Blast radius is now " + blastRadius);
                         }
                         case CONCURRENTBOMB -> {
-                            concurrentBombCount++;  // Allow one more bomb at once
+                            concurrentBombCount = (concurrentBombCount <= 8) ? concurrentBombCount++ : 8;  // Allow one more bomb at once
                             Gdx.app.log("PowerUp", "Concurrent bombs is now " + concurrentBombCount);
                         }
                         default ->
@@ -247,6 +249,7 @@ public class GameMap {
             return;
         }
         bombs.add(bomb);
+        bombPlacedSound.play();
     }
 
 
@@ -304,31 +307,7 @@ public class GameMap {
         return !(obj instanceof IndestructibleWall || obj instanceof DestructibleWall);
     }
 
-    // In GameMap.java
-    public boolean isBlastRadiusActive() {
-        // If ANY active power-up has the BLASTRADIUS icon -> true
-        for (ActivePowerUp apu : activePowerUps) {
-            if (apu.icon == Textures.BLASTRADIOUS_HUD) {
-                return true;
-            }
-        }
-        return false;
-    }
 
-    public boolean isConcurrentBombActive() {
-        // If ANY active power-up has the CONCURRENTBOMB icon -> true
-        for (ActivePowerUp apu : activePowerUps) {
-            if (apu.icon == Textures.CONCURRENTBOMB_HUD) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    public List<ActivePowerUp> getActivePowerUps() {
-        return activePowerUps;
-    }
 
     public Collection<GameObject> getAllObjects() {
         return map.values();

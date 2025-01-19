@@ -74,7 +74,7 @@ public class Hud {
         float screenHeight = Gdx.graphics.getHeight();
 
 
-        float scaleFactor = 0.3f;
+        float scaleFactor = 0.4f;
         float newPanelWidth = screenWidth * scaleFactor;
         float aspectRatio = panelHeight / panelWidth;
         float newPanelHeight = newPanelWidth * aspectRatio;

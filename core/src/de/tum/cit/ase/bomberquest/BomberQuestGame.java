@@ -196,11 +196,6 @@ public class BomberQuestGame extends Game {
             // Set the two-minute track's specific behavior
             if (track == MusicTrack.TWO_MINUTE_TRACK) {
                 track.setLooping(false); // Ensure the track doesn't loop
-                track.setOnCompletionListener(music -> {
-                    System.out.println("Two-minute track finished playing!");
-                    // Additional logic after the track finishes
-                    // Example: Transition to a new state or stop music
-                });
             }
 
             // Play the new track

@@ -73,6 +73,7 @@ public class GameScreen implements Screen {
             map.getPlayer().update(deltaTime);
 
             // Normalize the velocity vector if moving diagonally
+            // adapted from https://stackoverflow.com/questions/25583169/vector2-normalize-function-confused-about-diagonal-output
             float magnitude = (float) Math.sqrt(vx * vx + vy * vy);
             if (magnitude > 0) {
                 vx = (vx / magnitude) * moveSpeed;
@@ -127,13 +128,19 @@ public class GameScreen implements Screen {
                 blinkToggle = !blinkToggle;
                 blinkAccumulator = 0f;
             }
-            state = blinkToggle ? Hud.PanelState.RED : Hud.PanelState.BLACK;
+            if(!map.getEnemies().isEmpty()) {
+                state = blinkToggle ? Hud.PanelState.RED : Hud.PanelState.BLACK;
+            } else {
+                state = blinkToggle ? Hud.PanelState.BLUE : Hud.PanelState.BLACK;
+            }
+
+
         } else if (remainingTime < 60) {
-            state = Hud.PanelState.RED;
+            state = (map.getEnemies().isEmpty()) ? Hud.PanelState.BLUE : Hud.PanelState.RED;
             blinkAccumulator = 0f;
             blinkToggle = false;
         } else {
-            state = Hud.PanelState.BLACK;
+            state = (map.getEnemies().isEmpty()) ? Hud.PanelState.BLUE : Hud.PanelState.BLACK;
             blinkAccumulator = 0f;
             blinkToggle = false;
         }
@@ -141,6 +148,10 @@ public class GameScreen implements Screen {
         hud.setPanelState(state);
         hud.setCounts(map.getConcurrentBombCount(), map.getBlastRadius());
         hud.render(timerText);
+
+        if(remainingTime == 0){
+            game.goToGameOver();
+        }
 
         if (paused) {
             pauseScreen.render();
@@ -170,8 +181,8 @@ public class GameScreen implements Screen {
         float cameraBottom = mapCamera.position.y - halfH;
         float cameraTop = mapCamera.position.y + halfH;
 
-        float marginX = 0.1f * mapCamera.viewportWidth;
-        float marginY = 0.1f * mapCamera.viewportHeight;
+        float marginX = 0.2f * mapCamera.viewportWidth;
+        float marginY = 0.2f * mapCamera.viewportHeight;
 
         float playerX = map.getPlayer().getX() * TILE_SIZE_PX * SCALE;
         float playerY = map.getPlayer().getY() * TILE_SIZE_PX * SCALE;
