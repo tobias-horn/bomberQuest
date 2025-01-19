@@ -95,11 +95,11 @@ public class GameMap {
 
                     switch (powerUp.getType()) {
                         case BLASTRADIUS -> {
-                            blastRadius = (blastRadius <= 8) ? blastRadius++ : 8;
+                            blastRadius = Math.min(blastRadius + 1, 8);
                             Gdx.app.log("PowerUp", "Blast radius is now " + blastRadius);
                         }
                         case CONCURRENTBOMB -> {
-                            concurrentBombCount = (concurrentBombCount <= 8) ? concurrentBombCount++ : 8;  // Allow one more bomb at once
+                            concurrentBombCount = Math.min(concurrentBombCount + 1, 8);
                             Gdx.app.log("PowerUp", "Concurrent bombs is now " + concurrentBombCount);
                         }
                         default ->
