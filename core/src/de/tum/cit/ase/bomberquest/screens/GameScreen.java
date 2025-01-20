@@ -30,7 +30,7 @@ public class GameScreen implements Screen {
     private boolean paused = false;
     private PauseScreen pauseScreen;
     private float remainingTime;
-    private final float initialTime = 2 * 60f;
+    private final float initialTime = 5 * 60f;
     private float blinkAccumulator = 0f;
     private boolean blinkToggle = false;
     private boolean isGameOver = false; // Tracks game over state
@@ -242,7 +242,21 @@ public class GameScreen implements Screen {
         }
 
         if (map.getPlayer() != null) {
-            draw(spriteBatch, map.getPlayer());
+            Drawable player = map.getPlayer();
+            TextureRegion texture = player.getCurrentAppearance();
+
+            float playerScaleFactor = 0.8f; // Scale the player size (texture) indivisually
+
+            float spriteWidthInWorldUnits = ((float) texture.getRegionWidth() / TILE_SIZE_PX) * playerScaleFactor;
+            float spriteHeightInWorldUnits = ((float) texture.getRegionHeight() / TILE_SIZE_PX) * playerScaleFactor;
+
+            float x = (player.getX() - (spriteWidthInWorldUnits / 2)) * TILE_SIZE_PX * SCALE;
+            float y = (player.getY() - (spriteHeightInWorldUnits / 2)) * TILE_SIZE_PX * SCALE;
+
+            float width = texture.getRegionWidth() * SCALE * playerScaleFactor;
+            float height = texture.getRegionHeight() * SCALE * playerScaleFactor;
+
+            spriteBatch.draw(texture, x, y, width, height);
         }
 
         spriteBatch.end();
@@ -277,7 +291,6 @@ public class GameScreen implements Screen {
 //        if (drawable instanceof GameObject gameObject) {
 //            if (gameObject.getBody() == null) return;
 //        }
-
         TextureRegion texture = drawable.getCurrentAppearance();
         float spriteWidthInWorldUnits = (float) texture.getRegionWidth() / TILE_SIZE_PX;
         float spriteHeightInWorldUnits = (float) texture.getRegionHeight() / TILE_SIZE_PX;

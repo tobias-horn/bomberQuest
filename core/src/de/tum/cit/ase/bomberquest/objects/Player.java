@@ -1,10 +1,7 @@
 package de.tum.cit.ase.bomberquest.objects;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import de.tum.cit.ase.bomberquest.textures.Animations;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
 
@@ -48,18 +45,26 @@ public class Player extends GameObject implements Drawable {
      */
     @Override
     protected void createHitbox(World world, float tileX, float tileY) {
+        // 1) Define the body as Dynamic so the player moves.
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
-        bodyDef.position.set(tileX + 0.5f, tileY + 0.5f); // Center in the tile
-
+        bodyDef.position.set(tileX + 0.5f, tileY + 0.5f); // center of the tile
         body = world.createBody(bodyDef);
 
-        PolygonShape rectangle = new PolygonShape();
-        rectangle.setAsBox(0.23f,0.47f);
+        CircleShape circle = new CircleShape();
+        circle.setRadius(0.4f);
 
-        body.createFixture(rectangle, 1.0f);
-        rectangle.dispose();
 
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = circle;
+
+        body.createFixture(fixtureDef);
+        circle.dispose();
+
+        // Prevent rotation so the player stays upright if you want.
+        body.setFixedRotation(true);
+
+        // Associate this Player object with the Box2D body:
         body.setUserData(this); // Link the player object to its body
     }
 
