@@ -29,12 +29,23 @@ public class Bomb extends GameObject implements Drawable {
     // Time elapsed since the bomb was placed (used for animations)
     private float elapsedTime;
 
+    // Variables to save position before destroying the body
+    private float savedX, savedY;
+
     // Reference to the game map for applying effects
     private final GameMap gameMap;
 
     // Sound effect for the explosion
     private static final Sound explosionSound = Gdx.audio.newSound(Gdx.files.internal("assets/audio/explosionSound.mp3"));
 
+    // --------------------------------------------
+    // NEW FIELDS FOR EXPLOSION ANIMATION LIFESPAN
+    // --------------------------------------------
+    /** How long we keep this Bomb object around (for center animation) after it explodes. */
+    private float explosionTimer = Animations.BOMB_CENTER_EXPLOSION.getAnimationDuration();
+
+    /** Whether we have already spawned the ExplosionTile objects for the plus-shape. */
+    private boolean explosionInitialized = false;
 
     /**
      * Creates a new bomb object.
@@ -53,10 +64,6 @@ public class Bomb extends GameObject implements Drawable {
         this.elapsedTime = 0; // Used for animation purposes.
     }
 
-    /**
-     * Sets up the bomb's hitbox for collision detection.
-     * This creates a static, sensor-type Box2D body.
-     */
     @Override
     protected void createHitbox(World world, float tileX, float tileY) {
         BodyDef bodyDef = new BodyDef();
@@ -70,184 +77,233 @@ public class Bomb extends GameObject implements Drawable {
         shape.setAsBox(0.5f, 0.5f);
 
         Fixture fixture = body.createFixture(shape, 1f);
-        fixture.setSensor(true); // Sensors detect collisions without affecting physics.
+        fixture.setSensor(true); // Bomb is just a sensor.
 
-        // We call dispose() in here because this is where we create the temporary Shape used to define the physical boundaries of the object.
-        // The shape is used immediately when you call createFixture()
-        // Once the shape has been used to create a fixture for the Box2D body, it is no longer needed, and we dispose of it to free up the memory.
         shape.dispose();
-        body.setUserData(this); // Link the body back to this Bomb object.
+        body.setUserData(this);
     }
 
-    /**
-     * Starts the countdown timer for the bomb.
-     * By default, the bomb explodes after 3 seconds.
-     */
     public void startTimer() {
-        if (hasExploded) return; // If already exploded, do nothing.
-        this.remainingTime = 3f; // Set the timer to 3 seconds.
+        if (hasExploded) return;
+        this.remainingTime = 3f; // Bomb explodes after 3 seconds
     }
 
-    /**
-     * Causes the bomb to explode immediately.
-     * Plays the explosion sound, applies area effects, and removes the bomb's hitbox.
-     */
     public void explode() {
-        if (hasExploded) return; // Prevent multiple explosions.
-        hasExploded = true; // Mark the bomb as exploded.
-        explosionSound.play(); // Play the explosion sound.
+        if (hasExploded) return;
+        hasExploded = true;
+        explosionSound.play();
 
-        affectArea(); // Apply effects to the surrounding area.
+        // Save the position before destroying the body
+        savedX = getX();
+        savedY = getY();
 
-        // Remove the bomb's hitbox from the physics world.
-        if (body != null) body.getWorld().destroyBody(body);
-    }
+        affectArea();
 
-    /**
-     * Updates the bomb's state (called every frame).
-     * @param deltaTime Time elapsed since the last frame.
-     */
-    public void update(float deltaTime) {
-        // Decrease the timer if it's active.
-        if (remainingTime > 0) {
-            remainingTime -= deltaTime; // Countdown.
-            if (remainingTime <= 0) explode(); // Explode when the timer reaches 0.
+        if (body != null) {
+            body.getWorld().destroyBody(body);
+            body = null; // Nullify the body
         }
 
-        // Update elapsed time for animation purposes.
+        explosionTimer = 0.4f; // Keep the bomb around for the animation
+    }
+
+    public void update(float deltaTime) {
+        // 1) Countdown to explosion
+        if (remainingTime > 0) {
+            remainingTime -= deltaTime;
+            if (remainingTime <= 0) {
+                explode();
+            }
+        }
+
+        // 2) If bomb has exploded, handle the explosion-lifespan timer
+        if (hasExploded) {
+            // Spawn the plus-shape explosion tiles only once
+            if (!explosionInitialized) {
+                spawnExplosionTiles();
+                explosionInitialized = true;
+            }
+
+            // Decrement the bomb's own animation timer
+            if (explosionTimer > 0) {
+                explosionTimer -= deltaTime;
+                // Once timer is done, we can remove the bomb from the game
+                if (explosionTimer <= 0) {
+                    // Mark it so the GameMap can remove it from bombs list
+                    // or you can set a flag and check in GameMap
+                }
+            }
+        }
+
         elapsedTime += deltaTime;
     }
 
-    /**
-     * Handles the effects of the bomb's explosion.
-     * The explosion affects the bomb's tile and expands outward in all directions.
-     */
+    // The main explosion logic
     private void affectArea() {
         int bombTileX = (int) Math.floor(getX());
         int bombTileY = (int) Math.floor(getY());
 
-        // Apply effects to the bomb's own tile.
+        // "self" tile
         applyExplosionEffects(bombTileX, bombTileY);
 
-        // Expand outward in all four directions.
-        checkDirection(bombTileX, bombTileY, 1,  0); // Right.
-        checkDirection(bombTileX, bombTileY, -1, 0); // Left.
-        checkDirection(bombTileX, bombTileY, 0,  1); // Up.
-        checkDirection(bombTileX, bombTileY, 0, -1); // Down.
+        // Expand outward in all four directions
+        checkDirection(bombTileX, bombTileY, 1, 0);  // Right
+        checkDirection(bombTileX, bombTileY, -1, 0); // Left
+        checkDirection(bombTileX, bombTileY, 0, 1);  // Up
+        checkDirection(bombTileX, bombTileY, 0, -1); // Down
     }
 
-    /**
-     * Handles the explosion in a specific direction.
-     * Stops if a wall blocks the explosion.
-     */
     private void checkDirection(int startX, int startY, int dx, int dy) {
         for (int i = 1; i <= radius; i++) {
             int checkX = startX + i * dx;
             int checkY = startY + i * dy;
 
-            // Stop expanding if a wall is hit.
-            if (applyExplosionEffects(checkX, checkY)) break;
+            // If we hit a wall, stop
+            boolean shouldStop = applyExplosionEffects(checkX, checkY);
+            if (shouldStop) break;
         }
     }
 
-    /**
-     * Applies explosion effects to a specific tile.
-     * @return True if the explosion should stop expanding (e.g., due to a wall).
-     */
     private boolean applyExplosionEffects(int tileX, int tileY) {
-        if (destroyWalls(tileX, tileY)) return true; // Stop if a wall blocks the explosion.
+        if (destroyWalls(tileX, tileY)) return true;
 
-        damagePlayerIfPresent(tileX, tileY); // Damage the player if they're on this tile.
-        damageEnemiesIfPresent(tileX, tileY); // Damage enemies on this tile.
+        damagePlayerIfPresent(tileX, tileY);
+        damageEnemiesIfPresent(tileX, tileY);
 
-        return false; // Keep expanding if nothing blocks the explosion.
+        return false;
     }
 
-    /**
-     * Checks for walls on the tile and handles their destruction if destructible.
-     * @return True if the explosion stops due to a wall.
-     */
     private boolean destroyWalls(int tileX, int tileY) {
         GameObject obj = gameMap.getObjectAt(tileX, tileY);
 
         if (obj instanceof IndestructibleWall) {
-            // Indestructible wall blocks explosion
-            return true;
+            return true; // stop
         } else if (obj instanceof DestructibleWall destructibleWall) {
-            // Remove destructible wall and spawn any hidden powerup
-            gameMap.removeObjectAt(tileX, tileY);
+            destructibleWall.startFading(); // Start fade animation
 
             if (destructibleWall.getPowerUpUnderneath() != null) {
-                PowerUpType powerUpType = destructibleWall.getPowerUpUnderneath();
-
-                PowerUp powerUp = new PowerUp(
-                        gameMap.getWorld(),
-                        tileX,
-                        tileY,
-                        powerUpType
-                );
-
-                gameMap.getMap().put(new Vector2(tileX, tileY), powerUp);
+                // spawn powerup
+                gameMap.getMap().put(new Vector2(tileX, tileY),
+                        new PowerUp(gameMap.getWorld(), tileX, tileY, destructibleWall.getPowerUpUnderneath()));
             }
-
-            // **CHANGED HERE**: Do NOT stop; return false so the explosion continues
-            return false;
+            return false; // keep expanding, since destructible walls do not block
         }
 
-        // Nothing to destroy, so do not block the explosion
         return false;
     }
 
-    /**
-     * Damages the player if they're within the explosion radius.
-     * Ends the game if the player is hit.
-     */
     private void damagePlayerIfPresent(int tileX, int tileY) {
-        int playerTileX = (int) Math.floor(gameMap.getPlayer().getX());
-        int playerTileY = (int) Math.floor(gameMap.getPlayer().getY());
-
-        if (playerTileX == tileX && playerTileY == tileY) {
-            gameMap.getGame().goToGameOver(); // End the game if the player is on the tile.
+        int px = (int) Math.floor(gameMap.getPlayer().getX());
+        int py = (int) Math.floor(gameMap.getPlayer().getY());
+        if (px == tileX && py == tileY) {
+            gameMap.getGame().goToGameOver();
         }
     }
 
-    /**
-     * Damages enemies within the explosion radius.
-     * Removes enemies from the game if hit.
-     */
     private void damageEnemiesIfPresent(int tileX, int tileY) {
         Iterator<Enemy> it = gameMap.getEnemies().iterator();
         while (it.hasNext()) {
             Enemy e = it.next();
-
-            if (e.getBody() == null) continue; // Skip already removed enemies.
-
+            if (e.getBody() == null) continue;
             int ex = (int) Math.floor(e.getX());
             int ey = (int) Math.floor(e.getY());
-
             if (ex == tileX && ey == tileY) {
                 e.getBody().getWorld().destroyBody(e.getBody());
-                e.setBody(null); // Remove the enemy's body.
-                it.remove(); // Remove the enemy from the list.
+                e.setBody(null);
+                it.remove();
             }
         }
     }
 
+    // ----------------------------------------------------------------------
+    // NEW METHOD: Create ExplosionTile objects for the plus-shape animation
+    // ----------------------------------------------------------------------
+    private void spawnExplosionTiles() {
+        int bombTileX = (int) Math.floor(getX());
+        int bombTileY = (int) Math.floor(getY());
+
+        // 1) Add the center tile
+        ExplosionTile center = new ExplosionTile(gameMap, bombTileX, bombTileY, ExplosionTile.Type.CENTER);
+        gameMap.addExplosionTile(center);
+
+        // 2) For each direction, create the appropriate tiles
+        spawnDirectionalTiles(bombTileX, bombTileY,  1, 0); // Right
+        spawnDirectionalTiles(bombTileX, bombTileY, -1, 0); // Left
+        spawnDirectionalTiles(bombTileX, bombTileY, 0,  1); // Up
+        spawnDirectionalTiles(bombTileX, bombTileY, 0, -1); // Down
+    }
+
+    private void spawnDirectionalTiles(int startX, int startY, int dx, int dy) {
+        for (int i = 1; i <= radius; i++) {
+            int tx = startX + i * dx;
+            int ty = startY + i * dy;
+
+            // If we hit an IndestructibleWall, no tile is drawn
+            // If we destroy a destructible wall, we STILL want the explosion to pass
+            GameObject obj = gameMap.getObjectAt(tx, ty);
+            if (obj instanceof IndestructibleWall) {
+                break; // stop drawing further tiles
+            }
+
+            boolean isEnd = (i == radius);
+            ExplosionTile.Type type = pickTileType(dx, dy, isEnd);
+            ExplosionTile tile = new ExplosionTile(gameMap, tx, ty, type);
+            gameMap.addExplosionTile(tile);
+
+            if (obj instanceof DestructibleWall) {
+                // We still break from drawing beyond this tile if we want
+                // the explosion to pass destructible walls, do not break
+                // but it’s your choice.
+            }
+        }
+    }
+
+    // Helper to choose correct explosion tile type (middle vs end, horizontal vs vertical)
+    private ExplosionTile.Type pickTileType(int dx, int dy, boolean isEnd) {
+        // Check horizontal directions
+        if (dx > 0) {
+            return isEnd ? ExplosionTile.Type.RIGHT_END : ExplosionTile.Type.RIGHT_MIDDLE;
+        }
+        if (dx < 0) {
+            return isEnd ? ExplosionTile.Type.LEFT_END : ExplosionTile.Type.LEFT_MIDDLE;
+        }
+        // Check vertical directions
+        if (dy > 0) {
+            return isEnd ? ExplosionTile.Type.UP_END : ExplosionTile.Type.UP_MIDDLE;
+        }
+        if (dy < 0) {
+            return isEnd ? ExplosionTile.Type.DOWN_END : ExplosionTile.Type.DOWN_MIDDLE;
+        }
+        // Default case (center of explosion)
+        return ExplosionTile.Type.CENTER;
+    }
+
     @Override
     public TextureRegion getCurrentAppearance() {
-        return Animations.BOMB_GOING_OFF.getKeyFrame(this.elapsedTime, true);
+        // If not exploded, show bomb animation
+        if (!hasExploded) {
+            return Animations.BOMB_GOING_OFF.getKeyFrame(this.elapsedTime, true);
+        }
+        // If exploded, optionally show a "center explosion" animation
+        return Animations.BOMB_CENTER_EXPLOSION.getKeyFrame(this.elapsedTime, true);
     }
 
-    // Getters and setters for the bomb's radius and explosion state.
-    public float getRadius() {
-        return radius;
+    public float getRadius() { return radius; }
+    public void setRadius(float radius) { this.radius = radius; }
+    public boolean isHasExploded() { return hasExploded; }
+
+    // Use this in GameMap.bombs removal logic
+    public boolean isExplosionFinished() {
+        return (hasExploded && explosionTimer <= 0);
     }
 
-    public void setRadius(float radius) {
-        this.radius = radius;
+    @Override
+    public float getX() {
+        return body != null ? body.getPosition().x : savedX;
     }
 
-    public boolean isHasExploded() {
-        return hasExploded;
+    @Override
+    public float getY() {
+        return body != null ? body.getPosition().y : savedY;
     }
 }

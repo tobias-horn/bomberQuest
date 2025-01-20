@@ -19,6 +19,7 @@ public enum MusicTrack {
     private final Music music;
     private final float originalVolume;
     private boolean isMuted = false;
+    private boolean isPaused = false;
 
     MusicTrack(String fileName, float volume) {
         this.music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + fileName));
@@ -30,6 +31,7 @@ public enum MusicTrack {
 
     public void play() {
         this.music.play();
+        isPaused = false;
     }
 
     public void stop() {
@@ -47,6 +49,13 @@ public enum MusicTrack {
         if (isMuted) {
             music.setVolume(originalVolume);
             isMuted = false;
+        }
+    }
+
+    public void pause(){
+        if (!isPaused){
+            music.pause();
+            isPaused = true;
         }
     }
 

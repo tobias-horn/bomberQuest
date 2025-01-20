@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
+import de.tum.cit.ase.bomberquest.audio.MusicTrack;
 import de.tum.cit.ase.bomberquest.textures.Textures;
 import de.tum.cit.ase.bomberquest.ui.MenuButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -76,6 +77,8 @@ public class PauseScreen {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("PauseScreen", "To main menu clicked");
                 game.setScreen(new MenuScreen(game, font));
+                game.setScreenWithState(ScreenState.MENU);
+
             }
         });
 

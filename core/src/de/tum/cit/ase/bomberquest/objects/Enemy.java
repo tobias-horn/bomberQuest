@@ -24,7 +24,7 @@ public class Enemy extends GameObject implements Drawable {
     private GameMap gameMap;
 
     /** The movement speed of the enemy. */
-    private final float speed = 1f;
+    private float speed = 1f;
 
     // Random wandering
     private float randomWalkTimer = 0f; // Timer for how long to move in one random direction
@@ -106,10 +106,14 @@ public class Enemy extends GameObject implements Drawable {
         float distToPlayer = new Vector2(getX(), getY()).dst(px, py);
 
         // 5) Define the chase range in tiles
-        float chaseRange = 6f;
+        float chaseRange = 5f;
 
         // 6) Only activate A* if the player is within the chase range
         if (distToPlayer <= chaseRange) {
+            // Temporarily increase the speed by 1 while following the player
+            float originalSpeed = speed; // the original speed
+            speed += 0.5f; // temporary speed boost
+
             // Use A* to find a path to the player's current tile
             List<Vector2> path = AStarPathFinder.calculatePath(
                     gameMap,
@@ -125,12 +129,18 @@ public class Enemy extends GameObject implements Drawable {
 
                 // Move toward the center of the tile
                 Vector2 direction = targetPos.sub(currentPos).nor(); // Calculate normalized direction
-                body.setLinearVelocity(direction.scl(speed));
+                body.setLinearVelocity(direction.scl(speed)); // Use the boosted speed
+
+                // Reset the speed back to the original after applying the boost
+                speed = originalSpeed;
 
                 // Update animation direction based on velocity
                 updateAnimationDirection(direction.x, direction.y);
                 return;
             }
+
+            // Reset the speed back to the original in case no path was found
+            speed = originalSpeed;
         }
 
         // 7) Fallback to random wandering if the player is out of range or no path was found

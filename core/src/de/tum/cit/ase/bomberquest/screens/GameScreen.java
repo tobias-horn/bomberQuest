@@ -9,53 +9,68 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
+import de.tum.cit.ase.bomberquest.audio.MusicTrack;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.objects.Bomb;
 import de.tum.cit.ase.bomberquest.objects.Enemy;
+import de.tum.cit.ase.bomberquest.objects.ExplosionTile;
 import de.tum.cit.ase.bomberquest.objects.GameObject;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
 import de.tum.cit.ase.bomberquest.textures.Textures;
 import de.tum.cit.ase.bomberquest.ui.KeyBindings;
 
+/**
+ * Represents the main game screen, where the gameplay occurs.
+ * Manages rendering, game logic updates, user input, and transitions between game states.
+ */
 public class GameScreen implements Screen {
 
-    public static final int TILE_SIZE_PX = 32;
-    public static final int SCALE = 2;
+    public static final int TILE_SIZE_PX = 32; // Size of a tile in pixels
+    public static final int SCALE = 2; // Scale factor for rendering
 
+    // References to core game components
     private final BomberQuestGame game;
     private final SpriteBatch spriteBatch;
     private final GameMap map;
     private final Hud hud;
     private final OrthographicCamera mapCamera;
-    private boolean paused = false;
     private PauseScreen pauseScreen;
-    private float remainingTime;
-    private final float initialTime = 5 * 60f;
-    private float blinkAccumulator = 0f;
-    private boolean blinkToggle = false;
-    private boolean isGameOver = false; // Tracks game over state
 
+    private boolean paused = false; // Tracks whether the game is paused
+    private float remainingTime; // Remaining time for the level
+    private final float initialTime = 5 * 60f; // Initial time for the level (5 minutes)
+    private float blinkAccumulator = 0f; // Accumulates time for blink effects
+    private boolean blinkToggle = false; // Toggles the blink state
+    private boolean isGameOver = false; // Tracks whether the game is over
+
+    /**
+     * Constructor for the GameScreen class.
+     * @param game The main game instance.
+     */
     public GameScreen(BomberQuestGame game) {
         this.game = game;
         this.spriteBatch = game.getSpriteBatch();
         this.map = game.getMap();
         this.hud = game.getHud();
-
         this.mapCamera = new OrthographicCamera();
         this.mapCamera.setToOrtho(false);
-
         this.pauseScreen = new PauseScreen(game, game.getSkin().getFont("font"));
-
         this.remainingTime = initialTime;
     }
 
+    /**
+     * Renders the game screen.
+     * @param deltaTime Time elapsed since the last frame.
+     */
     @Override
     public void render(float deltaTime) {
         if (!paused) {
-            float moveSpeed = 2.5f;
-            float vx = 0;
-            float vy = 0;
 
+            float moveSpeed = 2f; // Player's speed
+            float vx = 0; // Horizontal velocity
+            float vy = 0; // Vertical velocity
+
+            // Player movement
             if (Gdx.input.isKeyPressed(KeyBindings.getKey(KeyBindings.MOVE_UP))) {
                 vy += moveSpeed;
             }
@@ -69,16 +84,18 @@ public class GameScreen implements Screen {
                 vx += moveSpeed;
             }
 
-            map.getPlayer().updateDirection(vx, vy);
-            map.getPlayer().update(deltaTime);
-
             // Normalize the velocity vector if moving diagonally
-            // adapted from https://stackoverflow.com/questions/25583169/vector2-normalize-function-confused-about-diagonal-output
+            // Adopted logic from:
+            // 1. https://stackoverflow.com/questions/25583169/vector2-normalize-function-confused-about-diagonal-output
+            // 2. https://forum.gamemaker.io/index.php?threads/how-to-i-fix-diagonal-speed-being-faster.113852/#:~:text=A%20normalized%20vector%20always%20has,divide%20each%20component%20by%20it.
             float magnitude = (float) Math.sqrt(vx * vx + vy * vy);
             if (magnitude > 0) {
                 vx = (vx / magnitude) * moveSpeed;
                 vy = (vy / magnitude) * moveSpeed;
             }
+
+            map.getPlayer().updateDirection(vx, vy);
+            map.getPlayer().update(deltaTime);
 
             if (Gdx.input.isKeyJustPressed(KeyBindings.getKey(KeyBindings.PLACE_BOMB))) {
                 float px = map.getPlayer().getX();
@@ -106,6 +123,7 @@ public class GameScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(KeyBindings.getKey(KeyBindings.PAUSE_GAME))) {
             setPaused(!paused);
+
         }
 
         ScreenUtils.clear(Color.BLACK);
@@ -113,9 +131,6 @@ public class GameScreen implements Screen {
         updateCamera();
         renderBackground();
         renderMap();
-
-
-
 
         int minutes = (int) (remainingTime / 60);
         int seconds = (int) (remainingTime % 60);
@@ -133,7 +148,6 @@ public class GameScreen implements Screen {
             } else {
                 state = blinkToggle ? Hud.PanelState.BLUE : Hud.PanelState.BLACK;
             }
-
 
         } else if (remainingTime < 60) {
             state = (map.getEnemies().isEmpty()) ? Hud.PanelState.BLUE : Hud.PanelState.RED;
@@ -158,12 +172,21 @@ public class GameScreen implements Screen {
         }
     }
 
+
     public void setPaused(boolean shouldPause) {
         this.paused = shouldPause;
+
+        // Pause or resume music based on the paused state
         if (paused) {
+            if (game.getCurrentMusicTrack() != null) {
+                game.getCurrentMusicTrack().pause(); // Pause the current music track
+            }
             Gdx.app.log("Pause", "Pausing and setting input processor to PauseScreen stage");
             Gdx.input.setInputProcessor(pauseScreen.getStage());
         } else {
+            if (game.getCurrentMusicTrack() != null) {
+                game.getCurrentMusicTrack().play(); // Resume the current music track
+            }
             Gdx.app.log("Pause", "Unpausing; removing PauseScreen stage input processor");
             Gdx.input.setInputProcessor(null);
         }
@@ -241,6 +264,11 @@ public class GameScreen implements Screen {
             draw(spriteBatch, bomb);
         }
 
+        // DRAW EXPLOSION TILES (NEW)
+        for (ExplosionTile explosionTile : map.getExplosionTiles()) {
+            draw(spriteBatch, explosionTile);
+        }
+
         if (map.getPlayer() != null) {
             Drawable player = map.getPlayer();
             TextureRegion texture = player.getCurrentAppearance();
@@ -288,9 +316,6 @@ public class GameScreen implements Screen {
     }
 
     private static void draw(SpriteBatch spriteBatch, Drawable drawable) {
-//        if (drawable instanceof GameObject gameObject) {
-//            if (gameObject.getBody() == null) return;
-//        }
         TextureRegion texture = drawable.getCurrentAppearance();
         float spriteWidthInWorldUnits = (float) texture.getRegionWidth() / TILE_SIZE_PX;
         float spriteHeightInWorldUnits = (float) texture.getRegionHeight() / TILE_SIZE_PX;
@@ -317,16 +342,8 @@ public class GameScreen implements Screen {
 
     @Override public void pause() {}
     @Override public void resume() {}
-
-    @Override
-    public void show() {}
-
-    @Override
-    public void hide() {}
+    @Override public void show() {}
+    @Override public void hide() {}
 
     public void setGameOver(boolean b) {}
-
-    public boolean isGameOver() {
-        return isGameOver;
-    }
 }

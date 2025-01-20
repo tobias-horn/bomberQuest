@@ -182,6 +182,7 @@ public class BomberQuestGame extends Game {
             case GAME_WON -> {
                 setScreen(new GameWonScreen(this, font));
                 gameWonSound.play();
+                currentMusicTrack.stop();
             }
         }
     }
@@ -228,6 +229,77 @@ public class BomberQuestGame extends Game {
         return hud;
     }
 
+    public void setSpriteBatch(SpriteBatch spriteBatch) {
+        this.spriteBatch = spriteBatch;
+    }
+
+    public BitmapFont getFont() {
+        return font;
+    }
+
+    public void setFont(BitmapFont font) {
+        this.font = font;
+    }
+
+    public void setSkin(Skin skin) {
+        this.skin = skin;
+    }
+
+    public void setMap(GameMap map) {
+        this.map = map;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public String getSelectedMap() {
+        return selectedMap;
+    }
+
+    public void setSelectedMap(String selectedMap) {
+        this.selectedMap = selectedMap;
+    }
+
+    public ScreenState getCurrentScreenState() {
+        return currentScreenState;
+    }
+
+    public void setCurrentScreenState(ScreenState currentScreenState) {
+        this.currentScreenState = currentScreenState;
+    }
+
+    public ScreenState getPreviousScreenState() {
+        return previousScreenState;
+    }
+
+    public void setPreviousScreenState(ScreenState previousScreenState) {
+        this.previousScreenState = previousScreenState;
+    }
+
+    public MusicTrack getCurrentMusicTrack() {
+        return currentMusicTrack;
+    }
+
+    public void setCurrentMusicTrack(MusicTrack currentMusicTrack) {
+        this.currentMusicTrack = currentMusicTrack;
+    }
+
+    public void setHud(Hud hud) {
+        this.hud = hud;
+    }
+
+    public Sound getGameWonSound() {
+        return gameWonSound;
+    }
+
+    public void setGameWonSound(Sound gameWonSound) {
+        this.gameWonSound = gameWonSound;
+    }
 
     public NativeFileChooser getFileChooser() {
         return fileChooser;

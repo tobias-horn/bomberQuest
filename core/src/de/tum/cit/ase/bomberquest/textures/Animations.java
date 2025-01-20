@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Array;
  * These can be referenced anywhere they are needed.
  */
 public class Animations {
-    
+
     /**
      * The animation for the character walking down.
      */
@@ -195,6 +195,19 @@ public class Animations {
             SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 5),
             SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 10)
     );
+
+    public static final Animation<TextureRegion> FALL_OF_THE_WALL = new Animation<>(0.1f,
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 6),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 7),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 8),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 9),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 10),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 11)
+    );
+
+
+
+
 
 
 
