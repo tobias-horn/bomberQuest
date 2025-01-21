@@ -11,10 +11,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
 import de.tum.cit.ase.bomberquest.map.GameMap;
-import de.tum.cit.ase.bomberquest.objects.Bomb;
-import de.tum.cit.ase.bomberquest.objects.Enemy;
-import de.tum.cit.ase.bomberquest.objects.ExplosionTile;
-import de.tum.cit.ase.bomberquest.objects.GameObject;
+import de.tum.cit.ase.bomberquest.objects.*;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
 import de.tum.cit.ase.bomberquest.textures.Textures;
 import de.tum.cit.ase.bomberquest.ui.KeyBindings;
@@ -251,10 +248,14 @@ public class GameScreen implements Screen {
         spriteBatch.begin();
 
         for (GameObject obj : map.getAllObjects()) {
-            if (obj instanceof Drawable drawableObj) {
+            if (obj instanceof Drawable drawableObj && obj.getBody() != null) {
                 draw(spriteBatch, drawableObj);
             }
+            if (obj instanceof Exit) {
+                Gdx.app.log("Rendering", "Exit found at (" + obj.getX() + ", " + obj.getY() + ")");
+            }
         }
+
 
         for (Enemy enemy : map.getEnemies()) {
             draw(spriteBatch, enemy);

@@ -309,8 +309,9 @@ public class GameMap {
         }
 
         if (removedObj instanceof DestructibleWall dw && dw.isExitUnderneath()) {
-            boolean activeState = enemies.isEmpty();
+            boolean activeState = enemies.isEmpty(); // set active if no enemies
             Exit exit = new Exit(world, x, y, activeState);
+            Gdx.app.log("GameMap", "Placing Exit at (" + x + ", " + y + ")");
             map.put(new Vector2(x, y), exit);
         }
     }

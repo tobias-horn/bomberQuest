@@ -51,7 +51,13 @@ public class DestructibleWall extends GameObject implements Drawable {
 
     public void startFading() {
         fadingAway = true;
-        animationTime = 0f; // Reset animation time
+        animationTime = 0f;
+
+        if (body != null) {
+            body.getWorld().destroyBody(body);
+            body = null;
+        }
+        Gdx.app.log("DestructibleWall", "Wall is now fading and its body is destroyed.");
     }
 
     public boolean isFadedAway() {
@@ -60,7 +66,13 @@ public class DestructibleWall extends GameObject implements Drawable {
 
     public void update(float deltaTime) {
         if (fadingAway) {
-            animationTime += deltaTime; // Increment animation time
+            animationTime += deltaTime;
+
+            // Destroy the body as soon as the fade completes
+            if (Animations.FALL_OF_THE_WALL.isAnimationFinished(animationTime) && body != null) {
+                body.getWorld().destroyBody(body);
+                body = null;
+            }
         }
     }
 }

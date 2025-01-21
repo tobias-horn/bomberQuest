@@ -1,5 +1,6 @@
 package de.tum.cit.ase.bomberquest.objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 
@@ -36,6 +37,10 @@ public abstract class GameObject {
      * @return The current x-position of this object's center (Box2D).
      */
     public float getX() {
+        if (body == null) {
+            Gdx.app.error("GameObject", "Attempting to access position of a GameObject with a null body.");
+            return 0; // Default position to prevent crashes
+        }
         return body.getPosition().x;
     }
 
@@ -43,6 +48,10 @@ public abstract class GameObject {
      * @return The current y-position of this object's center (Box2D).
      */
     public float getY() {
+        if (body == null) {
+            Gdx.app.error("GameObject", "Attempting to access position of a GameObject with a null body.");
+            return 0; // Default position to prevent crashes
+        }
         return body.getPosition().y;
     }
 
