@@ -147,55 +147,56 @@ public class Animations {
     public static final Animation<TextureRegion> BLAST_RIGHT_END_PIECE = new Animation<>(0.1f,
             SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 5),
             SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 10),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 5),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 10)
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 5),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 10)
     );
 
     //LEFT BLAST
     public static final Animation<TextureRegion> BLAST_LEFT_INITIAL_PIECE = new Animation<>(0.1f,
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 4),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 9),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 4),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 9)
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 2),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 7),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 2),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 7)
     );
 
     public static final Animation<TextureRegion> BLAST_LEFT_END_PIECE = new Animation<>(0.1f,
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 5),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 10),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 5),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 10)
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 1),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 6),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 1),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 6)
     );
 
     // UP BLAST
     public static final Animation<TextureRegion> BLAST_UP_INITIAL_PIECE = new Animation<>(0.1f,
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 4),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 9),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 4),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 9)
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(6, 3),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(6, 8),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(11, 3),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(11, 8)
     );
 
     public static final Animation<TextureRegion> BLAST_UP_END_PIECE = new Animation<>(0.1f,
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 5),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 10),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 5),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 10)
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(5, 3),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(5, 8),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(10, 3),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(10, 8)
     );
 
     // DOWN BLAST
     public static final Animation<TextureRegion> BLAST_DOWN_INITIAL_PIECE = new Animation<>(0.1f,
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 4),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 9),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 4),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(12, 9)
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(8, 3),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(8, 8),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(13, 3),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(13, 8)
     );
 
     public static final Animation<TextureRegion> BLAST_DOWN_END_PIECE = new Animation<>(0.1f,
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 5),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 10),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 5),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(7, 10)
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(9, 3),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(9, 8),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(14, 3),
+            SpriteSheet.ORIGINAL_BOMBERMAN.at(14, 8)
     );
 
+    //Wall Animation
     public static final Animation<TextureRegion> FALL_OF_THE_WALL = new Animation<>(0.1f,
             SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 6),
             SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 7),

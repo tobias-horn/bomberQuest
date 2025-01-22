@@ -157,7 +157,7 @@ public class GameScreen implements Screen {
         }
 
         hud.setPanelState(state);
-        hud.setCounts(map.getConcurrentBombCount(), map.getBlastRadius());
+        hud.setCounts(map.getConcurrentBombCount(), map.getBlastRadius(), map.getRemainingEnemiesCount());
         hud.render(timerText);
 
         if(remainingTime == 0){
@@ -318,14 +318,24 @@ public class GameScreen implements Screen {
 
     private static void draw(SpriteBatch spriteBatch, Drawable drawable) {
         TextureRegion texture = drawable.getCurrentAppearance();
-        float spriteWidthInWorldUnits = (float) texture.getRegionWidth() / TILE_SIZE_PX;
-        float spriteHeightInWorldUnits = (float) texture.getRegionHeight() / TILE_SIZE_PX;
+        // Apply scaling for specific objects
+        float scale = 1.0f; // Default scale
+        if (drawable instanceof ExplosionTile) {
+            scale = 2.0f; // Scale ExplosionTile by 2
+        } else if (drawable instanceof Enemy) {
+            scale = 1.5f; // Scale Enemy by 1.5
+        }
+
+
+        float spriteWidthInWorldUnits = ((float) texture.getRegionWidth() / TILE_SIZE_PX) * scale;
+        float spriteHeightInWorldUnits = ((float) texture.getRegionHeight() / TILE_SIZE_PX) * scale;
 
         float x = (drawable.getX() - (spriteWidthInWorldUnits / 2)) * TILE_SIZE_PX * SCALE;
         float y = (drawable.getY() - (spriteHeightInWorldUnits / 2)) * TILE_SIZE_PX * SCALE;
 
-        float width = texture.getRegionWidth() * SCALE;
-        float height = texture.getRegionHeight() * SCALE;
+        float width = texture.getRegionWidth() * SCALE * scale;
+        float height = texture.getRegionHeight() * SCALE * scale;
+
         spriteBatch.draw(texture, x, y, width, height);
     }
 

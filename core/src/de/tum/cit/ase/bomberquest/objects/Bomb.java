@@ -127,11 +127,6 @@ public class Bomb extends GameObject implements Drawable {
             // Decrement the bomb's own animation timer
             if (explosionTimer > 0) {
                 explosionTimer -= deltaTime;
-                // Once timer is done, we can remove the bomb from the game
-                if (explosionTimer <= 0) {
-                    // Mark it so the GameMap can remove it from bombs list
-                    // or you can set a flag and check in GameMap
-                }
             }
         }
 
@@ -216,7 +211,7 @@ public class Bomb extends GameObject implements Drawable {
     }
 
     // ----------------------------------------------------------------------
-    // NEW METHOD: Create ExplosionTile objects for the plus-shape animation
+    // Create ExplosionTile objects for the animation
     // ----------------------------------------------------------------------
     private void spawnExplosionTiles() {
         int bombTileX = (int) Math.floor(getX());
@@ -285,7 +280,7 @@ public class Bomb extends GameObject implements Drawable {
             return Animations.BOMB_GOING_OFF.getKeyFrame(this.elapsedTime, true);
         }
         // If exploded, optionally show a "center explosion" animation
-        return Animations.BOMB_CENTER_EXPLOSION.getKeyFrame(this.elapsedTime, true);
+        return Animations.BOMB_CENTER_EXPLOSION.getKeyFrame(this.elapsedTime, false);
     }
 
     public float getRadius() { return radius; }

@@ -34,6 +34,7 @@ public class GameMap {
 
     private int concurrentBombCount = 1; // Number of bombs player can place at once
     private int blastRadius = 1; // Radius of bomb explosions
+    private int remainingEnemiesCount = 0;
 
     // Player and game objects
     private Player player;
@@ -140,6 +141,9 @@ public class GameMap {
     public void tick(float frameTime) {
 
         enemies.removeIf(enemy -> enemy.getBody() == null); // Remove enemies without physics bodies
+        // Update remaining enemies count
+        remainingEnemiesCount = enemies.size();
+        hud.setRemainingEnemiesCount(remainingEnemiesCount);
         for (Enemy enemy : enemies) {
             enemy.tick(frameTime); // Update each enemy
         }
@@ -409,5 +413,9 @@ public class GameMap {
 
     public int getBlastRadius() {
         return blastRadius;
+    }
+
+    public int getRemainingEnemiesCount() {
+        return remainingEnemiesCount;
     }
 }

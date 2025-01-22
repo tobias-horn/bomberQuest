@@ -25,6 +25,7 @@ public class Hud {
 
     private int concurrentBombCount = 1;
     private int blastRadiusCount = 1;
+    private int remainingEnemiesCount = 0;
 
     public Hud(SpriteBatch spriteBatch, BitmapFont font) {
         this.spriteBatch = spriteBatch;
@@ -56,9 +57,10 @@ public class Hud {
      * Instead, we call this each frame to set the current number of
      * concurrent bombs & blast radius from the game map.
      */
-    public void setCounts(int concurrentBombs, int blastRadius) {
+    public void setCounts(int concurrentBombs, int blastRadius, int enemies) {
         this.concurrentBombCount = concurrentBombs;
         this.blastRadiusCount = blastRadius;
+        this.remainingEnemiesCount = enemies;
     }
 
     /**
@@ -123,6 +125,31 @@ public class Hud {
         float blastTextY = leftIconY + (iconSize + blastTextHeight) / 2f;
         font.draw(spriteBatch, blastLayout, blastTextX, blastTextY);
 
+        // Render remaining enemies count
+        GlyphLayout enemiesLayout = new GlyphLayout(font, String.valueOf(remainingEnemiesCount));
+        float enemiesTextWidth = enemiesLayout.width;
+        float enemiesTextHeight = enemiesLayout.height;
+
+        float enemiesOverlayWidth = iconSize + 5 + enemiesTextWidth + 2 * padding;
+        float enemiesOverlayHeight = iconSize + 2 * padding;
+
+// Position the overlay on the screen (e.g., top-center)
+        float enemiesOverlayX = (screenWidth - enemiesOverlayWidth) / 2f;
+        float enemiesOverlayY = screenHeight - margin - panelHeight - enemiesOverlayHeight - 10; // Below the main panel
+
+// Draw the overlay background
+        spriteBatch.draw(transparentBlackTexture, enemiesOverlayX, enemiesOverlayY, enemiesOverlayWidth, enemiesOverlayHeight);
+
+// Draw the icon for remaining enemies (optional, replace Textures.ENEMIES_HUD with your texture)
+        float enemiesIconX = enemiesOverlayX + padding;
+        float enemiesIconY = enemiesOverlayY + padding;
+        spriteBatch.draw(Textures.ENEMYCOUNT_HUD, enemiesIconX, enemiesIconY, iconSize, iconSize);
+
+// Draw the remaining enemies count
+        float enemiesTextX = enemiesIconX + iconSize + 5;
+        float enemiesTextY = enemiesIconY + (iconSize + enemiesTextHeight) / 2f;
+        font.draw(spriteBatch, enemiesLayout, enemiesTextX, enemiesTextY);
+
         GlyphLayout bombLayout = new GlyphLayout(font, String.valueOf(concurrentBombCount));
         float bombTextWidth  = bombLayout.width;
         float bombTextHeight = bombLayout.height;
@@ -179,5 +206,9 @@ public class Hud {
         BLACK,
         RED,
         BLUE
+    }
+
+    public void setRemainingEnemiesCount(int count) {
+        this.remainingEnemiesCount = count;
     }
 }

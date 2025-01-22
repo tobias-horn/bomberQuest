@@ -112,7 +112,7 @@ public class Enemy extends GameObject implements Drawable {
         if (distToPlayer <= chaseRange) {
             // Temporarily increase the speed by 1 while following the player
             float originalSpeed = speed; // the original speed
-            speed += 0; // temporary speed boost
+            speed += 0.5; // temporary speed boost
 
             // Use A* to find a path to the player's current tile
             List<Vector2> path = AStarPathFinder.calculatePath(

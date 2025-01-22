@@ -61,34 +61,34 @@ public class ExplosionTile implements Drawable {
     public TextureRegion getCurrentAppearance() {
         switch (type) {
             case CENTER -> {
-                return Animations.BOMB_CENTER_EXPLOSION.getKeyFrame(elapsedTime, true);
+                return Animations.BOMB_CENTER_EXPLOSION.getKeyFrame(elapsedTime, false);
             }
             case LEFT_END -> {
-                return Animations.BLAST_LEFT_END_PIECE.getKeyFrame(elapsedTime, true);
+                return Animations.BLAST_LEFT_END_PIECE.getKeyFrame(elapsedTime, false);
             }
             case RIGHT_END -> {
-                return Animations.BLAST_RIGHT_END_PIECE.getKeyFrame(elapsedTime, true);
+                return Animations.BLAST_RIGHT_END_PIECE.getKeyFrame(elapsedTime, false);
             }
             case UP_END -> {
-                return Animations.BLAST_UP_END_PIECE.getKeyFrame(elapsedTime, true);
+                return Animations.BLAST_UP_END_PIECE.getKeyFrame(elapsedTime, false);
             }
             case DOWN_END -> {
-                return Animations.BLAST_DOWN_END_PIECE.getKeyFrame(elapsedTime, true);
+                return Animations.BLAST_DOWN_END_PIECE.getKeyFrame(elapsedTime, false);
             }
             case RIGHT_MIDDLE -> {
-                return Animations.BLAST_RIGHT_INITIAL_PIECE.getKeyFrame(elapsedTime, true);
+                return Animations.BLAST_RIGHT_INITIAL_PIECE.getKeyFrame(elapsedTime, false);
             }
             case LEFT_MIDDLE -> {
-                return Animations.BLAST_LEFT_INITIAL_PIECE.getKeyFrame(elapsedTime, true);
+                return Animations.BLAST_LEFT_INITIAL_PIECE.getKeyFrame(elapsedTime, false);
             }
             case UP_MIDDLE -> {
-                return Animations.BLAST_UP_INITIAL_PIECE.getKeyFrame(elapsedTime, true);
+                return Animations.BLAST_UP_INITIAL_PIECE.getKeyFrame(elapsedTime, false);
             }
             case DOWN_MIDDLE -> {
-                return Animations.BLAST_DOWN_INITIAL_PIECE.getKeyFrame(elapsedTime, true);
+                return Animations.BLAST_DOWN_INITIAL_PIECE.getKeyFrame(elapsedTime, false);
             }
             default -> {
-                return Animations.BOMB_CENTER_EXPLOSION.getKeyFrame(elapsedTime, true);
+                return Animations.BOMB_CENTER_EXPLOSION.getKeyFrame(elapsedTime, false);
             }
         }
     }
