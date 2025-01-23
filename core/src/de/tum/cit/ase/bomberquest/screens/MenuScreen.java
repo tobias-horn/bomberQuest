@@ -12,6 +12,8 @@ import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.textures.Textures;
 import de.tum.cit.ase.bomberquest.ui.MenuButton;
 
+import javax.swing.*;
+
 public class MenuScreen extends BaseScreen {
 
     private Stage uiStage;
@@ -57,6 +59,8 @@ public class MenuScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new SettingsScreen(game, font));
+                game.setPreviousScreenState(ScreenState.MENU);
+                game.setCurrentScreenState(ScreenState.SETTINGS);
                 super.clicked(event, x, y);
             }
         });

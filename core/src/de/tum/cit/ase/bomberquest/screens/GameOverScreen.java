@@ -116,6 +116,8 @@ public class GameOverScreen extends BaseScreen {
         menuButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                game.setCurrentScreenState(ScreenState.MENU);
+                game.setPreviousScreenState(ScreenState.GAME_OVER);
                 game.goToMenu();
                 super.clicked(event, x, y);
             }

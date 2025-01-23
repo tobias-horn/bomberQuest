@@ -32,7 +32,7 @@ public class Textures {
     public static final TextureRegion CONCURRENTBOMB_HUD = new TextureRegion(
             new Texture(new FileHandle("assets/texture/concurrentBombPuHUD.png")));
 
-    public static final TextureRegion ENEMYCOUNT_HUD = SpriteSheet.ORIGINAL_BOMBERMAN.at(15,2);
+    public static final TextureRegion ENEMYCOUNT_HUD = new TextureRegion(new Texture(new FileHandle("assets/texture/enemyCountHUD.png")));
 
 
     // Menu button textures

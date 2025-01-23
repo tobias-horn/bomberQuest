@@ -134,13 +134,13 @@ public class Hud {
         float enemiesOverlayHeight = iconSize + 2 * padding;
 
 // Position the overlay on the screen (e.g., top-center)
-        float enemiesOverlayX = (screenWidth - enemiesOverlayWidth) / 2f;
-        float enemiesOverlayY = screenHeight - margin - panelHeight - enemiesOverlayHeight - 10; // Below the main panel
+        float enemiesOverlayX = margin;
+        float enemiesOverlayY = margin;
 
 // Draw the overlay background
         spriteBatch.draw(transparentBlackTexture, enemiesOverlayX, enemiesOverlayY, enemiesOverlayWidth, enemiesOverlayHeight);
 
-// Draw the icon for remaining enemies (optional, replace Textures.ENEMIES_HUD with your texture)
+// Draw the icon for remaining enemies
         float enemiesIconX = enemiesOverlayX + padding;
         float enemiesIconY = enemiesOverlayY + padding;
         spriteBatch.draw(Textures.ENEMYCOUNT_HUD, enemiesIconX, enemiesIconY, iconSize, iconSize);
