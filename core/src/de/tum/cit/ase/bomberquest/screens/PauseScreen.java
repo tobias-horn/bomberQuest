@@ -108,6 +108,7 @@ public class PauseScreen {
                 game.setScreen(new SettingsScreen(game, font));
                 game.setCurrentScreenState(ScreenState.SETTINGS);
                 game.setScreenWithState(ScreenState.SETTINGS);
+                game.setPreviousScreenState(ScreenState.GAME);
                 super.clicked(event, x, y);
             }
         });

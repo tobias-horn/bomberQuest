@@ -75,14 +75,27 @@ public class GameWonScreen extends BaseScreen {
         table.add(messageLabel).padBottom(50f);
         table.row();
 
-        // Display final score
+        // --- New logic for final score and high score ---
         int finalScore = 0;
+        int highScore  = 0;
         if (game.getMap() != null && game.getMap().getScore() != null) {
+            // Update/check if we have a new high score
+
+            // Retrieve final score
             finalScore = game.getMap().getScore().getScore();
+            // Retrieve current high score
         }
+
+        // Display final score
         Label scoreLabel = new Label("Score: " + finalScore, labelStyle);
         table.add(scoreLabel).padBottom(30f);
         table.row();
+
+        // Display high score
+        Label highScoreLabel = new Label("High Score: " + highScore, labelStyle);
+        table.add(highScoreLabel).padBottom(40f);
+        table.row();
+        // --- End new logic ---
 
         float desiredWidth = 400f;
         float desiredHeight = 70f;

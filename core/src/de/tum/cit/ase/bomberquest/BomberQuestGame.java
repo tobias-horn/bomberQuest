@@ -160,6 +160,7 @@ public class BomberQuestGame extends Game {
      */
     public void restartGame() {
         Screen currentScreen = getScreen();
+        score.resetScore();
         if (currentScreen instanceof GameScreen) {
             ((GameScreen) currentScreen).setGameOver(false);
             currentScreen.dispose();

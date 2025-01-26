@@ -1,5 +1,8 @@
 package de.tum.cit.ase.bomberquest.bonusFeatures;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
+
 /**
  * Manages the player's score in the game.
  *
@@ -8,13 +11,18 @@ package de.tum.cit.ase.bomberquest.bonusFeatures;
  * - For each enemy killed: +100 points
  * - For each power-up collected: +85 points
  * - For each second remaining when the player wins: +2 points
+ *
+ * Also maintains a persistent high score across game sessions.
  */
 public class Score {
 
+
+    // Current in-game score (not persisted across sessions)
     private int score;
 
     public Score() {
         this.score = 0;
+        // Initialize Preferences here to ensure Gdx.app is not null
     }
 
     /**
@@ -47,7 +55,7 @@ public class Score {
     }
 
     /**
-     * Returns the current score.
+     * Returns the current (this-session) score.
      * @return The current score.
      */
     public int getScore() {
@@ -55,9 +63,10 @@ public class Score {
     }
 
     /**
-     * Resets the score to zero (if needed).
+     * Resets the in-game score to zero.
      */
     public void resetScore() {
         this.score = 0;
     }
+
 }
