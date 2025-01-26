@@ -17,6 +17,7 @@ import java.util.*;
  */
 public class GameMap {
 
+    // static code runs once when class is loaded into memory
     static {
         com.badlogic.gdx.physics.box2d.Box2D.init(); // Initialize Box2D for physics simulation
     }
@@ -64,6 +65,7 @@ public class GameMap {
         markBorderWalls();
 
         // Collision detection
+        // Adapted from https://www.gamedevelopment.blog/full-libgdx-game-tutorial-box2d-contact-listener/
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
@@ -161,6 +163,8 @@ public class GameMap {
         explosionTiles.removeIf(ExplosionTile::isFinished);
 
         // Collect walls to be removed after the loop
+        // This is needed because we ran into a ConcurrentModificationException Error when trying to remove it from the collection while iterating over it
+        // Adapted from https://stackoverflow.com/questions/5113016/getting-a-concurrentmodificationexception-thrown-when-removing-an-element-from-a
         List<Vector2> wallsToRemove = new ArrayList<>();
 
         // Remove destructible walls with finished animations
@@ -204,6 +208,7 @@ public class GameMap {
     /**
      * Advances the physics simulation in fixed time steps.
      * @param frameTime Time elapsed since the last frame.
+     * Adapted from https://www.reddit.com/r/libgdx/comments/5ib2q3/trying_to_get_my_head_around_fixed_timestep_in/
      */
     private void doPhysicsStep(float frameTime) {
         this.physicsTime += frameTime;

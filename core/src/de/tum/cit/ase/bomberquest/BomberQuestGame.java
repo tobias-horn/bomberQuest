@@ -14,8 +14,11 @@ import de.tum.cit.ase.bomberquest.objects.Player;
 import de.tum.cit.ase.bomberquest.screens.*;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 
+/**
+ * Main class for the BomberQuest game, responsible for initializing and managing game states, resources, and screen transitions.
+ * Extends libGDX's {@link Game} class to leverage its game lifecycle management.
+ */
 public class BomberQuestGame extends Game {
-
 
     private SpriteBatch spriteBatch;
     private BitmapFont font;
@@ -30,17 +33,24 @@ public class BomberQuestGame extends Game {
     private Hud hud;
     private Sound gameWonSound;
 
+    /**
+     * Constructs a new BomberQuestGame instance with the specified file chooser.
+     *
+     * @param fileChooser the {@link NativeFileChooser} used for selecting files within the game
+     */
     public BomberQuestGame(NativeFileChooser fileChooser) {
         this.fileChooser = fileChooser;
         currentMusicTrack = null;
     }
 
-
+    /**
+     * Initializes the game by setting up rendering components, loading resources, and transitioning to the main menu.
+     * This method is called once when the application is created.
+     */
     @Override
     public void create() {
         this.spriteBatch = new SpriteBatch(); // Create SpriteBatch for rendering
         this.skin = new Skin(Gdx.files.internal("skin/craftacular/craftacular-ui.json")); // Load UI skin
-
 
         if (MusicTrack.BACKGROUND != null) {
             // MusicTrack.BACKGROUND.play();
@@ -54,106 +64,29 @@ public class BomberQuestGame extends Game {
         this.hud = new Hud(spriteBatch, font);
         this.map = new GameMap(this, hardcodedMapFile, hud);
 
-
-
         goToMenu();
     }
 
-
+    /**
+     * Transitions the game to the main menu screen.
+     */
     public void goToMenu() {
         setScreenWithState(ScreenState.MENU);
     }
 
+    /**
+     * Transitions the game to the main gameplay screen.
+     */
     public void goToGame() {
         setScreenWithState(ScreenState.GAME);
     }
 
-
-    public Skin getSkin() {
-        return skin;
-    }
-
-
-    public SpriteBatch getSpriteBatch() {
-        return spriteBatch;
-    }
-
-
-    public GameMap getMap() {
-        return map;
-    }
-
-
-    @Override
-    public void setScreen(Screen screen) {
-        Screen previousScreen = super.screen;
-        super.setScreen(screen);
-        if (previousScreen != null) {
-            previousScreen.dispose();
-        }
-    }
-
-
-    @Override
-    public void dispose() {
-        getScreen().hide();
-        getScreen().dispose();
-        spriteBatch.dispose();
-        skin.dispose();
-    }
-
-
-    public void loadMap(String mapPath) {
-        try {
-
-            FileHandle fileHandle;
-            FileHandle internalCheck = Gdx.files.internal(mapPath);
-            if (internalCheck.exists()) {
-                fileHandle = internalCheck;
-            } else {
-                fileHandle = Gdx.files.absolute(mapPath);
-            }
-
-
-            this.selectedMap = mapPath;
-
-
-            this.map = new GameMap(this, fileHandle, hud);
-
-
-            goToGame();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to load map: " + mapPath);
-        }
-    }
-
-
-    public void goToGameOver() {
-        setScreenWithState(ScreenState.GAME_OVER);
-    }
-
-
-    public void restartGame() {
-        Screen currentScreen = getScreen();
-        if (currentScreen instanceof GameScreen) {
-
-            ((GameScreen) currentScreen).setGameOver(false);
-            currentScreen.dispose();
-        }
-
-
-        if (selectedMap != null) {
-            loadMap(selectedMap);
-        } else {
-            Gdx.app.error("BomberQuestGame", "No map selected to restart the game.");
-        }
-    }
-
-    public void goToGameWon() {
-        setScreenWithState(ScreenState.GAME_WON);
-    }
-
+    /**
+     * Sets the active screen based on the provided {@code ScreenState}.
+     * Handles the transition logic and ensures proper resource management during screen changes.
+     *
+     * @param newState the {@link ScreenState} to transition to
+     */
     public void setScreenWithState(ScreenState newState) {
         // Record previous screen state:
         if (currentScreenState != null) {
@@ -182,11 +115,18 @@ public class BomberQuestGame extends Game {
             case GAME_WON -> {
                 setScreen(new GameWonScreen(this, font));
                 gameWonSound.play();
-                currentMusicTrack.stop();
+                if (currentMusicTrack != null) {
+                    currentMusicTrack.stop();
+                }
             }
         }
     }
 
+    /**
+     * Plays the specified music track, handling the transition from any currently playing track.
+     *
+     * @param track the {@link MusicTrack} to be played
+     */
     private void playMusic(MusicTrack track) {
         if (currentMusicTrack != track) {
             // Stop the current track if it's playing
@@ -205,6 +145,93 @@ public class BomberQuestGame extends Game {
         }
     }
 
+    /**
+     * Transitions the game to the game over screen.
+     */
+    public void goToGameOver() {
+        setScreenWithState(ScreenState.GAME_OVER);
+    }
+
+    /**
+     * Restarts the current game by disposing of the existing game screen and reloading the selected map.
+     * If no map is selected, an error is logged.
+     */
+    public void restartGame() {
+        Screen currentScreen = getScreen();
+        if (currentScreen instanceof GameScreen) {
+            ((GameScreen) currentScreen).setGameOver(false);
+            currentScreen.dispose();
+        }
+
+        if (selectedMap != null) {
+            loadMap(selectedMap);
+        } else {
+            Gdx.app.error("BomberQuestGame", "No map selected to restart the game.");
+        }
+    }
+
+    /**
+     * Transitions the game to the game won screen.
+     */
+    public void goToGameWon() {
+        setScreenWithState(ScreenState.GAME_WON);
+    }
+
+    /**
+     * Loads a game map from the specified path and transitions to the gameplay screen.
+     * If the map fails to load, an error message is printed.
+     *
+     * @param mapPath the file path of the map to load
+     */
+    public void loadMap(String mapPath) {
+        try {
+            FileHandle fileHandle;
+            FileHandle internalCheck = Gdx.files.internal(mapPath);
+            if (internalCheck.exists()) {
+                fileHandle = internalCheck;
+            } else {
+                fileHandle = Gdx.files.absolute(mapPath);
+            }
+
+            this.selectedMap = mapPath;
+            this.map = new GameMap(this, fileHandle, hud);
+            goToGame();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to load map: " + mapPath);
+        }
+    }
+
+    /**
+     * Sets the active screen and ensures that the previous screen is properly disposed of to free resources.
+     *
+     * @param screen the new {@link Screen} to set as active
+     */
+    @Override
+    public void setScreen(Screen screen) {
+        Screen previousScreen = super.screen;
+        super.setScreen(screen);
+        if (previousScreen != null) {
+            previousScreen.dispose();
+        }
+    }
+
+    /**
+     * Disposes of all game resources, including screens, rendering components, and skins.
+     * This method is called when the application is closing.
+     */
+    @Override
+    public void dispose() {
+        getScreen().hide();
+        getScreen().dispose();
+        spriteBatch.dispose();
+        skin.dispose();
+    }
+
+    /**
+     * Navigates back to the previous screen state if available.
+     * If no previous state exists, defaults to transitioning to the main menu.
+     */
     public void goBack() {
         if (previousScreenState != null) {
             System.out.println("Going back to: " + previousScreenState + " from: " + currentScreenState);
@@ -224,6 +251,20 @@ public class BomberQuestGame extends Game {
         }
     }
 
+    // Getters and Setters for various components (omitted for brevity)
+    // These methods are considered trivial and thus are not documented.
+
+    public Skin getSkin() {
+        return skin;
+    }
+
+    public SpriteBatch getSpriteBatch() {
+        return spriteBatch;
+    }
+
+    public GameMap getMap() {
+        return map;
+    }
 
     public Hud getHud() {
         return hud;

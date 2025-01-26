@@ -14,13 +14,24 @@ import de.tum.cit.ase.bomberquest.ui.MenuButton;
 
 import javax.swing.*;
 
+/**
+ * MenuScreen displays the main menu of the BomberQuest game.
+ * It provides options to start a new game, access settings, or quit the game.
+ * The screen is constructed using a Stage and Table for layout management.
+ */
 public class MenuScreen extends BaseScreen {
 
     private Stage uiStage;
 
+    /**
+     * Constructs the MenuScreen with the provided game instance and font.
+     * Initializes the UI stage and sets up menu buttons with their respective listeners.
+     *
+     * @param game The main game instance.
+     * @param font The BitmapFont used for rendering text on the buttons.
+     */
     public MenuScreen(BomberQuestGame game, BitmapFont font) {
         super(game, font, "assets/startScreen/start_background.jpg", false);
-
 
         uiStage = new Stage(new ScreenViewport(), game.getSpriteBatch());
 
@@ -89,23 +100,40 @@ public class MenuScreen extends BaseScreen {
         table.add(quitButton).size(desiredWidth, desiredHeight).center().padBottom(10f);
     }
 
+    /**
+     * Sets the input processor to the UI stage when the screen is shown.
+     */
     @Override
     public void show() {
         Gdx.input.setInputProcessor(uiStage);
     }
 
+    /**
+     * Renders the UI stage by updating and drawing its actors.
+     *
+     * @param deltaTime The time elapsed since the last render.
+     */
     @Override
     protected void renderContent(float deltaTime) {
         uiStage.act(deltaTime);
         uiStage.draw();
     }
 
+    /**
+     * Handles resizing of the screen by updating the viewport of the UI stage.
+     *
+     * @param width  The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
         uiStage.getViewport().update(width, height, true);
     }
 
+    /**
+     * Disposes of the UI stage and any other resources when the screen is no longer needed.
+     */
     @Override
     public void dispose() {
         uiStage.dispose();

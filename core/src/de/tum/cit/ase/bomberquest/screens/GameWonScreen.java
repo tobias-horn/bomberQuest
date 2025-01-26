@@ -15,6 +15,10 @@ import de.tum.cit.ase.bomberquest.ui.MenuButton;
 
 import java.util.Random;
 
+/**
+ * GameWonScreen displays a "You Won" message along with a random celebratory sub-message.
+ * It provides options to start a new game or return to the main menu.
+ */
 public class GameWonScreen extends BaseScreen {
 
     private final Stage uiStage;
@@ -43,6 +47,12 @@ public class GameWonScreen extends BaseScreen {
             "The exit is clear, the enemies are gone, and you’re unstoppable!"
     };
 
+    /**
+     * Constructs the GameWonScreen with the provided game instance and font.
+     *
+     * @param game The main game instance.
+     * @param font The BitmapFont to use for text rendering.
+     */
     public GameWonScreen(BomberQuestGame game, BitmapFont font) {
         super(game, font, "assets/startScreen/start_background.jpg", true);
 
@@ -51,11 +61,9 @@ public class GameWonScreen extends BaseScreen {
 
         this.uiStage = new Stage(new ScreenViewport(), game.getSpriteBatch());
 
-
         Table table = new Table();
         table.setFillParent(true);
         table.center();
-
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, font.getColor());
         Label wonLabel = new Label("YOU WON!", labelStyle);
@@ -63,11 +71,9 @@ public class GameWonScreen extends BaseScreen {
         table.add(wonLabel).padBottom(40f);
         table.row();
 
-
         Label messageLabel = new Label(winMessage, labelStyle);
         table.add(messageLabel).padBottom(50f);
         table.row();
-
 
         float desiredWidth = 400f;
         float desiredHeight = 70f;
@@ -106,23 +112,40 @@ public class GameWonScreen extends BaseScreen {
         uiStage.addActor(table);
     }
 
+    /**
+     * Sets the input processor to the UI stage when the screen is shown.
+     */
     @Override
     public void show() {
         Gdx.input.setInputProcessor(uiStage);
     }
 
+    /**
+     * Renders the UI stage by updating and drawing its actors.
+     *
+     * @param deltaTime The time elapsed since the last render.
+     */
     @Override
     protected void renderContent(float deltaTime) {
         uiStage.act(deltaTime);
         uiStage.draw();
     }
 
+    /**
+     * Handles resizing of the screen by updating the viewport of the UI stage.
+     *
+     * @param width  The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
         uiStage.getViewport().update(width, height, true);
     }
 
+    /**
+     * Disposes of the UI stage and any other resources when the screen is no longer needed.
+     */
     @Override
     public void dispose() {
         uiStage.dispose();

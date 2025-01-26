@@ -16,6 +16,8 @@ import de.tum.cit.ase.bomberquest.textures.Drawable;
 import de.tum.cit.ase.bomberquest.textures.Textures;
 import de.tum.cit.ase.bomberquest.ui.KeyBindings;
 
+import java.util.Random;
+
 /**
  * Represents the main game screen, where the gameplay occurs.
  * Manages rendering, game logic updates, user input, and transitions between game states.
@@ -41,7 +43,8 @@ public class GameScreen implements Screen {
     private boolean isGameOver = false; // Tracks whether the game is over
 
     /**
-     * Constructor for the GameScreen class.
+     * Constructs the GameScreen with the provided game instance.
+     *
      * @param game The main game instance.
      */
     public GameScreen(BomberQuestGame game) {
@@ -56,7 +59,8 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Renders the game screen.
+     * Renders the game screen, updating game logic and handling user input.
+     *
      * @param deltaTime Time elapsed since the last frame.
      */
     @Override
@@ -82,9 +86,7 @@ public class GameScreen implements Screen {
             }
 
             // Normalize the velocity vector if moving diagonally
-            // Adopted logic from:
-            // 1. https://stackoverflow.com/questions/25583169/vector2-normalize-function-confused-about-diagonal-output
-            // 2. https://forum.gamemaker.io/index.php?threads/how-to-i-fix-diagonal-speed-being-faster.113852/#:~:text=A%20normalized%20vector%20always%20has,divide%20each%20component%20by%20it.
+            // Adapted from https://stackoverflow.com/questions/25583169/vector2-normalize-function-confused-about-diagonal-output
             float magnitude = (float) Math.sqrt(vx * vx + vy * vy);
             if (magnitude > 0) {
                 vx = (vx / magnitude) * moveSpeed;
@@ -100,7 +102,6 @@ public class GameScreen implements Screen {
 
                 int tileX = (int) Math.floor(px);
                 int tileY = (int) Math.floor(py);
-
 
                 Bomb bomb = new Bomb(map.getWorld(), tileX, tileY, 1, map);
                 bomb.setRadius(map.getBlastRadius());
@@ -120,7 +121,6 @@ public class GameScreen implements Screen {
 
         if (Gdx.input.isKeyJustPressed(KeyBindings.getKey(KeyBindings.PAUSE_GAME))) {
             setPaused(!paused);
-
         }
 
         ScreenUtils.clear(Color.BLACK);
@@ -169,7 +169,11 @@ public class GameScreen implements Screen {
         }
     }
 
-
+    /**
+     * Sets the paused state of the game, pausing or resuming game logic and music accordingly.
+     *
+     * @param shouldPause True to pause the game, false to resume.
+     */
     public void setPaused(boolean shouldPause) {
         this.paused = shouldPause;
 
@@ -189,10 +193,16 @@ public class GameScreen implements Screen {
         }
     }
 
+    /**
+     * Resumes the game from a paused state.
+     */
     public void resumeGame() {
         setPaused(false);
     }
 
+    /**
+     * Updates the camera position to follow the player while keeping the camera within map bounds.
+     */
     private void updateCamera() {
         float halfW = mapCamera.viewportWidth * 0.5f;
         float halfH = mapCamera.viewportHeight * 0.5f;
@@ -243,6 +253,9 @@ public class GameScreen implements Screen {
         mapCamera.update();
     }
 
+    /**
+     * Renders all drawable objects on the map, including the player, enemies, bombs, and explosions.
+     */
     private void renderMap() {
         spriteBatch.setProjectionMatrix(mapCamera.combined);
         spriteBatch.begin();
@@ -255,7 +268,6 @@ public class GameScreen implements Screen {
                 Gdx.app.log("Rendering", "Exit found at (" + obj.getX() + ", " + obj.getY() + ")");
             }
         }
-
 
         for (Enemy enemy : map.getEnemies()) {
             draw(spriteBatch, enemy);
@@ -274,7 +286,7 @@ public class GameScreen implements Screen {
             Drawable player = map.getPlayer();
             TextureRegion texture = player.getCurrentAppearance();
 
-            float playerScaleFactor = 0.8f; // Scale the player size (texture) indivisually
+            float playerScaleFactor = 0.8f; // Scale the player size (texture) individually
 
             float spriteWidthInWorldUnits = ((float) texture.getRegionWidth() / TILE_SIZE_PX) * playerScaleFactor;
             float spriteHeightInWorldUnits = ((float) texture.getRegionHeight() / TILE_SIZE_PX) * playerScaleFactor;
@@ -291,6 +303,9 @@ public class GameScreen implements Screen {
         spriteBatch.end();
     }
 
+    /**
+     * Renders the background tiles based on the camera's current viewport.
+     */
     private void renderBackground() {
         spriteBatch.setProjectionMatrix(mapCamera.combined);
         spriteBatch.begin();
@@ -316,6 +331,12 @@ public class GameScreen implements Screen {
         spriteBatch.end();
     }
 
+    /**
+     * Draws a drawable object using the provided SpriteBatch.
+     *
+     * @param spriteBatch The SpriteBatch used for rendering.
+     * @param drawable    The drawable object to render.
+     */
     private static void draw(SpriteBatch spriteBatch, Drawable drawable) {
         TextureRegion texture = drawable.getCurrentAppearance();
         // Apply scaling for specific objects
@@ -325,7 +346,6 @@ public class GameScreen implements Screen {
         } else if (drawable instanceof Enemy) {
             scale = 1.5f; // Scale Enemy by 1.5
         }
-
 
         float spriteWidthInWorldUnits = ((float) texture.getRegionWidth() / TILE_SIZE_PX) * scale;
         float spriteHeightInWorldUnits = ((float) texture.getRegionHeight() / TILE_SIZE_PX) * scale;
@@ -339,6 +359,12 @@ public class GameScreen implements Screen {
         spriteBatch.draw(texture, x, y, width, height);
     }
 
+    /**
+     * Handles resizing of the screen by updating the camera viewport and HUD.
+     *
+     * @param width  The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         mapCamera.setToOrtho(false, width, height);
@@ -346,15 +372,40 @@ public class GameScreen implements Screen {
         pauseScreen.resize(width, height);
     }
 
+    /**
+     * Disposes of resources used by the game screen, including the pause screen.
+     */
     @Override
     public void dispose() {
         pauseScreen.dispose();
     }
 
-    @Override public void pause() {}
-    @Override public void resume() {}
-    @Override public void show() {}
-    @Override public void hide() {}
+    @Override
+    public void pause() {
+        // Not implemented
+    }
 
-    public void setGameOver(boolean b) {}
+    @Override
+    public void resume() {
+        // Not implemented
+    }
+
+    @Override
+    public void show() {
+        // Not implemented
+    }
+
+    @Override
+    public void hide() {
+        // Not implemented
+    }
+
+    /**
+     * Sets the game over state.
+     *
+     * @param b True if the game is over, false otherwise.
+     */
+    public void setGameOver(boolean b) {
+        // Implementation can be added as needed
+    }
 }

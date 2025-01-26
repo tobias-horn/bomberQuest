@@ -7,6 +7,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import de.tum.cit.ase.bomberquest.textures.Textures;
 
+/**
+ * Hud manages the Heads-Up Display (HUD) for the BomberQuest game.
+ * It displays essential game information such as the timer, concurrent bombs, blast radius, and remaining enemies.
+ * The HUD is rendered using SpriteBatch and BitmapFont, and adapts to screen resizing.
+ */
 public class Hud {
 
     private final SpriteBatch spriteBatch;
@@ -27,20 +32,26 @@ public class Hud {
     private int blastRadiusCount = 1;
     private int remainingEnemiesCount = 0;
 
+    /**
+     * Constructs the Hud with the specified SpriteBatch and BitmapFont.
+     * Initializes textures and sets up the HUD panel.
+     *
+     * @param spriteBatch The SpriteBatch used for rendering HUD elements.
+     * @param font        The BitmapFont used for rendering text on the HUD.
+     */
     public Hud(SpriteBatch spriteBatch, BitmapFont font) {
         this.spriteBatch = spriteBatch;
         this.font = font;
         this.camera = new OrthographicCamera();
 
         blackPanelTexture = new Texture(Gdx.files.internal("assets/menu/hudPanelBlack.png"));
-        redPanelTexture   = new Texture(Gdx.files.internal("assets/menu/hudPanelRed.png"));
-        bluePanelTexture  = new Texture(Gdx.files.internal("assets/menu/hudPanelBlue.png"));
+        redPanelTexture = new Texture(Gdx.files.internal("assets/menu/hudPanelRed.png"));
+        bluePanelTexture = new Texture(Gdx.files.internal("assets/menu/hudPanelBlue.png"));
 
         panelTexture = blackPanelTexture;
 
         panelWidth = panelTexture.getWidth();
         panelHeight = panelTexture.getHeight();
-
 
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(0, 0, 0, 0.3f); // Black with 0.3 opacity
@@ -50,12 +61,12 @@ public class Hud {
     }
 
     /**
-     * Removed update(float deltaTime) that was subtracting power-up time.
-     */
-
-    /**
-     * Instead, we call this each frame to set the current number of
-     * concurrent bombs & blast radius from the game map.
+     * Updates the counts for concurrent bombs, blast radius, and remaining enemies.
+     * This method should be called each frame to reflect the current game state.
+     *
+     * @param concurrentBombs The current number of bombs placed by the player.
+     * @param blastRadius     The current blast radius of the bombs.
+     * @param enemies         The number of enemies remaining on the map.
      */
     public void setCounts(int concurrentBombs, int blastRadius, int enemies) {
         this.concurrentBombCount = concurrentBombs;
@@ -64,7 +75,10 @@ public class Hud {
     }
 
     /**
-     * Renders the HUD panel (center) plus the permanent power-up counts.
+     * Renders the HUD panel and associated information such as the timer,
+     * concurrent bombs, blast radius, and remaining enemies.
+     *
+     * @param timerText The formatted timer text to display.
      */
     public void render(String timerText) {
 
@@ -72,9 +86,8 @@ public class Hud {
 
         spriteBatch.begin();
 
-        float screenWidth  = Gdx.graphics.getWidth();
+        float screenWidth = Gdx.graphics.getWidth();
         float screenHeight = Gdx.graphics.getHeight();
-
 
         float scaleFactor = 0.4f;
         float newPanelWidth = screenWidth * scaleFactor;
@@ -87,45 +100,40 @@ public class Hud {
         spriteBatch.draw(panelTexture, panelX, panelY, newPanelWidth, newPanelHeight);
 
         GlyphLayout layout = new GlyphLayout(font, timerText);
-        float textWidth  = layout.width;
+        float textWidth = layout.width;
         float textHeight = layout.height;
 
-        float textX = panelX + (newPanelWidth  - textWidth) / 2f;
+        float textX = panelX + (newPanelWidth - textWidth) / 2f;
         float textY = panelY + (newPanelHeight + textHeight) / 2f;
         font.draw(spriteBatch, layout, textX, textY);
 
         float iconSize = 45f;
-        float margin   = 15f;
-        float padding  = 10f;
+        float margin = 15f;
+        float padding = 10f;
 
-
+        // Render Blast Radius Count
         GlyphLayout blastLayout = new GlyphLayout(font, String.valueOf(blastRadiusCount));
-        float blastTextWidth  = blastLayout.width;
+        float blastTextWidth = blastLayout.width;
         float blastTextHeight = blastLayout.height;
-
 
         float leftOverlayWidth = iconSize + 5 + blastTextWidth + 2 * padding;
         float leftOverlayHeight = iconSize + 2 * padding;
 
-
         float leftOverlayX = margin;
         float leftOverlayY = screenHeight - margin - leftOverlayHeight;
 
-
         spriteBatch.draw(transparentBlackTexture, leftOverlayX, leftOverlayY, leftOverlayWidth, leftOverlayHeight);
-
 
         float leftIconX = leftOverlayX + padding;
         float leftIconY = leftOverlayY + padding;
         spriteBatch.draw(Textures.BLASTRADIOUS_HUD, leftIconX, leftIconY, iconSize, iconSize);
-
 
         float blastTextX = leftIconX + iconSize + 5;
 
         float blastTextY = leftIconY + (iconSize + blastTextHeight) / 2f;
         font.draw(spriteBatch, blastLayout, blastTextX, blastTextY);
 
-        // Render remaining enemies count
+        // Render Remaining Enemies Count
         GlyphLayout enemiesLayout = new GlyphLayout(font, String.valueOf(remainingEnemiesCount));
         float enemiesTextWidth = enemiesLayout.width;
         float enemiesTextHeight = enemiesLayout.height;
@@ -133,43 +141,39 @@ public class Hud {
         float enemiesOverlayWidth = iconSize + 5 + enemiesTextWidth + 2 * padding;
         float enemiesOverlayHeight = iconSize + 2 * padding;
 
-// Position the overlay on the screen (e.g., top-center)
+        // Position the overlay on the screen (e.g., bottom-left)
         float enemiesOverlayX = margin;
         float enemiesOverlayY = margin;
 
-// Draw the overlay background
+        // Draw the overlay background
         spriteBatch.draw(transparentBlackTexture, enemiesOverlayX, enemiesOverlayY, enemiesOverlayWidth, enemiesOverlayHeight);
 
-// Draw the icon for remaining enemies
+        // Draw the icon for remaining enemies
         float enemiesIconX = enemiesOverlayX + padding;
         float enemiesIconY = enemiesOverlayY + padding;
         spriteBatch.draw(Textures.ENEMYCOUNT_HUD, enemiesIconX, enemiesIconY, iconSize, iconSize);
 
-// Draw the remaining enemies count
+        // Draw the remaining enemies count
         float enemiesTextX = enemiesIconX + iconSize + 5;
         float enemiesTextY = enemiesIconY + (iconSize + enemiesTextHeight) / 2f;
         font.draw(spriteBatch, enemiesLayout, enemiesTextX, enemiesTextY);
 
+        // Render Concurrent Bomb Count
         GlyphLayout bombLayout = new GlyphLayout(font, String.valueOf(concurrentBombCount));
-        float bombTextWidth  = bombLayout.width;
+        float bombTextWidth = bombLayout.width;
         float bombTextHeight = bombLayout.height;
-
 
         float rightOverlayWidth = iconSize + 5 + bombTextWidth + 2 * padding;
         float rightOverlayHeight = iconSize + 2 * padding;
 
-
         float rightOverlayX = screenWidth - margin - rightOverlayWidth;
         float rightOverlayY = screenHeight - margin - rightOverlayHeight;
 
-
         spriteBatch.draw(transparentBlackTexture, rightOverlayX, rightOverlayY, rightOverlayWidth, rightOverlayHeight);
-
 
         float rightIconX = rightOverlayX + padding;
         float rightIconY = rightOverlayY + padding;
         spriteBatch.draw(Textures.CONCURRENTBOMB_HUD, rightIconX, rightIconY, iconSize, iconSize);
-
 
         float bombTextX = rightIconX + iconSize + 5;
         float bombTextY = rightIconY + (iconSize + bombTextHeight) / 2f;
@@ -179,35 +183,55 @@ public class Hud {
     }
 
     /**
-     * Returns the scaled height of the HUD panel if needed by other code.
+     * Returns the scaled height of the HUD panel based on the screen width and aspect ratio.
+     *
+     * @return The scaled height of the HUD panel.
      */
     public float getScaledHeight() {
-        float screenWidth  = Gdx.graphics.getWidth();
-        float scaleFactor  = 0.3f;
+        float screenWidth = Gdx.graphics.getWidth();
+        float scaleFactor = 0.3f;
         float newPanelWidth = screenWidth * scaleFactor;
-        float aspectRatio  = panelHeight / panelWidth;
+        float aspectRatio = panelHeight / panelWidth;
         return newPanelWidth * aspectRatio;
     }
 
-
+    /**
+     * Handles resizing of the HUD by updating the camera's orthographic projection.
+     *
+     * @param width  The new width of the screen.
+     * @param height The new height of the screen.
+     */
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);
     }
 
+    /**
+     * Sets the current state of the HUD panel, changing its appearance based on the specified state.
+     *
+     * @param state The new {@code PanelState} to apply to the HUD panel.
+     */
     public void setPanelState(PanelState state) {
         switch (state) {
             case BLACK -> panelTexture = blackPanelTexture;
-            case RED   -> panelTexture = redPanelTexture;
-            case BLUE  -> panelTexture = bluePanelTexture;
+            case RED -> panelTexture = redPanelTexture;
+            case BLUE -> panelTexture = bluePanelTexture;
         }
     }
 
+    /**
+     * Enum representing the different visual states of the HUD panel.
+     */
     public enum PanelState {
         BLACK,
         RED,
         BLUE
     }
 
+    /**
+     * Updates the count of remaining enemies displayed on the HUD.
+     *
+     * @param count The number of enemies remaining.
+     */
     public void setRemainingEnemiesCount(int count) {
         this.remainingEnemiesCount = count;
     }

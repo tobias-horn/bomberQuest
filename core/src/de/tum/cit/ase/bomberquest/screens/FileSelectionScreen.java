@@ -20,12 +20,23 @@ import de.tum.cit.ase.bomberquest.ui.MenuButton;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserCallback;
 import games.spooky.gdx.nativefilechooser.NativeFileChooserConfiguration;
 
+/**
+ * Screen that allows users to select or import map files for BomberQuest.
+ * It displays available maps from the internal "maps" directory and provides
+ * an option to import custom maps from the file system.
+ */
 public class FileSelectionScreen extends BaseScreen {
 
     private final Stage stage;
     private final BitmapFont font;
     private final BomberQuestGame game;
 
+    /**
+     * Creates a new FileSelectionScreen.
+     *
+     * @param game the main game instance
+     * @param font the bitmap font used for rendering text
+     */
     public FileSelectionScreen(BomberQuestGame game, BitmapFont font) {
         super(game, font, "assets/startScreen/start_background.jpg", true);
 
@@ -88,11 +99,9 @@ public class FileSelectionScreen extends BaseScreen {
         rootTable.add(mapTable).padBottom(20);
         rootTable.row();
 
-
         Label importLabel = new Label("Import a custom map", labelStyle);
         rootTable.add(importLabel).left().padBottom(10);
         rootTable.row();
-
 
         MenuButton importButton = new MenuButton(
                 "Select Map from File System",
@@ -107,10 +116,7 @@ public class FileSelectionScreen extends BaseScreen {
             public void clicked(InputEvent event, float x, float y) {
                 NativeFileChooserConfiguration conf = new NativeFileChooserConfiguration();
 
-
                 conf.directory = Gdx.files.absolute(System.getProperty("user.home"));
-
-
 
                 conf.title = "Choose a map";
 
@@ -159,22 +165,39 @@ public class FileSelectionScreen extends BaseScreen {
         rootTable.add(backButton).padBottom(10);
     }
 
+    /**
+     * Sets the input processor to this screen's stage when the screen is shown.
+     */
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
     }
 
+    /**
+     * Renders the content specific to the FileSelectionScreen, including the stage actors.
+     *
+     * @param deltaTime the time in seconds since the last render
+     */
     @Override
     public void renderContent(float deltaTime) {
         stage.act(deltaTime);
         stage.draw();
     }
 
+    /**
+     * Updates the viewport of the stage to match the new screen size.
+     *
+     * @param width  the new width of the screen in pixels
+     * @param height the new height of the screen in pixels
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
+    /**
+     * Disposes of the stage and releases resources used by this screen.
+     */
     @Override
     public void dispose() {
         stage.dispose();

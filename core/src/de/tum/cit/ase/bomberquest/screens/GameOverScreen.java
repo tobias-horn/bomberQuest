@@ -24,7 +24,6 @@ public class GameOverScreen extends BaseScreen {
     private final Stage uiStage;
     private final String gameOverMessage;
 
-
     private static final String[] MESSAGES = {
             "Boom! And just like that... Game Over.",
             "Out of lives, but not out of spirit!",
@@ -58,35 +57,28 @@ public class GameOverScreen extends BaseScreen {
 
         super(game, font, "assets/startScreen/start_background.jpg", true);
 
-
         Random random = new Random();
         this.gameOverMessage = MESSAGES[random.nextInt(MESSAGES.length)];
 
-
         this.uiStage = new Stage(new ScreenViewport(), game.getSpriteBatch());
-
 
         Table table = new Table();
         table.setFillParent(true);
         table.center();
-
 
         Label gameOverLabel = new Label("GAME OVER", new Label.LabelStyle(font, font.getColor()));
         gameOverLabel.setFontScale(2.0f);
         table.add(gameOverLabel).padBottom(40f);
         table.row();
 
-
         Label messageLabel = new Label(gameOverMessage, new Label.LabelStyle(font, font.getColor()));
         table.add(messageLabel).padBottom(50f);
         table.row();
-
 
         float desiredWidth = 400f;
         float desiredHeight = 70f;
         NinePatchDrawable upDrawable   = new NinePatchDrawable(Textures.BUTTON_LONG_NINEPATCH_OFF);
         NinePatchDrawable overDrawable = new NinePatchDrawable(Textures.BUTTON_LONG_NINEPATCH_HOVER);
-
 
         MenuButton restartButton = new MenuButton(
                 "Restart Game",
@@ -104,7 +96,6 @@ public class GameOverScreen extends BaseScreen {
         });
         table.add(restartButton).size(desiredWidth, desiredHeight).padBottom(15f);
         table.row();
-
 
         MenuButton menuButton = new MenuButton(
                 "Return to Menu",
@@ -124,29 +115,43 @@ public class GameOverScreen extends BaseScreen {
         });
         table.add(menuButton).size(desiredWidth, desiredHeight);
 
-
         uiStage.addActor(table);
     }
 
-
+    /**
+     * Sets the input processor to the UI stage when the screen is shown.
+     */
     @Override
     public void show() {
         Gdx.input.setInputProcessor(uiStage);
     }
 
-
+    /**
+     * Renders the UI stage by updating and drawing its actors.
+     *
+     * @param deltaTime The time elapsed since the last render.
+     */
     @Override
     protected void renderContent(float deltaTime) {
         uiStage.act(deltaTime);
         uiStage.draw();
     }
 
+    /**
+     * Handles resizing of the screen by updating the viewport of the UI stage.
+     *
+     * @param width  The new width of the screen.
+     * @param height The new height of the screen.
+     */
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
         uiStage.getViewport().update(width, height, true);
     }
 
+    /**
+     * Disposes of the UI stage and any other resources when the screen is no longer needed.
+     */
     @Override
     public void dispose() {
         uiStage.dispose();
