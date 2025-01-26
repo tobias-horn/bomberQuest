@@ -323,4 +323,20 @@ Default (re-bindable in **Settings**):
 
 ---
 
+## AI Usage in This Project
+
+AI tools were utilized during the development of this project to assist with specific tasks that complemented our own efforts. These tasks included:
+
+- Drafting and improving this documentation for clarity and completeness.
+- Writing JavaDoc comments to enhance the readability of the code.
+- Generating verbose and meaningful names for classes, methods, and attributes to align with best practices in code readability.
+- Conducting research and troubleshooting complex issues, such as debugging errors or understanding unfamiliar libraries.
+- Generating artwork for the menu screen to provide a creative and polished visual design.
+- Brainstorming creative and engaging "game over" and "game won" messages for player feedback.
+- Advising on edge cases and best practices that extend beyond the course's scope, such as:
+    - Proper disposal of native resources for improved performance and memory management.
+    - Cross plattform support
+
+---
+
 *Enjoy exploring, bombing obstacles, and collecting power-ups in BomberQuest!*
