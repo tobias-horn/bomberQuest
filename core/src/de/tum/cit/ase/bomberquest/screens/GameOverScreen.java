@@ -75,6 +75,15 @@ public class GameOverScreen extends BaseScreen {
         table.add(messageLabel).padBottom(50f);
         table.row();
 
+        // Display final score
+        int finalScore = 0;
+        if (game.getMap() != null && game.getMap().getScore() != null) {
+            finalScore = game.getMap().getScore().getScore();
+        }
+        Label scoreLabel = new Label("Score: " + finalScore, new Label.LabelStyle(font, font.getColor()));
+        table.add(scoreLabel).padBottom(30f);
+        table.row();
+
         float desiredWidth = 400f;
         float desiredHeight = 70f;
         NinePatchDrawable upDrawable   = new NinePatchDrawable(Textures.BUTTON_LONG_NINEPATCH_OFF);

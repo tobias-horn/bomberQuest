@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
+import de.tum.cit.ase.bomberquest.bonusFeatures.Score;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.objects.Player;
 import de.tum.cit.ase.bomberquest.screens.*;
@@ -32,6 +33,7 @@ public class BomberQuestGame extends Game {
     private MusicTrack currentMusicTrack;
     private Hud hud;
     private Sound gameWonSound;
+    private Score score = new Score();
 
     /**
      * Constructs a new BomberQuestGame instance with the specified file chooser.
@@ -62,7 +64,7 @@ public class BomberQuestGame extends Game {
 
         FileHandle hardcodedMapFile = Gdx.files.internal("maps/map-1.properties");
         this.hud = new Hud(spriteBatch, font);
-        this.map = new GameMap(this, hardcodedMapFile, hud);
+        this.map = new GameMap(this, hardcodedMapFile, hud, score);
 
         goToMenu();
     }
@@ -105,7 +107,7 @@ public class BomberQuestGame extends Game {
                 playMusic(MusicTrack.BACKGROUND);
             }
             case GAME -> {
-                setScreen(new GameScreen(this));
+                setScreen(new GameScreen(this, score));
                 playMusic(MusicTrack.TWO_MINUTE_TRACK);
             }
             case GAME_OVER -> {
@@ -194,7 +196,7 @@ public class BomberQuestGame extends Game {
             }
 
             this.selectedMap = mapPath;
-            this.map = new GameMap(this, fileHandle, hud);
+            this.map = new GameMap(this, fileHandle, hud, score);
             goToGame();
         } catch (Exception e) {
             e.printStackTrace();

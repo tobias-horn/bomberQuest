@@ -32,6 +32,10 @@ public class Hud {
     private int blastRadiusCount = 1;
     private int remainingEnemiesCount = 0;
 
+
+    private int timerInSeconds;
+    private int score;
+
     /**
      * Constructs the Hud with the specified SpriteBatch and BitmapFont.
      * Initializes textures and sets up the HUD panel.
@@ -76,7 +80,7 @@ public class Hud {
 
     /**
      * Renders the HUD panel and associated information such as the timer,
-     * concurrent bombs, blast radius, and remaining enemies.
+     * concurrent bombs, blast radius, remaining enemies, and score.
      *
      * @param timerText The formatted timer text to display.
      */
@@ -129,7 +133,6 @@ public class Hud {
         spriteBatch.draw(Textures.BLASTRADIOUS_HUD, leftIconX, leftIconY, iconSize, iconSize);
 
         float blastTextX = leftIconX + iconSize + 5;
-
         float blastTextY = leftIconY + (iconSize + blastTextHeight) / 2f;
         font.draw(spriteBatch, blastLayout, blastTextX, blastTextY);
 
@@ -178,6 +181,25 @@ public class Hud {
         float bombTextX = rightIconX + iconSize + 5;
         float bombTextY = rightIconY + (iconSize + bombTextHeight) / 2f;
         font.draw(spriteBatch, bombLayout, bombTextX, bombTextY);
+
+        // Render Score in bottom-right corner
+        String scoreText = "Score: " + score;
+        GlyphLayout scoreLayout = new GlyphLayout(font, scoreText);
+        float scoreTextWidth = scoreLayout.width;
+        float scoreTextHeight = scoreLayout.height;
+
+        float scoreOverlayWidth = scoreTextWidth + 2 * padding;
+        float scoreOverlayHeight = iconSize + 2 * padding;
+
+        float scoreOverlayX = screenWidth - margin - scoreOverlayWidth;
+        float scoreOverlayY = margin;
+
+        spriteBatch.draw(transparentBlackTexture, scoreOverlayX, scoreOverlayY, scoreOverlayWidth, scoreOverlayHeight);
+
+        float scoreTextX = scoreOverlayX + padding;
+        float scoreTextY = scoreOverlayY + padding + (iconSize + scoreTextHeight) / 2f;
+
+        font.draw(spriteBatch, scoreLayout, scoreTextX, scoreTextY);
 
         spriteBatch.end();
     }
@@ -234,5 +256,37 @@ public class Hud {
      */
     public void setRemainingEnemiesCount(int count) {
         this.remainingEnemiesCount = count;
+    }
+
+    /**
+     * Sets the remaining time in seconds on the HUD.
+     * @param seconds The remaining time in seconds.
+     */
+    public void setTimerInSeconds(int seconds) {
+        this.timerInSeconds = seconds;
+    }
+
+    /**
+     * Returns the remaining time in seconds as displayed on the HUD.
+     * @return The remaining time in seconds.
+     */
+    public int getTimerInSeconds() {
+        return timerInSeconds;
+    }
+
+    /**
+     * Sets the current score to display on the HUD.
+     * @param score The player's current score.
+     */
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    /**
+     * Returns the current score displayed on the HUD.
+     * @return The current score.
+     */
+    public int getScore() {
+        return score;
     }
 }

@@ -3,6 +3,7 @@ package de.tum.cit.ase.bomberquest.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.World;
+import de.tum.cit.ase.bomberquest.bonusFeatures.Score;
 import de.tum.cit.ase.bomberquest.textures.Animations;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
 import de.tum.cit.ase.bomberquest.textures.Textures;
@@ -13,6 +14,7 @@ public class DestructibleWall extends GameObject implements Drawable {
     private PowerUpType powerUpUnderneath = null;
     private boolean exitOpen = false;
 
+
     // Animation-related fields
     private boolean fadingAway = false;
     private float animationTime = Animations.FALL_OF_THE_WALL.getAnimationDuration();
@@ -21,6 +23,7 @@ public class DestructibleWall extends GameObject implements Drawable {
         super(world, x, y);
         this.exitUnderneath = exitUnderneath;
         this.powerUpUnderneath = powerUpUnderneath;
+
     }
 
     public boolean isExitUnderneath() {

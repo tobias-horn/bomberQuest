@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
+import de.tum.cit.ase.bomberquest.bonusFeatures.Score;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.objects.*;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
@@ -42,12 +43,14 @@ public class GameScreen implements Screen {
     private boolean blinkToggle = false; // Toggles the blink state
     private boolean isGameOver = false; // Tracks whether the game is over
 
+    private Score score;
+
     /**
      * Constructs the GameScreen with the provided game instance.
      *
      * @param game The main game instance.
      */
-    public GameScreen(BomberQuestGame game) {
+    public GameScreen(BomberQuestGame game, Score score) {
         this.game = game;
         this.spriteBatch = game.getSpriteBatch();
         this.map = game.getMap();
@@ -56,6 +59,7 @@ public class GameScreen implements Screen {
         this.mapCamera.setToOrtho(false);
         this.pauseScreen = new PauseScreen(game, game.getSkin().getFont("font"));
         this.remainingTime = initialTime;
+        this.score = score;
     }
 
     /**
@@ -86,7 +90,6 @@ public class GameScreen implements Screen {
             }
 
             // Normalize the velocity vector if moving diagonally
-            // Adapted from https://stackoverflow.com/questions/25583169/vector2-normalize-function-confused-about-diagonal-output
             float magnitude = (float) Math.sqrt(vx * vx + vy * vy);
             if (magnitude > 0) {
                 vx = (vx / magnitude) * moveSpeed;
@@ -103,7 +106,7 @@ public class GameScreen implements Screen {
                 int tileX = (int) Math.floor(px);
                 int tileY = (int) Math.floor(py);
 
-                Bomb bomb = new Bomb(map.getWorld(), tileX, tileY, 1, map);
+                Bomb bomb = new Bomb(map.getWorld(), tileX, tileY, 1, map, score);
                 bomb.setRadius(map.getBlastRadius());
                 bomb.startTimer();
                 map.addBomb(bomb);
@@ -158,6 +161,11 @@ public class GameScreen implements Screen {
 
         hud.setPanelState(state);
         hud.setCounts(map.getConcurrentBombCount(), map.getBlastRadius(), map.getRemainingEnemiesCount());
+
+        // Update HUD with current time (in seconds) and current score
+        hud.setTimerInSeconds(minutes * 60 + seconds);
+        hud.setScore(map.getScore().getScore());
+
         hud.render(timerText);
 
         if(remainingTime == 0){
@@ -265,7 +273,7 @@ public class GameScreen implements Screen {
                 draw(spriteBatch, drawableObj);
             }
             if (obj instanceof Exit) {
-                Gdx.app.log("Rendering", "Exit found at (" + obj.getX() + ", " + obj.getY() + ")");
+
             }
         }
 

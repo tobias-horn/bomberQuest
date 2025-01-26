@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import de.tum.cit.ase.bomberquest.bonusFeatures.Score;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.textures.Animations;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
@@ -47,6 +48,8 @@ public class Bomb extends GameObject implements Drawable {
     /** Whether we have already spawned the ExplosionTile objects for the plus-shape. */
     private boolean explosionInitialized = false;
 
+    private Score score;
+
     /**
      * Creates a new bomb object.
      * @param world The Box2D world the bomb exists in.
@@ -55,13 +58,14 @@ public class Bomb extends GameObject implements Drawable {
      * @param radius The radius of the explosion in tiles.
      * @param gameMap The game map, used for affecting objects.
      */
-    public Bomb(World world, float tileX, float tileY, float radius, GameMap gameMap) {
+    public Bomb(World world, float tileX, float tileY, float radius, GameMap gameMap, Score score) {
         super(world, tileX, tileY); // Calls the GameObject constructor to create the bomb's hitbox.
         this.radius = radius;
         this.gameMap = gameMap;
         this.hasExploded = false; // The bomb hasn't exploded yet.
         this.remainingTime = 0f; // Timer starts at 0 (not yet counting down).
         this.elapsedTime = 0; // Used for animation purposes.
+        this.score = score;
     }
 
     @Override
@@ -92,6 +96,7 @@ public class Bomb extends GameObject implements Drawable {
         if (hasExploded) return;
         hasExploded = true;
         explosionSound.play();
+
 
         // Save the position before destroying the body
         savedX = getX();
@@ -175,6 +180,8 @@ public class Bomb extends GameObject implements Drawable {
             return true; // stop
         } else if (obj instanceof DestructibleWall destructibleWall) {
             destructibleWall.startFading(); // Start fade animation
+            score.addPointsForWallDestroyed();
+            System.out.println("Added points for wall destroyed");
 
             if (destructibleWall.getPowerUpUnderneath() != null) {
                 // spawn powerup
@@ -205,6 +212,8 @@ public class Bomb extends GameObject implements Drawable {
             if (ex == tileX && ey == tileY) {
                 e.getBody().getWorld().destroyBody(e.getBody());
                 e.setBody(null);
+                System.out.println("Added points for enemy killed");
+                score.addPointsForEnemyKilled();
                 it.remove();
             }
         }

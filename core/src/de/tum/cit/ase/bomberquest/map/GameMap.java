@@ -8,7 +8,8 @@ import com.badlogic.gdx.physics.box2d.*;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.objects.*;
 import de.tum.cit.ase.bomberquest.screens.Hud;
-import de.tum.cit.ase.bomberquest.textures.Textures; // for the HUD icons
+import de.tum.cit.ase.bomberquest.textures.Textures;
+import de.tum.cit.ase.bomberquest.bonusFeatures.Score; // <-- Added import
 import java.util.*;
 
 /**
@@ -37,6 +38,9 @@ public class GameMap {
     private int blastRadius = 1; // Radius of bomb explosions
     private int remainingEnemiesCount = 0;
 
+    // Score management
+    private Score score;
+
     // Player and game objects
     private Player player;
     private List<Enemy> enemies = new ArrayList<>(); // List of enemies in the game
@@ -55,10 +59,11 @@ public class GameMap {
      * @param fileHandle The file containing the map definition.
      * @param hud The game's HUD for displaying stats.
      */
-    public GameMap(BomberQuestGame game, FileHandle fileHandle, Hud hud) {
+    public GameMap(BomberQuestGame game, FileHandle fileHandle, Hud hud, Score score) {
         this.game = game;
         this.hud = hud;
         this.world = new World(Vector2.Zero, true); // New physics world with no gravity
+        this.score = score;
 
         // Parse the map and initialize objects
         MapParser.parseMap(this, fileHandle);
@@ -96,6 +101,9 @@ public class GameMap {
                             : (PowerUp) objData2;
                     PowerUp.playSound();
                     powerUp.markForRemoval();
+
+                    // Award points for picking up power-up
+                    score.addPointsForPowerUp();
 
                     // power-up application
                     switch (powerUp.getType()) {
@@ -171,13 +179,15 @@ public class GameMap {
         for (Map.Entry<Vector2, GameObject> entry : map.entrySet()) {
             GameObject obj = entry.getValue();
             if (obj instanceof DestructibleWall wall) {
-                wall.update(frameTime); // Update animation time
+                wall.update(frameTime);
+                // Update animation time
                 if (wall.isFadedAway()) {
                     wallsToRemove.add(entry.getKey());
                 }
             }
         }
         for (Vector2 pos : wallsToRemove) {
+
             removeObjectAt((int) pos.x, (int) pos.y);
         }
 
@@ -200,6 +210,8 @@ public class GameMap {
             int py = (int) Math.floor(player.getY());
             GameObject below = getObjectAt(px, py);
             if (below instanceof Exit exit && exit.isActive()) {
+
+                score.addTimeBonus(hud.getTimerInSeconds());
                 game.goToGameWon();
             }
         }
@@ -307,10 +319,6 @@ public class GameMap {
             System.out.println("Removed object: " + removedObj);
 
 
-            if (removedObj instanceof Enemy) {
-                enemies.remove(removedObj);
-            }
-
             if (removedObj.getBody() != null) {
                 removedObj.getBody().getWorld().destroyBody(removedObj.getBody());
                 removedObj.setBody(null);
@@ -322,6 +330,7 @@ public class GameMap {
             Exit exit = new Exit(world, x, y, activeState);
             Gdx.app.log("GameMap", "Placing Exit at (" + x + ", " + y + ")");
             map.put(new Vector2(x, y), exit);
+
         }
     }
 
@@ -360,7 +369,6 @@ public class GameMap {
     public void addExplosionTile(ExplosionTile tile) {
         explosionTiles.add(tile);
     }
-
 
     //Getters and Setters
 
@@ -422,5 +430,13 @@ public class GameMap {
 
     public int getRemainingEnemiesCount() {
         return remainingEnemiesCount;
+    }
+
+    /**
+     * Returns the Score object for this map.
+     * @return The Score instance.
+     */
+    public Score getScore() {
+        return score;
     }
 }
