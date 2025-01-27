@@ -1,6 +1,7 @@
 package de.tum.cit.ase.bomberquest.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,12 +9,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
+import de.tum.cit.ase.bomberquest.audio.MusicTrack;
 import de.tum.cit.ase.bomberquest.bonusFeatures.Score;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.objects.*;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
 import de.tum.cit.ase.bomberquest.textures.Textures;
-import de.tum.cit.ase.bomberquest.bonusFeatures.KeyBindings;
+import de.tum.cit.ase.bomberquest.ui.KeyBindings;
+
+import java.util.Random;
 
 /**
  * Represents the main game screen, where the gameplay occurs.

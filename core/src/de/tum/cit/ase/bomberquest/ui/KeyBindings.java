@@ -1,4 +1,4 @@
-package de.tum.cit.ase.bomberquest.bonusFeatures;
+package de.tum.cit.ase.bomberquest.ui;
 
 import com.badlogic.gdx.Input;
 import java.util.HashMap;

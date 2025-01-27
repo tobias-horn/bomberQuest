@@ -14,7 +14,7 @@ import com.badlogic.gdx.audio.Music;
 
 public enum MusicTrack {
     BACKGROUND("mainMenuTrack.mp3", 1f),
-    TWO_MINUTE_TRACK("GameplayMusic.mp3", 1f);
+    TWO_MINUTE_TRACK("twoMinuteTrack.mp3", 1f);
 
     private final Music music;
     private final float originalVolume;
@@ -28,6 +28,7 @@ public enum MusicTrack {
         this.originalVolume = volume;
 
     }
+
 
     public void play() {
         this.music.play();
