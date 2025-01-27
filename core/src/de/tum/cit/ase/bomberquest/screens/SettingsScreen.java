@@ -3,7 +3,6 @@ package de.tum.cit.ase.bomberquest.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -19,7 +18,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
 import de.tum.cit.ase.bomberquest.textures.Textures;
-import de.tum.cit.ase.bomberquest.ui.KeyBindings;
+import de.tum.cit.ase.bomberquest.bonusFeatures.KeyBindings;
 import de.tum.cit.ase.bomberquest.ui.MenuButton;
 
 /**
