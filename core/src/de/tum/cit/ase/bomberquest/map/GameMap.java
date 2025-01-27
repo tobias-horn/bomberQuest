@@ -9,7 +9,8 @@ import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.objects.*;
 import de.tum.cit.ase.bomberquest.screens.Hud;
 import de.tum.cit.ase.bomberquest.textures.Textures;
-import de.tum.cit.ase.bomberquest.bonusFeatures.Score; // <-- Added import
+import de.tum.cit.ase.bomberquest.bonusFeatures.Score;
+
 import java.util.*;
 
 /**
@@ -173,23 +174,6 @@ public class GameMap {
         // Collect walls to be removed after the loop
         // This is needed because we ran into a ConcurrentModificationException Error when trying to remove it from the collection while iterating over it
         // Adapted from https://stackoverflow.com/questions/5113016/getting-a-concurrentmodificationexception-thrown-when-removing-an-element-from-a
-        List<Vector2> wallsToRemove = new ArrayList<>();
-
-        // Remove destructible walls with finished animations
-        for (Map.Entry<Vector2, GameObject> entry : map.entrySet()) {
-            GameObject obj = entry.getValue();
-            if (obj instanceof DestructibleWall wall) {
-                wall.update(frameTime);
-                // Update animation time
-                if (wall.isFadedAway()) {
-                    wallsToRemove.add(entry.getKey());
-                }
-            }
-        }
-        for (Vector2 pos : wallsToRemove) {
-
-            removeObjectAt((int) pos.x, (int) pos.y);
-        }
 
         // Step the physics simulation
         doPhysicsStep(frameTime);

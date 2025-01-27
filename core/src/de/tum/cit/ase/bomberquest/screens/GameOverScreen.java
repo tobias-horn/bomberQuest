@@ -75,28 +75,17 @@ public class GameOverScreen extends BaseScreen {
         table.add(messageLabel).padBottom(50f);
         table.row();
 
-        // --- New logic for final score and high score ---
+
         int finalScore = 0;
-        int highScore  = 0;
+
         if (game.getMap() != null && game.getMap().getScore() != null) {
-
-
-
-
             finalScore = game.getMap().getScore().getScore();
-
         }
 
         // Display final score
         Label scoreLabel = new Label("Score: " + finalScore, new Label.LabelStyle(font, font.getColor()));
         table.add(scoreLabel).padBottom(30f);
         table.row();
-
-        // Display high score
-        Label highScoreLabel = new Label("High Score: " + highScore, new Label.LabelStyle(font, font.getColor()));
-        table.add(highScoreLabel).padBottom(40f);
-        table.row();
-        // --- End new logic ---
 
         float desiredWidth = 400f;
         float desiredHeight = 70f;

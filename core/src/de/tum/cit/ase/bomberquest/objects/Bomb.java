@@ -179,9 +179,11 @@ public class Bomb extends GameObject implements Drawable {
         if (obj instanceof IndestructibleWall) {
             return true; // stop
         } else if (obj instanceof DestructibleWall destructibleWall) {
-            destructibleWall.startFading(); // Start fade animation
+
             score.addPointsForWallDestroyed();
             System.out.println("Added points for wall destroyed");
+
+            gameMap.removeObjectAt(tileX, tileY);
 
             if (destructibleWall.getPowerUpUnderneath() != null) {
                 // spawn powerup
