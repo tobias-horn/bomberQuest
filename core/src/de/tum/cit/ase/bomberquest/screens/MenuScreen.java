@@ -10,9 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.textures.Textures;
-import de.tum.cit.ase.bomberquest.ui.MenuButton;
-
-import javax.swing.*;
+import de.tum.cit.ase.bomberquest.bonusFeatures.ui.MenuButton;
 
 /**
  * MenuScreen displays the main menu of the BomberQuest game.

@@ -1,6 +1,7 @@
-package de.tum.cit.ase.bomberquest.map;
+package de.tum.cit.ase.bomberquest.bonusFeatures;
 
 import com.badlogic.gdx.math.Vector2;
+import de.tum.cit.ase.bomberquest.map.GameMap;
 
 import java.util.*;
 

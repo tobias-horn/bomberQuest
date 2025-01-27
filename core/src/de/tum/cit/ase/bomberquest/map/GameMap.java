@@ -97,8 +97,6 @@ public class GameMap {
                 if (player != null && otherObject != null) {
                     if (otherObject instanceof Enemy) {
                         handlePlayerEnemyCollision();
-                    } else if (otherObject instanceof SpeedPowerUp) {
-                        ((SpeedPowerUp) otherObject).markForRemoval();
                     } else if (otherObject instanceof PowerUp) {
                         ((PowerUp) otherObject).markForRemoval();
                     }
@@ -136,19 +134,18 @@ public class GameMap {
 
 
         for (GameObject obj : toAwardEffects) {
+
             if (obj instanceof PowerUp pu) {
+                System.out.println("Power Up collected");
+                System.out.println(pu.getType());
                 PowerUp.playSound();
                 score.addPointsForPowerUp();
                 switch (pu.getType()) {
                     case BLASTRADIUS -> blastRadius = Math.min(blastRadius + 1, 8);
                     case CONCURRENTBOMB -> concurrentBombCount = Math.min(concurrentBombCount + 1, 8);
+                    case SPEED -> { player.activateSpeedPowerUp(30f);
+                                hud.setSpeedPowerUpActive(true);}
                 }
-            }
-            else if (obj instanceof SpeedPowerUp speedPU) {
-                SpeedPowerUp.playSound();
-                score.addPointsForPowerUp();
-                player.activateSpeedPowerUp(30f);
-                hud.setSpeedPowerUpActive(true);
             }
         }
 
@@ -340,7 +337,6 @@ public class GameMap {
                 PowerUpType type = dw.getPowerUpUnderneath();
                 switch (type) {
                     case SPEED -> {
-
                         SpeedPowerUp speedPowerUp = new SpeedPowerUp(world, x, y);
                         map.put(new Vector2(x, y), speedPowerUp);
                     }
