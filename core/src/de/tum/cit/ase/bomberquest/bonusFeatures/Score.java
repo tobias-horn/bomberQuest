@@ -30,6 +30,7 @@ public class Score {
      */
     public void addPointsForWallDestroyed() {
         score += 15;
+        System.out.println("addPointsForWallDestroyed: 15");
     }
 
     /**
@@ -37,6 +38,7 @@ public class Score {
      */
     public void addPointsForEnemyKilled() {
         score += 100;
+        System.out.println("addPointsForEnemyKilled: 100");
     }
 
     /**
@@ -44,6 +46,7 @@ public class Score {
      */
     public void addPointsForPowerUp() {
         score += 85;
+        System.out.println("addPointsForPowerUp: 85");
     }
 
     /**

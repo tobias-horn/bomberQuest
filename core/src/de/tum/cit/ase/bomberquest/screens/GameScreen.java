@@ -71,6 +71,9 @@ public class GameScreen implements Screen {
     public void render(float deltaTime) {
         if (!paused) {
 
+
+            map.tick(deltaTime);
+
             float moveSpeed = 2f; // Player's speed
             float vx = 0; // Horizontal velocity
             float vy = 0; // Vertical velocity
@@ -114,7 +117,6 @@ public class GameScreen implements Screen {
 
             map.getPlayer().updateDirection(vx, vy);
 
-            map.tick(deltaTime);
 
             remainingTime -= deltaTime;
             if (remainingTime < 0) {

@@ -78,84 +78,39 @@ public class GameMap {
             public void beginContact(Contact contact) {
                 Fixture fixtureA = contact.getFixtureA();
                 Fixture fixtureB = contact.getFixtureB();
-                Object objData1 = fixtureA.getBody().getUserData();
-                Object objData2 = fixtureB.getBody().getUserData();
+                Object objDataA = fixtureA.getBody().getUserData();
+                Object objDataB = fixtureB.getBody().getUserData();
 
-                // If Player collides with Enemy -> game over
-                boolean isPlayerEnemyCollision =
-                        (objData1 instanceof Player && objData2 instanceof Enemy) ||
-                                (objData2 instanceof Player && objData1 instanceof Enemy);
+                // Identify if one of the objects is the player
+                Player player = null;
+                Object otherObject = null;
 
-                if (isPlayerEnemyCollision) {
-                    Gdx.app.log("Collision", "Player collided with an Enemy!");
-                    game.goToGameOver();
+                if (objDataA instanceof Player) {
+                    player = (Player) objDataA;
+                    otherObject = objDataB;
+                } else if (objDataB instanceof Player) {
+                    player = (Player) objDataB;
+                    otherObject = objDataA;
                 }
 
-                // If Player collides with a PowerUp -> pick it up
-                boolean isPlayerPowerUpCollision =
-                        (objData1 instanceof Player && objData2 instanceof PowerUp) ||
-                                (objData2 instanceof Player && objData1 instanceof PowerUp);
 
-                if (isPlayerPowerUpCollision) {
-                    Gdx.app.log("Collision", "Player collided with a PowerUp!");
-                    PowerUp powerUp = (objData1 instanceof PowerUp)
-                            ? (PowerUp) objData1
-                            : (PowerUp) objData2;
-                    PowerUp.playSound();
-                    powerUp.markForRemoval();
-
-                    // Award points for picking up power-up
-                    score.addPointsForPowerUp();
-
-                    // power-up application
-                    switch (powerUp.getType()) {
-                        case BLASTRADIUS -> {
-                            blastRadius = Math.min(blastRadius + 1, 8); // Increase blast radius, max 8
-                            Gdx.app.log("PowerUp", "Blast radius is now " + blastRadius);
-                        }
-                        case CONCURRENTBOMB -> {
-                            concurrentBombCount = Math.min(concurrentBombCount + 1, 8); // Increase bomb count, max 8
-                            Gdx.app.log("PowerUp", "Concurrent bombs is now " + concurrentBombCount);
-                        }
-                        case SPEED -> {
-                            // The logic for speed here,
-                            // though you might prefer your separate SpeedPowerUp collision logic.
-                            player.activateSpeedPowerUp(30f);
-                            hud.setSpeedPowerUpActive(true);
-                        }
-                        default ->
-                                Gdx.app.error("GameMap", "Unknown PowerUpType: " + powerUp.getType());
+                if (player != null && otherObject != null) {
+                    if (otherObject instanceof Enemy) {
+                        handlePlayerEnemyCollision();
+                    } else if (otherObject instanceof SpeedPowerUp) {
+                        ((SpeedPowerUp) otherObject).markForRemoval();
+                    } else if (otherObject instanceof PowerUp) {
+                        ((PowerUp) otherObject).markForRemoval();
                     }
                 }
-
-
-                boolean isPlayerSpeedCollision =
-                        (objData1 instanceof Player && objData2 instanceof SpeedPowerUp) ||
-                                (objData2 instanceof Player && objData1 instanceof SpeedPowerUp);
-
-                if (isPlayerSpeedCollision) {
-                    Gdx.app.log("Collision", "Player collided with a Speed PowerUp!");
-                    SpeedPowerUp powerUp = (objData1 instanceof SpeedPowerUp)
-                            ? (SpeedPowerUp) objData1
-                            : (SpeedPowerUp) objData2;
-
-                    // Play pick-up sound
-                    SpeedPowerUp.playSound();
-                    powerUp.markForRemoval();
-
-                    // Add points for picking up a power-up if you wish
-                    score.addPointsForPowerUp();
-
-                    // Activate the speed effect: double speed for 30s
-                    player.activateSpeedPowerUp(30f);
-
-                    // Update HUD to show speed icon
-                    hud.setSpeedPowerUpActive(true);
-                }
-
-
-
             }
+
+            private void handlePlayerEnemyCollision() {
+                Gdx.app.log("Collision", "Player collided with an Enemy!");
+                game.goToGameOver();
+            }
+
+
             @Override public void endContact(Contact contact) {}
             @Override public void preSolve(Contact contact, Manifold oldManifold) {}
             @Override public void postSolve(Contact contact, ContactImpulse impulse) {}
@@ -165,16 +120,39 @@ public class GameMap {
     /**
      * Removes power-ups that have been marked for removal from the map.
      */
-    private void removeMarkedPowerUps() {
+    private void handlePowerUps() {
         List<Vector2> toRemovePositions = new ArrayList<>();
+        List<GameObject> toAwardEffects = new ArrayList<>();
 
-        // Find all power-ups marked for removal
+
         for (Map.Entry<Vector2, GameObject> entry : map.entrySet()) {
-            if (entry.getValue() instanceof PowerUp p && p.isMarkedForRemoval()) {
+            GameObject obj = entry.getValue();
+            if ((obj instanceof PowerUp && ((PowerUp) obj).isMarkedForRemoval())
+                    || (obj instanceof SpeedPowerUp && ((SpeedPowerUp) obj).isMarkedForRemoval())) {
                 toRemovePositions.add(entry.getKey());
+                toAwardEffects.add(obj);
             }
         }
-        // Remove marked power-ups from the map
+
+
+        for (GameObject obj : toAwardEffects) {
+            if (obj instanceof PowerUp pu) {
+                PowerUp.playSound();
+                score.addPointsForPowerUp();
+                switch (pu.getType()) {
+                    case BLASTRADIUS -> blastRadius = Math.min(blastRadius + 1, 8);
+                    case CONCURRENTBOMB -> concurrentBombCount = Math.min(concurrentBombCount + 1, 8);
+                }
+            }
+            else if (obj instanceof SpeedPowerUp speedPU) {
+                SpeedPowerUp.playSound();
+                score.addPointsForPowerUp();
+                player.activateSpeedPowerUp(30f);
+                hud.setSpeedPowerUpActive(true);
+            }
+        }
+
+
         for (Vector2 pos : toRemovePositions) {
             removeObjectAt((int) pos.x, (int) pos.y);
         }
@@ -213,7 +191,7 @@ public class GameMap {
         // Step the physics simulation
         doPhysicsStep(frameTime);
         // Remove marked power-ups
-        removeMarkedPowerUps();
+        handlePowerUps();
 
         // Activate exit if all enemies are dead
         boolean allEnemiesDead = enemies.isEmpty();

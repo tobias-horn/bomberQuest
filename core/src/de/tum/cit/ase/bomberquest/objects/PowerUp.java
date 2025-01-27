@@ -15,6 +15,7 @@ public class PowerUp extends GameObject implements Drawable {
     private static final Sound clickSound = Gdx.audio.newSound(Gdx.files.internal("assets/audio/powerUp.mp3"));
     private boolean markedForRemoval = false;
 
+
     public void markForRemoval() {
         this.markedForRemoval = true;
     }
@@ -70,6 +71,7 @@ public class PowerUp extends GameObject implements Drawable {
     public PowerUpType getType() {
         return this.type;
     }
+
 
 
 }

@@ -13,6 +13,7 @@ public class SpeedPowerUp extends GameObject {
 
     private boolean markedForRemoval = false;
 
+
     public SpeedPowerUp(World world, float x, float y) {
         super(world, x, y);
         createHitbox(world, x, y);
@@ -51,4 +52,6 @@ public class SpeedPowerUp extends GameObject {
     public void markForRemoval() {
         this.markedForRemoval = true;
     }
+
+
 }
