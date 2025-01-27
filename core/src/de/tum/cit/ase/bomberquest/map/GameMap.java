@@ -6,9 +6,9 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
+import de.tum.cit.ase.bomberquest.bonusFeatures.SpeedPowerUp;
 import de.tum.cit.ase.bomberquest.objects.*;
 import de.tum.cit.ase.bomberquest.screens.Hud;
-import de.tum.cit.ase.bomberquest.textures.Textures;
 import de.tum.cit.ase.bomberquest.bonusFeatures.Score;
 
 import java.util.*;
@@ -65,6 +65,7 @@ public class GameMap {
         this.hud = hud;
         this.world = new World(Vector2.Zero, true); // New physics world with no gravity
         this.score = score;
+        hud.setSpeedPowerUpActive(false);
 
         // Parse the map and initialize objects
         MapParser.parseMap(this, fileHandle);
@@ -116,10 +117,44 @@ public class GameMap {
                             concurrentBombCount = Math.min(concurrentBombCount + 1, 8); // Increase bomb count, max 8
                             Gdx.app.log("PowerUp", "Concurrent bombs is now " + concurrentBombCount);
                         }
+                        case SPEED -> {
+                            // The logic for speed here,
+                            // though you might prefer your separate SpeedPowerUp collision logic.
+                            player.activateSpeedPowerUp(30f);
+                            hud.setSpeedPowerUpActive(true);
+                        }
                         default ->
                                 Gdx.app.error("GameMap", "Unknown PowerUpType: " + powerUp.getType());
                     }
                 }
+
+
+                boolean isPlayerSpeedCollision =
+                        (objData1 instanceof Player && objData2 instanceof SpeedPowerUp) ||
+                                (objData2 instanceof Player && objData1 instanceof SpeedPowerUp);
+
+                if (isPlayerSpeedCollision) {
+                    Gdx.app.log("Collision", "Player collided with a Speed PowerUp!");
+                    SpeedPowerUp powerUp = (objData1 instanceof SpeedPowerUp)
+                            ? (SpeedPowerUp) objData1
+                            : (SpeedPowerUp) objData2;
+
+                    // Play pick-up sound
+                    SpeedPowerUp.playSound();
+                    powerUp.markForRemoval();
+
+                    // Add points for picking up a power-up if you wish
+                    score.addPointsForPowerUp();
+
+                    // Activate the speed effect: double speed for 30s
+                    player.activateSpeedPowerUp(30f);
+
+                    // Update HUD to show speed icon
+                    hud.setSpeedPowerUpActive(true);
+                }
+
+
+
             }
             @Override public void endContact(Contact contact) {}
             @Override public void preSolve(Contact contact, Manifold oldManifold) {}
@@ -199,6 +234,10 @@ public class GameMap {
                 game.goToGameWon();
             }
         }
+
+        if (player != null && player.getSpeedTimer() <= 0f) {
+            hud.setSpeedPowerUpActive(false);
+        }
     }
 
     /**
@@ -241,6 +280,7 @@ public class GameMap {
             case 4 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, true, null));
             case 5 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.CONCURRENTBOMB));
             case 6 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.BLASTRADIUS));
+            case 7 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.SPEED));
         }
     }
 
@@ -302,19 +342,37 @@ public class GameMap {
         if (removedObj != null) {
             System.out.println("Removed object: " + removedObj);
 
-
             if (removedObj.getBody() != null) {
                 removedObj.getBody().getWorld().destroyBody(removedObj.getBody());
                 removedObj.setBody(null);
             }
         }
 
-        if (removedObj instanceof DestructibleWall dw && dw.isExitUnderneath()) {
-            boolean activeState = enemies.isEmpty(); // set active if no enemies
-            Exit exit = new Exit(world, x, y, activeState);
-            Gdx.app.log("GameMap", "Placing Exit at (" + x + ", " + y + ")");
-            map.put(new Vector2(x, y), exit);
 
+        if (removedObj instanceof DestructibleWall dw) {
+
+            if (dw.isExitUnderneath()) {
+                boolean activeState = enemies.isEmpty();
+                Exit exit = new Exit(world, x, y, activeState);
+                Gdx.app.log("GameMap", "Placing Exit at (" + x + ", " + y + ")");
+                map.put(new Vector2(x, y), exit);
+            }
+
+            else if (dw.getPowerUpUnderneath() != null) {
+                PowerUpType type = dw.getPowerUpUnderneath();
+                switch (type) {
+                    case SPEED -> {
+
+                        SpeedPowerUp speedPowerUp = new SpeedPowerUp(world, x, y);
+                        map.put(new Vector2(x, y), speedPowerUp);
+                    }
+                    case BLASTRADIUS, CONCURRENTBOMB -> {
+
+                        PowerUp powerUp = new PowerUp(world, x, y, type);
+                        map.put(new Vector2(x, y), powerUp);
+                    }
+                }
+            }
         }
     }
 

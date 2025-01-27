@@ -55,6 +55,8 @@ public class PowerUp extends GameObject implements Drawable {
                 return Textures.POWERUP_CONCURRENTBOMB;
             case BLASTRADIUS:
                 return Textures.BLASTRADIUS;
+            case SPEED:
+                return Textures.SPEED_POWER_UP;
             default:
                 throw new IllegalStateException("Unexpected type: " + type);
         }

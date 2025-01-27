@@ -15,9 +15,14 @@ public class Player extends GameObject implements Drawable {
 
     /** Time elapsed for animation purposes. */
     private float elapsedTime;
+
     // Fields in the Player class
     private PlayerDirection currentDirection = PlayerDirection.DOWN;
     private float vx = 0, vy = 0; // Velocity components
+
+
+    private float speedMultiplier = 1.0f;
+    private float speedTimer = 0f;
 
     // player directions
     public enum PlayerDirection {
@@ -54,7 +59,6 @@ public class Player extends GameObject implements Drawable {
         CircleShape circle = new CircleShape();
         circle.setRadius(0.4f);
 
-
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circle;
 
@@ -69,15 +73,21 @@ public class Player extends GameObject implements Drawable {
     }
 
     /**
-     * Updates the player's state every frame, such as animation timing.
+     * Updates the player's logic each frame (including animation timing).
      *
      * @param frameTime The time elapsed since the last frame.
      */
     public void tick(float frameTime) {
-        this.elapsedTime += frameTime; // Update animation timing
-        // Add other player-specific updates here (e.g., power-ups, health checks)
+        this.elapsedTime += frameTime;
+
     }
 
+    /**
+     * Sets the local velocity components and updates the player's facing direction.
+     *
+     * @param vx horizontal velocity component
+     * @param vy vertical velocity component
+     */
     public void updateDirection(float vx, float vy) {
         this.vx = vx;
         this.vy = vy;
@@ -95,8 +105,39 @@ public class Player extends GameObject implements Drawable {
         }
     }
 
+    /**
+     * The main update method called every frame.
+     * Handles the speed power-up timer and applies the final velocity to the Box2D body.
+     *
+     * @param deltaTime The time elapsed since the last frame.
+     */
+
     public void update(float deltaTime) {
         this.elapsedTime += deltaTime;
+
+
+        if (speedTimer > 0f) {
+            speedTimer -= deltaTime;
+            if (speedTimer <= 0f) {
+
+                speedMultiplier = 1.0f;
+                speedTimer = 0f;
+            }
+        }
+
+        if (body != null) {
+            body.setLinearVelocity(vx * speedMultiplier, vy * speedMultiplier);
+        }
+    }
+
+    /**
+     * Activates a speed power-up, doubling the player's speed for a given duration.
+     *
+     * @param durationSeconds The duration (in seconds) for the speed boost.
+     */
+    public void activateSpeedPowerUp(float durationSeconds) {
+        this.speedMultiplier = 10.0f;
+        this.speedTimer = durationSeconds;
     }
 
     /**
@@ -120,5 +161,9 @@ public class Player extends GameObject implements Drawable {
             default:
                 throw new IllegalStateException("Unexpected direction: " + currentDirection);
         }
+    }
+
+    public float getSpeedTimer() {
+        return speedTimer;
     }
 }

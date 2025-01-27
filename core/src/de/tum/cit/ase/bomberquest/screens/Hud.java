@@ -36,6 +36,8 @@ public class Hud {
     private int timerInSeconds;
     private int score;
 
+    private boolean speedPowerUpActive = false;
+
     /**
      * Constructs the Hud with the specified SpriteBatch and BitmapFont.
      * Initializes textures and sets up the HUD panel.
@@ -115,28 +117,50 @@ public class Hud {
         float margin = 15f;
         float padding = 10f;
 
+        // =========================
         // Render Blast Radius Count
+        // =========================
         GlyphLayout blastLayout = new GlyphLayout(font, String.valueOf(blastRadiusCount));
         float blastTextWidth = blastLayout.width;
         float blastTextHeight = blastLayout.height;
 
-        float leftOverlayWidth = iconSize + 5 + blastTextWidth + 2 * padding;
-        float leftOverlayHeight = iconSize + 2 * padding;
+        float blastOverlayWidth = iconSize + 5 + blastTextWidth + 2 * padding;
+        float blastOverlayHeight = iconSize + 2 * padding;
 
-        float leftOverlayX = margin;
-        float leftOverlayY = screenHeight - margin - leftOverlayHeight;
+        float blastOverlayX = margin;
+        float blastOverlayY = screenHeight - margin - blastOverlayHeight;
 
-        spriteBatch.draw(transparentBlackTexture, leftOverlayX, leftOverlayY, leftOverlayWidth, leftOverlayHeight);
+        spriteBatch.draw(transparentBlackTexture, blastOverlayX, blastOverlayY, blastOverlayWidth, blastOverlayHeight);
 
-        float leftIconX = leftOverlayX + padding;
-        float leftIconY = leftOverlayY + padding;
-        spriteBatch.draw(Textures.BLASTRADIOUS_HUD, leftIconX, leftIconY, iconSize, iconSize);
+        float blastIconX = blastOverlayX + padding;
+        float blastIconY = blastOverlayY + padding;
+        spriteBatch.draw(Textures.BLASTRADIOUS_HUD, blastIconX, blastIconY, iconSize, iconSize);
 
-        float blastTextX = leftIconX + iconSize + 5;
-        float blastTextY = leftIconY + (iconSize + blastTextHeight) / 2f;
+        float blastTextX = blastIconX + iconSize + 5;
+        float blastTextY = blastIconY + (iconSize + blastTextHeight) / 2f;
         font.draw(spriteBatch, blastLayout, blastTextX, blastTextY);
 
+        // ===================================
+        // Render Speed Power-Up Next to Blast
+        // ===================================
+        if (speedPowerUpActive) {
+            GlyphLayout speedLayout = new GlyphLayout(font, ""); // No count for speed
+            float speedOverlayWidth = iconSize + 2 * padding; // No text
+            float speedOverlayHeight = iconSize + 2 * padding;
+
+            float speedOverlayX = blastOverlayX + blastOverlayWidth + padding; // Next to blast
+            float speedOverlayY = blastOverlayY;
+
+            spriteBatch.draw(transparentBlackTexture, speedOverlayX, speedOverlayY, speedOverlayWidth, speedOverlayHeight);
+
+            float speedIconX = speedOverlayX + padding;
+            float speedIconY = speedOverlayY + padding;
+            spriteBatch.draw(Textures.SPEED_POWER_UP_HUD, speedIconX, speedIconY, iconSize, iconSize);
+        }
+
+        // ===================================
         // Render Remaining Enemies Count
+        // ===================================
         GlyphLayout enemiesLayout = new GlyphLayout(font, String.valueOf(remainingEnemiesCount));
         float enemiesTextWidth = enemiesLayout.width;
         float enemiesTextHeight = enemiesLayout.height;
@@ -161,28 +185,32 @@ public class Hud {
         float enemiesTextY = enemiesIconY + (iconSize + enemiesTextHeight) / 2f;
         font.draw(spriteBatch, enemiesLayout, enemiesTextX, enemiesTextY);
 
+        // ===================================
         // Render Concurrent Bomb Count
+        // ===================================
         GlyphLayout bombLayout = new GlyphLayout(font, String.valueOf(concurrentBombCount));
         float bombTextWidth = bombLayout.width;
         float bombTextHeight = bombLayout.height;
 
-        float rightOverlayWidth = iconSize + 5 + bombTextWidth + 2 * padding;
-        float rightOverlayHeight = iconSize + 2 * padding;
+        float bombOverlayWidth = iconSize + 5 + bombTextWidth + 2 * padding;
+        float bombOverlayHeight = iconSize + 2 * padding;
 
-        float rightOverlayX = screenWidth - margin - rightOverlayWidth;
-        float rightOverlayY = screenHeight - margin - rightOverlayHeight;
+        float bombOverlayX = screenWidth - margin - bombOverlayWidth;
+        float bombOverlayY = screenHeight - margin - bombOverlayHeight;
 
-        spriteBatch.draw(transparentBlackTexture, rightOverlayX, rightOverlayY, rightOverlayWidth, rightOverlayHeight);
+        spriteBatch.draw(transparentBlackTexture, bombOverlayX, bombOverlayY, bombOverlayWidth, bombOverlayHeight);
 
-        float rightIconX = rightOverlayX + padding;
-        float rightIconY = rightOverlayY + padding;
-        spriteBatch.draw(Textures.CONCURRENTBOMB_HUD, rightIconX, rightIconY, iconSize, iconSize);
+        float bombIconX = bombOverlayX + padding;
+        float bombIconY = bombOverlayY + padding;
+        spriteBatch.draw(Textures.CONCURRENTBOMB_HUD, bombIconX, bombIconY, iconSize, iconSize);
 
-        float bombTextX = rightIconX + iconSize + 5;
-        float bombTextY = rightIconY + (iconSize + bombTextHeight) / 2f;
+        float bombTextX = bombIconX + iconSize + 5;
+        float bombTextY = bombIconY + (iconSize + bombTextHeight) / 2f;
         font.draw(spriteBatch, bombLayout, bombTextX, bombTextY);
 
+        // ===================================
         // Render Score in bottom-right corner
+        // ===================================
         String scoreText = "Score: " + score;
         GlyphLayout scoreLayout = new GlyphLayout(font, scoreText);
         float scoreTextWidth = scoreLayout.width;
@@ -288,5 +316,15 @@ public class Hud {
      */
     public int getScore() {
         return score;
+    }
+
+
+    /**
+     * Sets whether the Speed Power-Up is active, controlling its display on the HUD.
+     *
+     * @param active True to display the Speed Power-Up icon, false to hide it.
+     */
+    public void setSpeedPowerUpActive(boolean active) {
+        this.speedPowerUpActive = active;
     }
 }

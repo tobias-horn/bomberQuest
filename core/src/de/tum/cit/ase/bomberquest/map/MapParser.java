@@ -32,6 +32,9 @@ public class MapParser {
             placeRandomExit(tileMap);
         }
 
+        addSpeedPowerUps(tileMap);
+
+
 
         for(Map.Entry<String, Integer> entry : tileMap.entrySet()){
                 int x = Integer.parseInt(entry.getKey().split(",")[0]);
@@ -61,6 +64,26 @@ public class MapParser {
         tileMap.put(selectedKey, 4);
 
 
+    }
+
+    public static void addSpeedPowerUps(HashMap<String, Integer> tileMap) {
+        List<String> possiblePositions = new ArrayList<>();
+
+        for (Map.Entry<String, Integer> entry : tileMap.entrySet()) {
+            if (entry.getValue() == 1) {
+
+                possiblePositions.add(entry.getKey());
+            }
+        }
+
+
+        Collections.shuffle(possiblePositions);
+        int maxSpeedPowerUps = Math.min(4, possiblePositions.size());
+
+        for (int i = 0; i < maxSpeedPowerUps; i++) {
+            String key = possiblePositions.get(i);
+            tileMap.put(key, 7);
+        }
     }
 
 }

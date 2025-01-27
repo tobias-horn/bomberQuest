@@ -112,7 +112,7 @@ public class GameScreen implements Screen {
                 map.addBomb(bomb);
             }
 
-            map.getPlayer().getBody().setLinearVelocity(vx, vy);
+            map.getPlayer().updateDirection(vx, vy);
 
             map.tick(deltaTime);
 

@@ -34,6 +34,9 @@ public class Textures {
 
     public static final TextureRegion ENEMYCOUNT_HUD = new TextureRegion(new Texture(new FileHandle("assets/texture/enemyCountHUD.png")));
 
+    public static final TextureRegion SPEED_POWER_UP_HUD = new TextureRegion(new Texture(new FileHandle("assets/texture/speedPuHUD.png")));
+    public static final TextureRegion SPEED_POWER_UP = new TextureRegion(new Texture(new FileHandle("assets/texture/speedPU.png")));
+
 
     // Menu button textures
     public static final TextureRegion BUTTON_LONG_OFF = new TextureRegion(
