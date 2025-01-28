@@ -26,6 +26,8 @@ public class Enemy extends GameObject implements Drawable {
     /** The movement speed of the enemy. */
     private float speed = 1f;
 
+    private boolean markedForRemoval = false;
+
     // Random wandering
     private float randomWalkTimer = 0f; // Timer for how long to move in one random direction
     private Vector2 randomDirectionVector = new Vector2(0, 0); // Current random direction
@@ -195,6 +197,14 @@ public class Enemy extends GameObject implements Drawable {
                 currentDirection = Direction.DOWN;
             }
         }
+    }
+
+    public void markForRemoval() {
+        this.markedForRemoval = true;
+    }
+
+    public boolean isMarkedForRemoval() {
+        return markedForRemoval;
     }
 
     @Override

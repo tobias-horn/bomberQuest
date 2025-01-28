@@ -22,6 +22,8 @@ public class KeyBindings {
     public static final String MOVE_RIGHT = "move_right";
     public static final String PLACE_BOMB = "place_bomb";
     public static final String PAUSE_GAME = "pause_game";
+    public static final String SHOOT_ARROW = "shoot_arrow";
+
 
     private static final Preferences prefs = Gdx.app.getPreferences("KeyBindings");
 
@@ -34,6 +36,7 @@ public class KeyBindings {
         bindings.put(MOVE_RIGHT, Input.Keys.D);        // Default: D
         bindings.put(PLACE_BOMB, Input.Keys.SPACE);    // Default: SPACE
         bindings.put(PAUSE_GAME, Input.Keys.ESCAPE);    // Default: ESC
+        bindings.put(SHOOT_ARROW, Input.Keys.SHIFT_LEFT); // Default: Left Shift
     }
 
     static {
@@ -60,6 +63,8 @@ public class KeyBindings {
                 return "Place Bomb";
             case PAUSE_GAME:
                 return "Pause Game";
+            case SHOOT_ARROW:
+                return "Shoot Arrow";
             default:
                 return action;
         }

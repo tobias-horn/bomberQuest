@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.ScreenStates.PauseScreen;
 import de.tum.cit.ase.bomberquest.ScreenStates.ScreenState;
+import de.tum.cit.ase.bomberquest.objects.Arrow;
 import de.tum.cit.ase.bomberquest.bonusFeatures.Score;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.objects.*;
@@ -33,6 +34,7 @@ public class GameScreen implements Screen {
     private final Hud hud;
     private final OrthographicCamera mapCamera;
     private PauseScreen pauseScreen;
+    private Arrow arrow;
 
     private boolean paused = false; // Tracks whether the game is paused
     private float remainingTime; // Remaining time for the level
@@ -113,8 +115,10 @@ public class GameScreen implements Screen {
                 map.addBomb(bomb);
             }
 
-            map.getPlayer().updateDirection(vx, vy);
-
+            if (Gdx.input.isKeyJustPressed(KeyBindings.getKey(KeyBindings.SHOOT_ARROW))) {
+                map.getPlayer().shootArrow(map);
+                Gdx.app.log("Shift key clicked", "Shooting arrow requested");
+            }
 
             remainingTime -= deltaTime;
             if (remainingTime < 0) {
@@ -337,9 +341,13 @@ public class GameScreen implements Screen {
             draw(spriteBatch, bomb);
         }
 
-        // DRAW EXPLOSION TILES (NEW)
+
         for (ExplosionTile explosionTile : map.getExplosionTiles()) {
             draw(spriteBatch, explosionTile);
+        }
+
+        for (Arrow arrow : map.getActiveArrows()) {
+            draw(spriteBatch, arrow);
         }
 
         if (map.getPlayer() != null) {

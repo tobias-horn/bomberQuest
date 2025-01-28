@@ -6,6 +6,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
+import de.tum.cit.ase.bomberquest.bonusFeatures.ArrowPowerUp;
 import de.tum.cit.ase.bomberquest.bonusFeatures.SpeedPowerUp;
 import de.tum.cit.ase.bomberquest.objects.*;
 import de.tum.cit.ase.bomberquest.screens.Hud;
@@ -48,6 +49,7 @@ public class GameMap {
     private final List<Bomb> bombs = new ArrayList<>(); // List of active bombs
     private final Map<Vector2, GameObject> map = new HashMap<>(); // Map of game objects and position
     private final List<ExplosionTile> explosionTiles = new ArrayList<>(); // Active explosion tiles
+    private final List<Arrow> activeArrows = new ArrayList<>();
 
     // Map dimentions
     private int width = 0;
@@ -101,6 +103,24 @@ public class GameMap {
                         ((PowerUp) otherObject).markForRemoval();
                     }
                 }
+
+                if ((objDataA instanceof Arrow && objDataB instanceof Enemy)
+                        || (objDataB instanceof Arrow && objDataA instanceof Enemy)) {
+
+                    Arrow arrow;
+                    Enemy enemy;
+                    if (objDataA instanceof Arrow) {
+                        arrow = (Arrow) objDataA;
+                        enemy = (Enemy) objDataB;
+                    } else {
+                        arrow = (Arrow) objDataB;
+                        enemy = (Enemy) objDataA;
+                    }
+
+                    killEnemyWithArrow(enemy);
+                    arrow.markForRemoval();
+                }
+
             }
 
             private void handlePlayerEnemyCollision() {
@@ -122,13 +142,18 @@ public class GameMap {
         List<Vector2> toRemovePositions = new ArrayList<>();
         List<GameObject> toAwardEffects = new ArrayList<>();
 
-
         for (Map.Entry<Vector2, GameObject> entry : map.entrySet()) {
             GameObject obj = entry.getValue();
             if ((obj instanceof PowerUp && ((PowerUp) obj).isMarkedForRemoval())
                     || (obj instanceof SpeedPowerUp && ((SpeedPowerUp) obj).isMarkedForRemoval())) {
                 toRemovePositions.add(entry.getKey());
                 toAwardEffects.add(obj);
+            }  else if (obj instanceof ArrowPowerUp arrowPowerUp && arrowPowerUp.isMarkedForRemoval()) {
+                ArrowPowerUp.playSound();
+                score.addPointsForPowerUp();
+                player.enableArrowShooting();
+                System.out.println("[handlePowerUps] Arrow power-up collected. Enabling arrow shooting for the player.");
+
             }
         }
 
@@ -145,6 +170,10 @@ public class GameMap {
                     case CONCURRENTBOMB -> concurrentBombCount = Math.min(concurrentBombCount + 1, 8);
                     case SPEED -> { player.activateSpeedPowerUp(30f);
                                 hud.setSpeedPowerUpActive(true);}
+                    case ARROW -> {
+                        System.out.println("[handlePowerUps] Plain ARROW power-up. Enabling arrow shooting...");
+                        player.enableArrowShooting();
+                    }
                 }
             }
         }
@@ -189,6 +218,27 @@ public class GameMap {
         doPhysicsStep(frameTime);
         // Remove marked power-ups
         handlePowerUps();
+
+        enemies.removeIf(e -> {
+            if (e.isMarkedForRemoval()) {
+                if (e.getBody() != null) {
+                    e.getBody().getWorld().destroyBody(e.getBody());
+                    e.setBody(null);
+                }
+                return true; // remove from list
+            }
+            return false;
+        });
+
+        for (Iterator<Arrow> it = activeArrows.iterator(); it.hasNext(); ) {
+            Arrow arrow = it.next();
+            arrow.update(frameTime);
+
+            if (arrow.shouldRemove()) {
+                arrow.destroyBody();
+                it.remove();
+            }
+        }
 
         // Activate exit if all enemies are dead
         boolean allEnemiesDead = enemies.isEmpty();
@@ -256,6 +306,7 @@ public class GameMap {
             case 5 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.CONCURRENTBOMB));
             case 6 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.BLASTRADIUS));
             case 7 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.SPEED));
+            case 8 -> map.put(new Vector2(x, y), new DestructibleWall(world, x, y, false, PowerUpType.ARROW));
         }
     }
 
@@ -333,6 +384,14 @@ public class GameMap {
     }
 
     /**
+     * Adds an arrow to the game, if the player has not exceeded their arrow limit.
+     * @param arrow The bomb to add.
+     */
+    public void addArrow(Arrow arrow) {
+        activeArrows.add(arrow);
+    }
+
+    /**
      * Removes the object from (x,y) in the map and destroys its physics body.
      * @param x X-coordinate (in tiles).
      * @param y Y-coordinate (in tiles).
@@ -372,9 +431,14 @@ public class GameMap {
                         PowerUp powerUp = new PowerUp(world, x, y, type);
                         map.put(new Vector2(x, y), powerUp);
                     }
+                    case ARROW -> {
+                        ArrowPowerUp arrowPowerUp = new ArrowPowerUp(world, x, y);
+                        map.put(new Vector2(x, y), arrowPowerUp);
+                    }
                 }
             }
         }
+
     }
 
     /**
@@ -403,6 +467,12 @@ public class GameMap {
         }
         // Consider walls or destructible walls as not walkable
         return !(obj instanceof IndestructibleWall || obj instanceof DestructibleWall);
+    }
+
+    public void killEnemyWithArrow(Enemy enemy) {
+        System.out.println("Added points for enemy killed by arrow");
+        score.addPointsForEnemyKilled();
+        enemy.markForRemoval();
     }
 
     /**
@@ -481,5 +551,9 @@ public class GameMap {
      */
     public Score getScore() {
         return score;
+    }
+
+    public List<Arrow> getActiveArrows() {
+        return activeArrows;
     }
 }

@@ -48,6 +48,13 @@ public class Textures {
     public static final TextureRegion SPEED_POWER_UP_HUD = new TextureRegion(new Texture(new FileHandle("assets/texture/speedPuHUD.png")));
     public static final TextureRegion SPEED_POWER_UP = new TextureRegion(new Texture(new FileHandle("assets/texture/speedPU.png")));
 
+    public static final TextureRegion ARROW_POWER_UP = new TextureRegion(new Texture(new FileHandle("assets/texture/arrowPowerUp.png")));
+
+    public static final TextureRegion ARROW_RIGHT = new TextureRegion(new Texture(new FileHandle("assets/texture/arrowRight.png")));
+    public static final TextureRegion ARROW_LEFT = new TextureRegion(new Texture(new FileHandle("assets/texture/arrowLeft.png")));
+    public static final TextureRegion ARROW_UP = new TextureRegion(new Texture(new FileHandle("assets/texture/arrowUp.png")));
+    public static final TextureRegion ARROW_DOWN = new TextureRegion(new Texture(new FileHandle("assets/texture/arrowDown.png")));
+
 
     // Menu button textures
     public static final TextureRegion BUTTON_LONG_OFF = new TextureRegion(

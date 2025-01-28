@@ -1,11 +1,16 @@
 package de.tum.cit.ase.bomberquest.objects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
+import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.textures.Animations;
 import de.tum.cit.ase.bomberquest.textures.Drawable;
 
-import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Represents the player character in the game.
@@ -19,6 +24,9 @@ public class Player extends GameObject implements Drawable {
     // Fields in the Player class
     private PlayerDirection currentDirection = PlayerDirection.DOWN;
     private float vx = 0, vy = 0; // Velocity components
+
+    private List<Arrow> activeArrows = new ArrayList<>();
+    private boolean canShootArrows = false; // set true once player picks up ArrowPowerUp
 
 
     private float speedMultiplier = 1.0f;
@@ -105,6 +113,18 @@ public class Player extends GameObject implements Drawable {
         }
     }
 
+    public void updateArrows(float deltaTime) {
+        Iterator<Arrow> it = activeArrows.iterator();
+        while (it.hasNext()) {
+            Arrow arrow = it.next();
+            arrow.update(deltaTime);
+            if (arrow.shouldRemove()) {
+                arrow.destroyBody();
+                it.remove();
+            }
+        }
+    }
+
     /**
      * The main update method called every frame.
      * Handles the speed power-up timer and applies the final velocity to the Box2D body.
@@ -139,6 +159,35 @@ public class Player extends GameObject implements Drawable {
         this.speedMultiplier = 10.0f;
         this.speedTimer = durationSeconds;
     }
+
+    public void enableArrowShooting() {
+        canShootArrows = true;
+        System.out.println("[enableArrowShooting] Player can now shoot arrows.");
+    }
+
+    public void shootArrow(GameMap map) {
+        System.out.println("[shootArrow] Arrow shooting method called.");
+
+        if (!canShootArrows) {
+            System.out.println("[shootArrow] Cannot shoot arrows - player does not have the arrow power-up.");
+            return;
+        }
+        if (currentDirection == PlayerDirection.IDLE) {
+            System.out.println("[shootArrow] Cannot shoot arrows - player is IDLE and not moving.");
+            return;
+        }
+        if (map.getActiveArrows().size() >= 2) {
+            System.out.println("[shootArrow] Cannot shoot arrows - maximum number of arrows already active.");
+            return;
+        }
+
+        Arrow arrow = new Arrow(map.getWorld(), getX(), getY(), currentDirection);
+        map.addArrow(arrow);
+        arrow.playSound();
+
+        System.out.println("[shootArrow] Arrow shot in direction: " + currentDirection);
+    }
+
 
     /**
      * Provides the current appearance of the player based on its state and animation.

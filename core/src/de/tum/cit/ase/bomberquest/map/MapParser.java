@@ -40,6 +40,7 @@ public class MapParser {
         }
 
         addSpeedPowerUps(tileMap);
+        addArrowPowerUps(tileMap);
 
         for(Map.Entry<String, Integer> entry : tileMap.entrySet()){
             int x = Integer.parseInt(entry.getKey().split(",")[0]);
@@ -90,6 +91,26 @@ public class MapParser {
         for (int i = 0; i < maxSpeedPowerUps; i++) {
             String key = possiblePositions.get(i);
             tileMap.put(key, 7);
+        }
+    }
+
+    public static void addArrowPowerUps(HashMap<String, Integer> tileMap) {
+        List<String> possiblePositions = new ArrayList<>();
+
+        for (Map.Entry<String, Integer> entry : tileMap.entrySet()) {
+            // 1 means destructible wall
+            if (entry.getValue() == 1) {
+                possiblePositions.add(entry.getKey());
+            }
+        }
+
+        Collections.shuffle(possiblePositions);
+        // Place up to 6 arrow power-ups (or whatever limit you need)
+        int maxArrowPowerUps = Math.min(6, possiblePositions.size());
+
+        for (int i = 0; i < maxArrowPowerUps; i++) {
+            String key = possiblePositions.get(i);
+            tileMap.put(key, 8);
         }
     }
 
