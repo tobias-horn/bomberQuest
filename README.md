@@ -14,13 +14,12 @@ A Java/LibGDX game inspired by the classic **Bomberman**. Navigate through tiled
     1. [Menus & Screens](#menus--screens)
     2. [Settings & Key Bindings](#settings--key-bindings)
     3. [Map System](#map-system)
-    4. [Enemy AI (A* Pathfinding)](#enemy-ai-a-pathfinding)
 3. [Bonus Features](#bonus-features)
 4. [Project Structure](#project-structure)
     1. [Core Classes](#core-classes)
     2. [Screens](#screens)
     3. [Game Objects](#game-objects)
-    4. [Map Parsing & Pathfinding](#map-parsing--pathfinding)
+    4. [Map & Bonus Packages](#map--bonus-packages)
 5. [Controls](#controls)
 
 ---
@@ -31,10 +30,10 @@ A Java/LibGDX game inspired by the classic **Bomberman**. Navigate through tiled
 - Explores a grid-based map.
 - Places bombs to destroy destructible walls and enemies.
 - Collects power-ups that increase the number of bombs they can place and the bombs’ blast radius.
-- Attempts to reach the exit to complete the level (the exit becomes available when all enemies are defeated).
+- Attempts to reach the exit to complete the level (the exit becomes available once all enemies are defeated).
 
 It uses [LibGDX](https://libgdx.com/) for rendering, asset management, audio, and input handling.  
-A custom **A\* pathfinding** algorithm is implemented (`AStarPathFinder`) to give enemies adaptive movement behavior.
+A custom **A\* pathfinding** algorithm is implemented to give enemies adaptive movement behavior.
 
 ---
 
@@ -42,284 +41,222 @@ A custom **A\* pathfinding** algorithm is implemented (`AStarPathFinder`) to giv
 
 ### Menus & Screens
 
-- **Start Screen (MenuScreen):**  
-  Displays the main menu with the following options:
+- **Start Screen (MenuScreen)**  
+  Displays the main menu with:
     1. **Start Game** → goes to **FileSelectionScreen** to select a map or import a custom one.
     2. **Settings** → opens **SettingsScreen**.
     3. **Quit Game** → exits the application immediately.
 
-- **Settings Screen (SettingsScreen):**  
+- **Settings Screen (SettingsScreen)**  
   Provides controls for:
-    - **Music Toggle** – Mutes/unmutes background music via `MusicTrack.mute()/unmute()`.
-    - **Custom Key Bindings** – Re-bind movement (up/down/left/right), place bomb, and pause. These are saved to preferences (`KeyBindings`) and persist across sessions.
+    - **Music Toggle** – Mutes/unmutes background music.
+    - **Custom Key Bindings** – Re-bind movement (up/down/left/right), place bomb, pause, and shoot arrow. Saved to preferences and persist across sessions.
 
-- **File Selection Screen (FileSelectionScreen):**
-    - Lists **preinstalled maps** (from `maps` folder).
-    - Allows **custom map import** via native file chooser. The chosen file must be a `.properties` map definition.
+- **File Selection Screen (FileSelectionScreen)**  
+  Lists **preinstalled maps** (from `maps` folder) and allows **custom map import**. The chosen file must be a `.properties` map definition.
 
-- **Game Screen (GameScreen):**  
-  Houses the main gameplay:
-    - Renders **player**, **enemies**, **indestructible/destructible walls**, **bombs**, **power-ups**, and **exit**.
-    - Contains the **HUD**, which displays:
-        - Timer (and a flashing indicator when time is critically low).
+- **Game Screen (GameScreen)**
+    - Main gameplay: renders the player, enemies, walls (indestructible & destructible), bombs, explosions, power-ups, and the exit.
+    - Houses a **HUD** that displays:
+        - Timer (with flashing indicator when time is low).
         - Number of bombs you can place concurrently.
         - Blast radius.
         - Remaining enemies count.
+        - Score.
+        - Icons for Speed Power-Up and Arrow Power-Up (when active).
+    - Manages camera centering, bomb/enemy updates, and pause handling.
 
-  It also manages:
-    - **Camera** centering on the player.
-    - **Bomb** and **enemy** updates each frame.
-    - **Pause** input (pausing spawns a separate overlay screen).
-
-- **Pause Screen (PauseScreen):**  
-  An overlay using a transparent dark background. Buttons:
+- **Pause Screen (PauseScreen)**  
+  An overlay with a semi-transparent dark background:
     - **Resume Game**
     - **To Main Menu**
     - **Settings**
     - **Quit Game**
 
-- **Game Over Screen (GameOverScreen):**
-    - Triggered if the player dies (e.g., bomb explosion, enemy collision) or if the timer runs out.
-    - Shows **random “Game Over” messages**.
-    - Options:
-        - **Restart** the same map.
-        - **Return to Menu**.
+- **Game Over Screen (GameOverScreen)**  
+  Triggered if time runs out or player dies (explosion or enemy collision). Shows random “Game Over” messages. Options:
+    - **Restart** the same map.
+    - **Return to Menu**.
 
-- **Game Won Screen (GameWonScreen):**
-    - Triggered if all enemies are destroyed and the player steps on the active exit.
-    - Shows **random “You Won” messages**.
-    - Options:
-        - **Start New Game** (restarts or chooses a new map).
-        - **Return to Menu**.
+- **Game Won Screen (GameWonScreen)**  
+  Triggered when all enemies are destroyed and the player steps on the exit.  
+  Shows random “You Won” messages. Options:
+    - **Start New Game** (restarts or selects a new map).
+    - **Return to Menu**.
 
 ### Settings & Key Bindings
 
-- **Mute Music**
-    - A toggle checkbox in **SettingsScreen**. Internally calls `MusicTrack.mute()` or `MusicTrack.unmute()`.
-- **Custom Key Bindings**
-    - Defaults:
-        - **W / A / S / D** for movement
-        - **Space** for placing bombs
-        - **Esc** for pause
-    - **Persistent** – changes are saved in `KeyBindings` (via LibGDX preferences) so that on the next game startup, the same keys are used.
+- **Mute Music**  
+  Toggle in the settings screen; calls `MusicTrack.mute()` or `MusicTrack.unmute()`.
+- **Custom Key Bindings**  
+  Defaults:
+    - **W / A / S / D** for movement
+    - **Space** for placing bombs
+    - **Esc** for pause
+    - **Left Shift** for shooting arrows
+      These can be changed in the settings screen. New bindings persist via LibGDX preferences.
 
 ### Map System
 
-- **Map Files**
-    - `.properties` format, each line:
-      ```
-      x,y = tileType
-      ```
-      where `tileType` is an integer describing which object should appear (e.g., 0 for indestructible wall, 1 for destructible wall, 2 for entrance, etc.).
+- **Map Files**  
+  `.properties` format, each line like: x,y = tileType
 
-- **Map Parser (MapParser.java)**
-    - Reads the `.properties` file, line by line.
-    - Converts `tileType` into actual game objects (e.g., `IndestructibleWall`, `DestructibleWall`, `Enemy`, etc.).
-    - If no exit (tile type `4`) is found, a **random destructible wall** is converted to an exit tile.
-    - The map’s width/height are tracked dynamically.
+The `tileType` is an integer describing which object should appear (e.g., 0 = indestructible wall, 1 = destructible wall, 2 = entrance, etc.).
 
-- **Dynamic Exit**
-    - If `tileType = 4` is present, it indicates a destructible wall with an exit underneath.
-    - Once the wall is destroyed, the exit tile becomes usable only if all enemies are gone.
+- **Map Parser (MapParser.java)**  
+  Reads the `.properties` file line by line, converting tile types into actual game objects.  
+  If no exit is found, one random destructible wall is converted to hide an exit.  
+  Also spawns randomly:
+- Up to 4 **Speed Power-Ups** on destructible walls.
+- Up to 6 **Arrow Power-Ups** on destructible walls
 
-### Enemy AI (A* Pathfinding)
-
-- **A-Star Pathfinder**
-    - **`AStarPathFinder`** calculates the shortest path from an enemy’s location to the player’s location.
-    - Enemies chase the player if within a certain “chase range.” Otherwise they wander randomly.
-    - Movement logic is in `Enemy.tick(...)`, updating each frame.
+- **Dynamic Exit**  
+  If tile type `4` is present, it indicates a destructible wall with an exit beneath it. The exit becomes usable only if all enemies are gone.
 
 ---
 
 ## Bonus Features
 
-Below are additional bonus features implemented beyond minimal requirements:
+Beyond minimal requirements, BomberQuest also includes:
 
-- Settings screen allowing:
-    - **Music mute/unmute**
-    - **Persistent hotkeys** saved for the next startup
-- **Map selection screen** displaying preinstalled maps
-- **Button sound effects** (plays a “click” on menu interactions)
-- **Custom buttons** using **libGDX nine patches** with stretchable areas for a polished, responsive design
-- **Custom music**:
-    - **Menu music** (background track for menu)
-    - **Gameplay music** (standard background track)
-    - **Intense gameplay music** (triggered in certain states, e.g., close to time running out)
-- **Custom game-over messages** displayed randomly
-- **Custom game-win messages** displayed randomly
-- **A\* pathfinder** for enemies
-- **Low-on-time flashing indicator** in the HUD (timer panel blinks red/black)
-- **Custom preloaded Maps** (importable `.properties` files)
-- **Visual Effects using gdx-vfx**:
-    - Implemented a custom library [`gdx-vfx`](https://github.com/crashinvaders/gdx-vfx) to enhance visual aesthetics.
-    - Displays an **old TV CRT overlay** on background images, giving a retro visual effect.
-    - Adds a **vignette** that dynamically responds to the game window's dimensions, ensuring consistent visual framing across different window sizes.
+1. **A-Star**  
+- The custom pathfinder calculates paths from an enemy’s tile to the player’s tile.
+- Enemies chase the player if within range, otherwise they wander randomly.
+- Logic is in `Enemy.tick(...)`, calling `AStarPathFinder.calculatePath(...)`.
+
+2. **Speed Power-Up**
+- Up to 4 can appear on the map.
+- Doubles the player's movement speed for **30 seconds** once collected.
+- HUD shows an icon when active.
+- Handled in `SpeedPowerUp.java` and integrated in the collision code.
+
+2. **Arrow Power-Up**
+- Up to 6 can appear on the map.
+- Enables the player to shoot arrows (default key: Left Shift) for **30 seconds**.
+- Arrows travel in the direction the player is facing, can kill enemies on contact, and disappear after a short duration.
+- HUD shows an icon when active.
+- Managed in `ArrowPowerUp.java` & `Arrow.java`.
+
+3. **Score System**
+- Implemented in `Score.java`.
+- Earn points for actions:
+    - +15 for destroying a destructible wall
+    - +100 for each enemy killed
+    - +85 for each power-up collected
+    - +2 for each second remaining when you reach the exit
+- The final score is displayed on Game Over / Game Won screens.
+
+4. **Audio & Visual Enhancements**
+- Music toggles and button click sounds
+- Retro visual effects using [`gdx-vfx`](https://github.com/crashinvaders/gdx-vfx) (CRT overlay, vignette, etc.)
+- Random “Game Over” and “You Won” messages
+
+5. **Persistent Key Mappings**
+- Save custom key bindings for movement, bomb placement, pause, and arrow shooting.
+
 
 ---
 
-
 ## Project Structure
 
-A simplified overview of the packages and classes:
+A simplified overview of packages and key classes:
+
+
+
 
 ```
 ├── de.tum.cit.ase.bomberquest
-│   ├── BomberQuestGame.java         # Main LibGDX Game/entry point
-│   ├── map/
-│   │   ├── GameMap.java             # Manages all game objects & physics world
-│   │   ├── MapParser.java           # Parses .properties files into map objects
-│   │   └── AStarPathFinder.java     # A* pathfinding for enemy AI
-│   ├── objects/
-│   │   ├── Player.java              # The player character
-│   │   ├── Enemy.java               # Enemy with pathfinding & wandering
-│   │   ├── Bomb.java                # Bomb logic & cross-shaped explosions
-│   │   ├── DestructibleWall.java    # Destroyable blocks (may have exit or power-up under)
-│   │   ├── IndestructibleWall.java  # Permanent, immovable blocks
-│   │   ├── PowerUp.java             # Increases bomb concurrency or blast radius
-│   │   ├── Exit.java                # Exit tile, active after all enemies die
-│   │   └── ...                      # Other tiles (Entrance, ExplosionTile, etc.)
-│   ├── screens/
-│   │   ├── MenuScreen.java          # Main menu UI
-│   │   ├── SettingsScreen.java      # Mute toggle, re-bind keys
-│   │   ├── FileSelectionScreen.java # Preinstalled map list & custom map import
-│   │   ├── GameScreen.java          # Renders gameplay & handles updates/timer
-│   │   ├── PauseScreen.java         # Pausing overlay
-│   │   ├── GameOverScreen.java      # Displays random messages upon losing
-│   │   ├── GameWonScreen.java       # Displays random messages upon winning
-│   │   ├── BaseScreen.java          # Shared VFX & background rendering logic
-│   │   └── ScreenState.java         # Enum for transitioning screens
-│   ├── ui/
-│   │   ├── KeyBindings.java         # Handles custom key mapping + saving to preferences
-│   │   └── MenuButton.java          # Reusable button widget (plays click sound)
-│   ├── textures/
-│   │   ├── Textures.java            # Static references to texture regions
-│   │   └── Animations.java          # Animation sets for bombs, players, enemies, etc.
+│   ├── BomberQuestGame.java        # Main LibGDX entry point & screen transitions
+│   ├── Hud.java                    # Heads-up display for timer, power-ups, score, etc.
 │   ├── audio/
-│   │   └── MusicTrack.java          # Manages looping, volume, & mute state
-│   └── ...
-└── ...
+│   │   └── MusicTrack.java         # Manages looping, volume, mute state
+│   ├── bonusFeatures/
+│   │   ├── AStarPathFinder.java    # A* pathfinding for enemy AI
+│   │   ├── ArrowPowerUp.java       # Special power-up enabling arrow shooting
+│   │   ├── SpeedPowerUp.java       # Special power-up doubling player speed
+│   │   ├── Score.java              # Manages the scoring logic
+│   │   └── ui/
+│   │       ├── KeyBindings.java    # Handles custom key mapping + persistent saving
+│   │       └── MenuButton.java     # Button widget (plays click sound, uses nine-patch)
+│   ├── map/
+│   │   ├── GameMap.java            # Holds game objects & manages physics world
+│   │   └── MapParser.java          # Reads .properties map files; spawns objects & power-ups
+│   ├── objects/
+│   │   ├── Player.java             # Player logic (movement, bomb/arrow usage, power-up states)
+│   │   ├── Enemy.java              # Enemy logic + pathfinding
+│   │   ├── Bomb.java               # Bomb logic & explosion
+│   │   ├── Arrow.java              # Actual arrow projectile
+│   │   ├── DestructibleWall.java   # Destroyable block (may hide power-up or exit)
+│   │   ├── IndestructibleWall.java # Permanent, immovable block
+│   │   ├── PowerUp.java            # Generic power-up (blast radius, concurrent bombs)
+│   │   ├── Exit.java               # Exit tile, becomes active once all enemies are dead
+│   │   └── Entrance.java           # Entrance tile where the player starts
+│   ├── screens/
+│   │   ├── BaseScreen.java         # Shared background & visual effects
+│   │   ├── MenuScreen.java         # Main menu UI
+│   │   ├── SettingsScreen.java     # Music toggle, key rebinding
+│   │   ├── FileSelectionScreen.java# Preinstalled map list & custom map import
+│   │   ├── GameScreen.java         # Main gameplay logic & rendering
+│   │   ├── PauseScreen.java        # Pause overlay
+│   │   ├── GameOverScreen.java     # Random messages upon losing
+│   │   └── GameWonScreen.java      # Random messages upon winning
+│   ├── textures/
+│   │   ├── Textures.java           # References to texture regions
+│   │   └── Animations.java         # Animation sets for bombs, players, enemies, etc.
+│   └── ...                         # Other files and resources
 ```
 
 ### Core Classes
 
-- **BomberQuestGame**
-    - Extends `com.badlogic.gdx.Game`.
-    - Loads global assets (like skins, fonts, sounds).
-    - Creates the initial menu screen and coordinates any screen switching via `setScreenWithState(...)`.
-    - Maintains references to `GameMap`, current `MusicTrack`, and HUD.
+- **BomberQuestGame**  
+  Manages global assets, creates screens, and orchestrates transitions.
 
-- **Hud**
-    - Displays info overlays (timer, bombs, blast radius, enemy count).
-    - Toggles color states for the timer area if time is under 10 seconds, causing a flashing effect.
-    - Updated each frame by `GameScreen`.
+- **Hud**  
+  Displays timer, bombs, blast radius, enemy count, **score**, and icons for Speed/Arrow power-ups.
 
 ### Screens
 
-1. **MenuScreen**
-    - The game’s main menu.
-    - Contains **Start**, **Settings**, **Quit** options.
-    - “Start” goes to `FileSelectionScreen` for map selection.
-    - “Settings” goes to `SettingsScreen`.
-
-2. **FileSelectionScreen**
-    - Lists maps in the `maps` directory (those with `.properties`).
-    - Allows user to pick and load one.
-    - Also provides a button to import external map files.
-
-3. **SettingsScreen**
-    - Checkboxes/sliders to mute music, re-bind keys, etc.
-    - Uses `KeyBindings` to store new key assignments.
-    - Mute toggles call `MusicTrack.mute()` or `MusicTrack.unmute()`.
-
-4. **GameScreen**
-    - Main gameplay logic.
-    - Updates:
-        - Player movement/inputs.
-        - Bomb placements (respecting concurrency limit).
-        - Enemy positions (including pathfinding).
-        - Timer countdown with a possible “time’s up” → game over.
-    - Renders the map, the player, bombs, explosion animations, and the HUD.
-    - Can pause the game, spawning `PauseScreen`.
-
-5. **PauseScreen**
-    - Uses a semi-transparent overlay drawn above the `GameScreen`.
-    - On resume, it unpauses and closes the overlay.
-
-6. **GameOverScreen**
-    - Triggered on player death or time expiry.
-    - Shows random defeat messages from a pre-defined set.
-    - Buttons to restart the same map or return to the main menu.
-
-7. **GameWonScreen**
-    - Triggered when the player kills all enemies and reaches the exit.
-    - Shows random victory messages.
-    - Options to start a new game or return to the main menu.
-
-8. **BaseScreen**
-    - Abstract class providing a background with optional VFX shading (CRT, film grain, vignetting).
-    - Common functionality for rendering, overlay drawing, resizing logic.
+- **MenuScreen**: Main menu.
+- **FileSelectionScreen**: Lists available maps, allows custom file import.
+- **SettingsScreen**: Key bindings, music toggle.
+- **GameScreen**: Main update loop & rendering.
+- **PauseScreen**: Overlays a semi-transparent UI.
+- **GameOverScreen**, **GameWonScreen**: End-of-round screens with random messages, final score, and replay/return options.
 
 ### Game Objects
 
-- **Player**
-    - Box2D “dynamic” body.
-    - Movement speed controlled by user input (keys W/A/S/D or custom rebound).
-    - Places bombs if concurrency limit not exceeded.
+- **Player**: Movable character with bomb concurrency limits, arrow-shooting, speed boosts, etc.
+- **Enemy**: Pathfinds or wanders. Deals damage on contact.
+- **Bomb**: Explodes after ~3 seconds in a cross pattern.
+- **Arrow**: Projectile that can kill enemies; expires after short flight.
+- **DestructibleWall**: Destroyable, can reveal power-ups or exit.
+- **IndestructibleWall**: Permanent obstacle.
+- **PowerUp** (generic) plus specialized **SpeedPowerUp** and **ArrowPowerUp**.
+- **Exit**: Activated once all enemies are dead.
+- **Entrance**: Starting point tile.
 
-- **Enemy**
-    - Box2D “dynamic” body.
-    - If player is close, uses A\* pathfinding to approach.
-    - If player is far, randomly wanders for some time.
-    - Can kill the player on contact (via `GameMap` contact listener).
+### Map & Bonus Packages
 
-- **Bomb**
-    - Box2D “static” body but sensor-based (doesn’t block movement).
-    - 3-second fuse, then explodes in a plus-shaped range.
-    - Explosion spawns `ExplosionTile` objects for visual effect.
-    - Damages or destroys destructible walls, kills enemies, and can kill the player.
-
-- **DestructibleWall**
-    - Contains either a **power-up** or an **exit** underneath (if tile type indicates so).
-    - When bomb explosion hits it, the wall “fades away” with an animation.
-    - If it was hiding a power-up, the power-up is revealed.
-    - If it was hiding the exit, the exit becomes physically accessible (and active if enemies are all dead).
-
-- **IndestructibleWall**
-    - Permanent obstacle, cannot be destroyed by bombs.
-
-- **PowerUp**
-    - Two types:
-        - **CONCURRENTBOMB** (increases the number of bombs you can place at once),
-        - **BLASTRADIUS** (increases each bomb’s explosion radius).
-    - On collision with player, triggers code in `GameMap` to remove the power-up and apply the effect.
-
-- **Exit**
-    - A sensor tile that becomes “active” if all enemies are defeated.
-    - Stepping on an active exit triggers `game.goToGameWon()`.
-
-### Map Parsing & Pathfinding
-
-- **MapParser**
-    - Reads lines from a `.properties` file.
-    - Extracts coordinates (`x,y`) and a tile type (integer).
-    - Creates the appropriate `GameObject` in the map.
-    - If no exit type is found, chooses a random destructible wall to hide the exit.
-
-- **AStarPathFinder**
-    - Basic A\* implementation with Manhattan distance as the heuristic.
-    - Enemies call `calculatePath(...)` each update to chase the player’s tile.
-    - If the path is valid and short enough, they follow it; otherwise they wander.
+- **GameMap**  
+  Maintains all active objects, bombs, arrows, enemies, plus Box2D physics stepping.
+- **MapParser**  
+  Reads `.properties` files, places destructible/indestructible walls, enemies, entrance, exit, and up to 4 Speed Power-Ups + 6 Arrow Power-Ups.
+- **AStarPathFinder** (in bonusFeatures)  
+  Implements A* for enemy pathfinding.
+- **Score**  
+  Central scoring logic (walls destroyed, enemies killed, power-ups, time bonus).
+- **SpeedPowerUp**, **ArrowPowerUp**  
+  Specialized power-ups that grant temporary abilities (double speed, arrow shooting).
 
 ---
 
 ## Controls
 
-Default (re-bindable in **Settings**):
-- **W, A, S, D**: Move (up, left, down, right)
+*(Re-bindable in **Settings**; defaults listed.)*
+- **W, A, S, D**: Move
 - **Space**: Place Bomb
+- **Left Shift**: Shoot Arrow
 - **Esc**: Pause / Resume
-
-*(These can be changed in-game; new bindings persist for the next session via `KeyBindings`.)*
 
 ---
 
@@ -340,4 +277,4 @@ AI tools were utilized during the development of this project to assist with spe
 
 ---
 
-*Enjoy exploring, bombing obstacles, and collecting power-ups in BomberQuest!*
+*Enjoy blowing up walls, outsmarting enemies, collecting power-ups, and racking up a high score in BomberQuest!*  

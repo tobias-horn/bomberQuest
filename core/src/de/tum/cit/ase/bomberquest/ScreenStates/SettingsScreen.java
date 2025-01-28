@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -45,7 +46,6 @@ public class SettingsScreen extends BaseScreen {
      * @param game The main game instance.
      * @param font The BitmapFont used for rendering text on the buttons.
      */
-
     public SettingsScreen(BomberQuestGame game, BitmapFont font, boolean fromPause) {
         super(game, font, "assets/startScreen/start_background.jpg", true);
         this.fromPause = fromPause;
@@ -82,6 +82,7 @@ public class SettingsScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 waitForKeyPress(KeyBindings.MOVE_UP, upButton);
+                super.clicked(event, x, y);
             }
         });
 
@@ -96,6 +97,7 @@ public class SettingsScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 waitForKeyPress(KeyBindings.MOVE_DOWN, downButton);
+                super.clicked(event, x, y);
             }
         });
 
@@ -110,6 +112,7 @@ public class SettingsScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 waitForKeyPress(KeyBindings.MOVE_LEFT, leftButton);
+                super.clicked(event, x, y);
             }
         });
 
@@ -124,6 +127,7 @@ public class SettingsScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 waitForKeyPress(KeyBindings.MOVE_RIGHT, rightButton);
+                super.clicked(event, x, y);
             }
         });
 
@@ -138,6 +142,7 @@ public class SettingsScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 waitForKeyPress(KeyBindings.PLACE_BOMB, placeBombButton);
+                super.clicked(event, x, y);
             }
         });
 
@@ -152,22 +157,33 @@ public class SettingsScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 waitForKeyPress(KeyBindings.PAUSE_GAME, pauseGameButton);
+                super.clicked(event, x, y);
             }
         });
 
-        // Create mute music checkbox
-        CheckBox muteButton = new CheckBox("Mute Music", skin, "customCheckBox");
-        muteButton.setChecked(MusicTrack.BACKGROUND.isMuted());
-        muteButton.addListener(new ClickListener() {
+
+        CheckBox muteCheckBox = new CheckBox("", skin, "customCheckBox");
+        muteCheckBox.setChecked(MusicTrack.BACKGROUND.isMuted());
+        muteCheckBox.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (muteButton.isChecked()) {
+                if (muteCheckBox.isChecked()) {
                     MusicTrack.BACKGROUND.mute();
                 } else {
                     MusicTrack.BACKGROUND.unmute();
                 }
+                super.clicked(event, x, y);
             }
         });
+
+        // Create a label for the mute checkbox
+        Label muteLabel = new Label("Mute Music", skin);
+
+        // Create a horizontal table to contain the checkbox and label with padding
+        Table muteTable = new Table();
+        muteTable.left(); // Align contents to the left
+        muteTable.add(muteCheckBox).size(desiredHeight, desiredHeight).padRight(20f);
+        muteTable.add(muteLabel).left(); // Align label to the left
 
         // Create back button
         MenuButton backButton = new MenuButton(
@@ -188,12 +204,17 @@ public class SettingsScreen extends BaseScreen {
                     game.goBack();
                 }
                 game.setPreviousScreenState(ScreenState.SETTINGS);
+                super.clicked(event, x, y);
             }
         });
 
-        // Layout the buttons in a table
+        
         Table table = new Table();
         table.setFillParent(true);
+        table.center();
+        stage.addActor(table);
+
+
         table.row().pad(10);
         table.add(upButton).size(desiredWidth, desiredHeight).center().pad(10);
         table.row().pad(10);
@@ -207,11 +228,9 @@ public class SettingsScreen extends BaseScreen {
         table.row().pad(10);
         table.add(pauseGameButton).size(desiredWidth, desiredHeight).center().pad(10);
         table.row().pad(10);
-        table.add(muteButton).size(desiredWidth, desiredHeight).center().pad(10);
+        table.add(muteTable).size(desiredWidth, desiredHeight).center().pad(10); // Add the muteTable with padding
         table.row().pad(10);
         table.add(backButton).size(desiredWidth, desiredHeight).center().pad(10);
-
-        stage.addActor(table);
     }
 
     /**
