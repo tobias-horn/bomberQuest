@@ -167,7 +167,6 @@ A simplified overview of packages and key classes:
 ```
 ├── de.tum.cit.ase.bomberquest
 │   ├── BomberQuestGame.java        # Main LibGDX entry point & screen transitions
-│   ├── Hud.java                    # Heads-up display for timer, power-ups, score, etc.
 │   ├── audio/
 │   │   └── MusicTrack.java         # Manages looping, volume, mute state
 │   ├── bonusFeatures/
@@ -189,17 +188,23 @@ A simplified overview of packages and key classes:
 │   │   ├── DestructibleWall.java   # Destroyable block (may hide power-up or exit)
 │   │   ├── IndestructibleWall.java # Permanent, immovable block
 │   │   ├── PowerUp.java            # Generic power-up (blast radius, concurrent bombs)
+│   │   ├── PowerUpType.java        # Enum for the different power ups
 │   │   ├── Exit.java               # Exit tile, becomes active once all enemies are dead
+│   │   ├── ExplosionTile.java      # Explosion when active
+│   │   ├── GameObject.java         # Abstract class for game objects 
 │   │   └── Entrance.java           # Entrance tile where the player starts
-│   ├── screens/
-│   │   ├── BaseScreen.java         # Shared background & visual effects
+│   ├── screensStates/
 │   │   ├── MenuScreen.java         # Main menu UI
 │   │   ├── SettingsScreen.java     # Music toggle, key rebinding
 │   │   ├── FileSelectionScreen.java# Preinstalled map list & custom map import
-│   │   ├── GameScreen.java         # Main gameplay logic & rendering
+│   │   ├── ScreenState.java        # Enum for screen states
 │   │   ├── PauseScreen.java        # Pause overlay
 │   │   ├── GameOverScreen.java     # Random messages upon losing
 │   │   └── GameWonScreen.java      # Random messages upon winning
+│   ├── screens/
+│   │   └── Hud.java                # Heads-up display for timer, power-ups, score, etc.
+│   │   ├── GameScreen.java         # Main gameplay logic & rendering
+│   │   ├── BaseScreen.java         # Shared background & visual effects
 │   ├── textures/
 │   │   ├── Textures.java           # References to texture regions
 │   │   └── Animations.java         # Animation sets for bombs, players, enemies, etc.
