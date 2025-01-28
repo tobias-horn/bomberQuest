@@ -1,12 +1,15 @@
 package de.tum.cit.ase.bomberquest.ScreenStates;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
 import de.tum.cit.ase.bomberquest.screens.BaseScreen;
@@ -21,6 +24,9 @@ import de.tum.cit.ase.bomberquest.bonusFeatures.ui.MenuButton;
 public class MenuScreen extends BaseScreen {
 
     private Stage uiStage;
+
+
+    private Image logoImage;
 
     /**
      * Constructs the MenuScreen with the provided game instance and font.
@@ -37,6 +43,12 @@ public class MenuScreen extends BaseScreen {
         Table table = new Table();
         table.setFillParent(true);
         uiStage.addActor(table);
+
+
+
+        logoImage = new Image(Textures.LOGO);
+        logoImage.setScaling(Scaling.fit);
+
 
         float desiredWidth = 400f;
         float desiredHeight = 70f;
@@ -91,7 +103,18 @@ public class MenuScreen extends BaseScreen {
             }
         });
 
+
+
+        // Add the logo in a row above the buttons, center it,
+        // clamp height to 100, and add some bottom padding
         table.row();
+        table.add(logoImage)
+                .center()
+                .height(100f)
+                .padBottom(50f);
+        table.row();
+
+
         table.add(startButton).size(desiredWidth, desiredHeight).center().padBottom(10f);
         table.row();
         table.add(settingsButton).size(desiredWidth, desiredHeight).center().padBottom(10f);
@@ -135,6 +158,7 @@ public class MenuScreen extends BaseScreen {
      */
     @Override
     public void dispose() {
+
         uiStage.dispose();
         super.dispose();
     }

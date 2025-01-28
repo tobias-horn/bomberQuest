@@ -1,5 +1,6 @@
 package de.tum.cit.ase.bomberquest.textures;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -11,6 +12,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * These can be referenced anywhere they are needed.
  */
 public class Textures {
+
+    public static final Texture LOGO = new Texture(Gdx.files.internal("assets/menu/bomberQuestLogo.png"));
+
 
     // Game assets
     public static final TextureRegion INDESTRUCTABLEWALL = SpriteSheet.TILES.at(7, 2);
