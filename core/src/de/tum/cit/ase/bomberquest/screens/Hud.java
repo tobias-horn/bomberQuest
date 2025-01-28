@@ -42,6 +42,8 @@ public class Hud {
     // Arrow Power-Up
     private boolean arrowPowerUpActive = false;
 
+    private static final float MAX_PANEL_HEIGHT = 100f;
+
     /**
      * Constructs the Hud with the specified SpriteBatch and BitmapFont.
      * Initializes textures and sets up the HUD panel.
@@ -102,8 +104,15 @@ public class Hud {
 
         float scaleFactor = 0.4f;
         float newPanelWidth = screenWidth * scaleFactor;
+
         float aspectRatio = panelHeight / panelWidth;
         float newPanelHeight = newPanelWidth * aspectRatio;
+
+        if (newPanelHeight > MAX_PANEL_HEIGHT) {
+            newPanelHeight = MAX_PANEL_HEIGHT;
+            newPanelWidth = newPanelHeight / aspectRatio;
+        }
+
 
         float panelX = (screenWidth - newPanelWidth) / 2f;
         float panelY = screenHeight - newPanelHeight;

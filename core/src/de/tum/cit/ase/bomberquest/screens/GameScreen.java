@@ -309,6 +309,16 @@ public class GameScreen implements Screen {
             mapCamera.position.y = maxCameraY;
         }
 
+        if (mapWidthInPx < mapCamera.viewportWidth) {
+            mapCamera.position.x = mapWidthInPx / 2f;
+        }
+
+        // If the map is shorter than the viewport, center vertically:
+        if (mapHeightInPx < mapCamera.viewportHeight) {
+            mapCamera.position.y = mapHeightInPx / 2f;
+        }
+
+
         // After adjusting the camera's position, update the camera to apply the changes.
         // This typically recalculates the camera's matrices and ensures the new position is rendered.
         mapCamera.update();
