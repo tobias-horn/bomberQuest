@@ -156,7 +156,7 @@ public class Player extends GameObject implements Drawable {
      * @param durationSeconds The duration (in seconds) for the speed boost.
      */
     public void activateSpeedPowerUp(float durationSeconds) {
-        this.speedMultiplier = 10.0f;
+        this.speedMultiplier = 2f;
         this.speedTimer = durationSeconds;
     }
 
@@ -181,7 +181,31 @@ public class Player extends GameObject implements Drawable {
             return;
         }
 
-        Arrow arrow = new Arrow(map.getWorld(), getX(), getY(), currentDirection);
+
+        float spawnX = body.getPosition().x;
+        float spawnY = body.getPosition().y;
+
+        switch (currentDirection) {
+            case RIGHT:
+                spawnY -= 0.5f;
+                break;
+            case LEFT:
+                spawnX -= 1f;
+                spawnY -= 0.5f;
+                break;
+            case UP:
+                spawnX -= 0.5f;
+                spawnY += 0.5f;
+                break;
+            case DOWN:
+                spawnX -= 0.5f;
+                spawnY -= 1f;
+                break;
+            default:
+                return;
+        }
+
+        Arrow arrow = new Arrow(map.getWorld(), spawnX, spawnY, currentDirection);
         map.addArrow(arrow);
         arrow.playSound();
 

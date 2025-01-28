@@ -40,7 +40,7 @@ public class Arrow extends GameObject implements Drawable {
         body = world.createBody(bodyDef);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(0.2f, 0.2f);
+        shape.setAsBox(0.08f, 0.016f);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
