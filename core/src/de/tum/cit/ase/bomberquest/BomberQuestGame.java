@@ -8,6 +8,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import de.tum.cit.ase.bomberquest.ScreenStates.GameOverScreen;
+import de.tum.cit.ase.bomberquest.ScreenStates.GameWonScreen;
+import de.tum.cit.ase.bomberquest.ScreenStates.MenuScreen;
+import de.tum.cit.ase.bomberquest.ScreenStates.ScreenState;
 import de.tum.cit.ase.bomberquest.audio.MusicTrack;
 import de.tum.cit.ase.bomberquest.bonusFeatures.Score;
 import de.tum.cit.ase.bomberquest.map.GameMap;
@@ -108,7 +112,7 @@ public class BomberQuestGame extends Game {
             }
             case GAME -> {
                 setScreen(new GameScreen(this, score));
-                playMusic(MusicTrack.TWO_MINUTE_TRACK);
+                playMusic(MusicTrack.GAMEPLAY_MUSIC);
             }
             case GAME_OVER -> {
                 setScreen(new GameOverScreen(this, font));
@@ -131,19 +135,16 @@ public class BomberQuestGame extends Game {
      */
     private void playMusic(MusicTrack track) {
         if (currentMusicTrack != track) {
-            // Stop the current track if it's playing
             if (currentMusicTrack != null) {
                 currentMusicTrack.stop();
             }
 
-            // Set the two-minute track's specific behavior
-            if (track == MusicTrack.TWO_MINUTE_TRACK) {
-                track.setLooping(false); // Ensure the track doesn't loop
+            if (track == MusicTrack.GAMEPLAY_MUSIC) {
+                track.setLooping(false);
             }
 
-            // Play the new track
             track.play();
-            currentMusicTrack = track; // Update the reference
+            currentMusicTrack = track;
         }
     }
 

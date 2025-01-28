@@ -14,6 +14,17 @@ public class Textures {
 
     // Game assets
     public static final TextureRegion INDESTRUCTABLEWALL = SpriteSheet.TILES.at(7, 2);
+
+    public static final TextureRegion TLBW = SpriteSheet.TILES.at(1, 1);
+    public static final TextureRegion TRBW = SpriteSheet.TILES.at(1, 3);
+    public static final TextureRegion BLBW = SpriteSheet.TILES.at(3, 1);
+    public static final TextureRegion BRBW = SpriteSheet.TILES.at(3, 3);
+
+    public static final TextureRegion TBW = SpriteSheet.TILES.at(1, 2);
+    public static final TextureRegion BBW = SpriteSheet.TILES.at(3, 2);
+    public static final TextureRegion RBW = SpriteSheet.TILES.at(2, 3);
+    public static final TextureRegion LBW = SpriteSheet.TILES.at(2, 1);
+
     public static final TextureRegion DESTRUCTABLEWALL = SpriteSheet.TILES.at(7, 1);
     public static final TextureRegion ENTRANCE = SpriteSheet.TILES.at(8, 3);
     public static final TextureRegion EXIT_INACTIVE = SpriteSheet.TILES.at(9, 2);

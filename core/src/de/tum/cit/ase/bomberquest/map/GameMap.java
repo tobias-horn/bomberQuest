@@ -263,15 +263,42 @@ public class GameMap {
      * Marks walls on the border of the map as border walls.
      */
     private void markBorderWalls() {
+        int maxX = width - 1;
+        int maxY = height - 1;
+
         for (Map.Entry<Vector2, GameObject> entry : map.entrySet()) {
             if (entry.getValue() instanceof IndestructibleWall wall) {
                 int x = (int) entry.getKey().x;
                 int y = (int) entry.getKey().y;
-                if (isOnBorder(x, y)) {
+
+                // Check if it's on the border
+                if (isOnBorder(x, y, maxX, maxY)) {
                     wall.setBorderWall(true);
+                    // Set corner or edge type...
+                    if (x == 0 && y == 0) {
+                        wall.setBorderWallType(IndestructibleWall.BorderWallType.BOTTOM_LEFT);
+                    } else if (x == 0 && y == maxY) {
+                        wall.setBorderWallType(IndestructibleWall.BorderWallType.TOP_LEFT);
+                    } else if (x == maxX && y == 0) {
+                        wall.setBorderWallType(IndestructibleWall.BorderWallType.BOTTOM_RIGHT);
+                    } else if (x == maxX && y == maxY) {
+                        wall.setBorderWallType(IndestructibleWall.BorderWallType.TOP_RIGHT);
+                    } else if (y == 0) {
+                        wall.setBorderWallType(IndestructibleWall.BorderWallType.BOTTOM);
+                    } else if (y == maxY) {
+                        wall.setBorderWallType(IndestructibleWall.BorderWallType.TOP);
+                    } else if (x == 0) {
+                        wall.setBorderWallType(IndestructibleWall.BorderWallType.LEFT);
+                    } else if (x == maxX) {
+                        wall.setBorderWallType(IndestructibleWall.BorderWallType.RIGHT);
+                    }
                 }
             }
         }
+    }
+
+    private boolean isOnBorder(int x, int y, int maxX, int maxY) {
+        return (x == 0 || y == 0 || x == maxX || y == maxY);
     }
 
     /**

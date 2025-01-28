@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.ase.bomberquest.BomberQuestGame;
+import de.tum.cit.ase.bomberquest.ScreenStates.PauseScreen;
+import de.tum.cit.ase.bomberquest.ScreenStates.ScreenState;
 import de.tum.cit.ase.bomberquest.bonusFeatures.Score;
 import de.tum.cit.ase.bomberquest.map.GameMap;
 import de.tum.cit.ase.bomberquest.objects.*;
@@ -182,17 +184,23 @@ public class GameScreen implements Screen {
      */
     public void setPaused(boolean shouldPause) {
         this.paused = shouldPause;
+        // Update the game's screen state
+        if (shouldPause) {
+            game.setCurrentScreenState(ScreenState.PAUSE);
+        } else {
+            game.setCurrentScreenState(ScreenState.GAME);
+        }
 
         // Pause or resume music based on the paused state
         if (paused) {
             if (game.getCurrentMusicTrack() != null) {
-                game.getCurrentMusicTrack().pause(); // Pause the current music track
+                game.getCurrentMusicTrack().pause();
             }
             Gdx.app.log("Pause", "Pausing and setting input processor to PauseScreen stage");
             Gdx.input.setInputProcessor(pauseScreen.getStage());
         } else {
             if (game.getCurrentMusicTrack() != null) {
-                game.getCurrentMusicTrack().play(); // Resume the current music track
+                game.getCurrentMusicTrack().play();
             }
             Gdx.app.log("Pause", "Unpausing; removing PauseScreen stage input processor");
             Gdx.input.setInputProcessor(null);

@@ -14,6 +14,20 @@ public class IndestructibleWall extends GameObject implements Drawable {
 
     private boolean borderWall;
 
+    public enum BorderWallType {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT,
+        TOP,
+        BOTTOM,
+        LEFT,
+        RIGHT,
+        NONE
+    }
+
+    private BorderWallType borderWallType = BorderWallType.NONE;
+
     /**
      * Constructs an IndestructibleWall at the specified position within the given physics world.
      *
@@ -33,20 +47,46 @@ public class IndestructibleWall extends GameObject implements Drawable {
      */
     @Override
     public TextureRegion getCurrentAppearance() {
-        if (!isBorderWall()) {
+        if (!borderWall) {
             return Textures.INDESTRUCTABLEWALL;
-        } else {
-            return Textures.BORDERWALL;
+        }
+
+        switch (borderWallType) {
+            case TOP_LEFT:
+                return Textures.TLBW;
+            case TOP_RIGHT:
+                return Textures.TRBW;
+            case BOTTOM_LEFT:
+                return Textures.BLBW;
+            case BOTTOM_RIGHT:
+                return Textures.BRBW;
+            case TOP:
+                return Textures.TBW;
+            case BOTTOM:
+                return Textures.BBW;
+            case LEFT:
+                return Textures.LBW;
+            case RIGHT:
+                return Textures.RBW;
+            case NONE:
+            default:
+                return Textures.INDESTRUCTABLEWALL;
         }
     }
-
 
     public boolean isBorderWall() {
         return borderWall;
     }
 
-
     public void setBorderWall(boolean borderWall) {
         this.borderWall = borderWall;
+    }
+
+    public BorderWallType getBorderWallType() {
+        return borderWallType;
+    }
+
+    public void setBorderWallType(BorderWallType borderWallType) {
+        this.borderWallType = borderWallType;
     }
 }
