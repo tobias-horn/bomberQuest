@@ -49,6 +49,7 @@ public class Textures {
     public static final TextureRegion SPEED_POWER_UP = new TextureRegion(new Texture(new FileHandle("assets/texture/speedPU.png")));
 
     public static final TextureRegion ARROW_POWER_UP = new TextureRegion(new Texture(new FileHandle("assets/texture/arrowPowerUp.png")));
+    public static final TextureRegion ARROW_POWER_UP_HUD = new TextureRegion(new Texture(new FileHandle("assets/texture/arrowPowerUpHUD.png")));
 
     public static final TextureRegion ARROW_RIGHT = new TextureRegion(new Texture(new FileHandle("assets/texture/arrowRight.png")));
     public static final TextureRegion ARROW_LEFT = new TextureRegion(new Texture(new FileHandle("assets/texture/arrowLeft.png")));

@@ -92,11 +92,6 @@ public class GameWonScreen extends BaseScreen {
         table.add(scoreLabel).padBottom(30f);
         table.row();
 
-        // Display high score
-        Label highScoreLabel = new Label("High Score: " + highScore, labelStyle);
-        table.add(highScoreLabel).padBottom(40f);
-        table.row();
-        // --- End new logic ---
 
         float desiredWidth = 400f;
         float desiredHeight = 70f;

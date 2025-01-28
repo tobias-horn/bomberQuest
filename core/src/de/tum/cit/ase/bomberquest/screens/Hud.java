@@ -9,7 +9,8 @@ import de.tum.cit.ase.bomberquest.textures.Textures;
 
 /**
  * Hud manages the Heads-Up Display (HUD) for the BomberQuest game.
- * It displays essential game information such as the timer, concurrent bombs, blast radius, and remaining enemies.
+ * It displays essential game information such as the timer, concurrent bombs,
+ * blast radius, speed power-up, arrow power-up, and remaining enemies.
  * The HUD is rendered using SpriteBatch and BitmapFont, and adapts to screen resizing.
  */
 public class Hud {
@@ -32,11 +33,14 @@ public class Hud {
     private int blastRadiusCount = 1;
     private int remainingEnemiesCount = 0;
 
-
     private int timerInSeconds;
     private int score;
 
+    // Speed Power-UP
     private boolean speedPowerUpActive = false;
+
+    // Arrow Power-Up
+    private boolean arrowPowerUpActive = false;
 
     /**
      * Constructs the Hud with the specified SpriteBatch and BitmapFont.
@@ -82,7 +86,8 @@ public class Hud {
 
     /**
      * Renders the HUD panel and associated information such as the timer,
-     * concurrent bombs, blast radius, remaining enemies, and score.
+     * concurrent bombs, blast radius, remaining enemies, speed power-up,
+     * arrow power-up, and score.
      *
      * @param timerText The formatted timer text to display.
      */
@@ -117,9 +122,8 @@ public class Hud {
         float margin = 15f;
         float padding = 10f;
 
-        // =========================
+
         // Render Blast Radius Count
-        // =========================
         GlyphLayout blastLayout = new GlyphLayout(font, String.valueOf(blastRadiusCount));
         float blastTextWidth = blastLayout.width;
         float blastTextHeight = blastLayout.height;
@@ -140,12 +144,11 @@ public class Hud {
         float blastTextY = blastIconY + (iconSize + blastTextHeight) / 2f;
         font.draw(spriteBatch, blastLayout, blastTextX, blastTextY);
 
-        // ===================================
+
         // Render Speed Power-Up Next to Blast
-        // ===================================
+
         if (speedPowerUpActive) {
-            GlyphLayout speedLayout = new GlyphLayout(font, ""); // No count for speed
-            float speedOverlayWidth = iconSize + 2 * padding; // No text
+            float speedOverlayWidth = iconSize + 2 * padding; // No text for speed
             float speedOverlayHeight = iconSize + 2 * padding;
 
             float speedOverlayX = blastOverlayX + blastOverlayWidth + padding; // Next to blast
@@ -158,9 +161,9 @@ public class Hud {
             spriteBatch.draw(Textures.SPEED_POWER_UP_HUD, speedIconX, speedIconY, iconSize, iconSize);
         }
 
-        // ===================================
+
         // Render Remaining Enemies Count
-        // ===================================
+
         GlyphLayout enemiesLayout = new GlyphLayout(font, String.valueOf(remainingEnemiesCount));
         float enemiesTextWidth = enemiesLayout.width;
         float enemiesTextHeight = enemiesLayout.height;
@@ -168,7 +171,7 @@ public class Hud {
         float enemiesOverlayWidth = iconSize + 5 + enemiesTextWidth + 2 * padding;
         float enemiesOverlayHeight = iconSize + 2 * padding;
 
-        // Position the overlay on the screen (e.g., bottom-left)
+        // Position the overlay on the screen
         float enemiesOverlayX = margin;
         float enemiesOverlayY = margin;
 
@@ -185,32 +188,74 @@ public class Hud {
         float enemiesTextY = enemiesIconY + (iconSize + enemiesTextHeight) / 2f;
         font.draw(spriteBatch, enemiesLayout, enemiesTextX, enemiesTextY);
 
-        // ===================================
-        // Render Concurrent Bomb Count
-        // ===================================
-        GlyphLayout bombLayout = new GlyphLayout(font, String.valueOf(concurrentBombCount));
-        float bombTextWidth = bombLayout.width;
-        float bombTextHeight = bombLayout.height;
 
-        float bombOverlayWidth = iconSize + 5 + bombTextWidth + 2 * padding;
-        float bombOverlayHeight = iconSize + 2 * padding;
+        // Render ARROW Power-Up (Top Right) if active
 
-        float bombOverlayX = screenWidth - margin - bombOverlayWidth;
-        float bombOverlayY = screenHeight - margin - bombOverlayHeight;
+        if (arrowPowerUpActive) {
+            float arrowOverlayWidth = iconSize + 2 * padding;
+            float arrowOverlayHeight = iconSize + 2 * padding;
 
-        spriteBatch.draw(transparentBlackTexture, bombOverlayX, bombOverlayY, bombOverlayWidth, bombOverlayHeight);
+            // calculate bomb overlay first so to know where to place arrow
+            GlyphLayout bombLayout = new GlyphLayout(font, String.valueOf(concurrentBombCount));
+            float bombTextWidth = bombLayout.width;
+            float bombTextHeight = bombLayout.height;
 
-        float bombIconX = bombOverlayX + padding;
-        float bombIconY = bombOverlayY + padding;
-        spriteBatch.draw(Textures.CONCURRENTBOMB_HUD, bombIconX, bombIconY, iconSize, iconSize);
+            float bombOverlayWidth = iconSize + 5 + bombTextWidth + 2 * padding;
+            float bombOverlayHeight = iconSize + 2 * padding;
 
-        float bombTextX = bombIconX + iconSize + 5;
-        float bombTextY = bombIconY + (iconSize + bombTextHeight) / 2f;
-        font.draw(spriteBatch, bombLayout, bombTextX, bombTextY);
+            float bombOverlayX = screenWidth - margin - bombOverlayWidth;
+            float bombOverlayY = screenHeight - margin - bombOverlayHeight;
 
-        // ===================================
+
+            float arrowOverlayX = bombOverlayX - (arrowOverlayWidth + padding);
+            float arrowOverlayY = bombOverlayY;
+
+
+            spriteBatch.draw(transparentBlackTexture, arrowOverlayX, arrowOverlayY, arrowOverlayWidth, arrowOverlayHeight);
+
+            float arrowIconX = arrowOverlayX + padding;
+            float arrowIconY = arrowOverlayY + padding;
+
+
+            spriteBatch.draw(Textures.ARROW_POWER_UP_HUD, arrowIconX, arrowIconY, iconSize, iconSize);
+
+
+            spriteBatch.draw(transparentBlackTexture, bombOverlayX, bombOverlayY, bombOverlayWidth, bombOverlayHeight);
+
+            float bombIconX = bombOverlayX + padding;
+            float bombIconY = bombOverlayY + padding;
+            spriteBatch.draw(Textures.CONCURRENTBOMB_HUD, bombIconX, bombIconY, iconSize, iconSize);
+
+            float bombTextX = bombIconX + iconSize + 5;
+            float bombTextY = bombIconY + (iconSize + bombTextHeight) / 2f;
+            font.draw(spriteBatch, bombLayout, bombTextX, bombTextY);
+
+        } else {
+
+            GlyphLayout bombLayout = new GlyphLayout(font, String.valueOf(concurrentBombCount));
+            float bombTextWidth = bombLayout.width;
+            float bombTextHeight = bombLayout.height;
+
+            float bombOverlayWidth = iconSize + 5 + bombTextWidth + 2 * padding;
+            float bombOverlayHeight = iconSize + 2 * padding;
+
+            float bombOverlayX = screenWidth - margin - bombOverlayWidth;
+            float bombOverlayY = screenHeight - margin - bombOverlayHeight;
+
+            spriteBatch.draw(transparentBlackTexture, bombOverlayX, bombOverlayY, bombOverlayWidth, bombOverlayHeight);
+
+            float bombIconX = bombOverlayX + padding;
+            float bombIconY = bombOverlayY + padding;
+            spriteBatch.draw(Textures.CONCURRENTBOMB_HUD, bombIconX, bombIconY, iconSize, iconSize);
+
+            float bombTextX = bombIconX + iconSize + 5;
+            float bombTextY = bombIconY + (iconSize + bombTextHeight) / 2f;
+            font.draw(spriteBatch, bombLayout, bombTextX, bombTextY);
+        }
+
+
         // Render Score in bottom-right corner
-        // ===================================
+
         String scoreText = "Score: " + score;
         GlyphLayout scoreLayout = new GlyphLayout(font, scoreText);
         float scoreTextWidth = scoreLayout.width;
@@ -288,6 +333,7 @@ public class Hud {
 
     /**
      * Sets the remaining time in seconds on the HUD.
+     *
      * @param seconds The remaining time in seconds.
      */
     public void setTimerInSeconds(int seconds) {
@@ -296,6 +342,7 @@ public class Hud {
 
     /**
      * Returns the remaining time in seconds as displayed on the HUD.
+     *
      * @return The remaining time in seconds.
      */
     public int getTimerInSeconds() {
@@ -304,6 +351,7 @@ public class Hud {
 
     /**
      * Sets the current score to display on the HUD.
+     *
      * @param score The player's current score.
      */
     public void setScore(int score) {
@@ -312,12 +360,12 @@ public class Hud {
 
     /**
      * Returns the current score displayed on the HUD.
+     *
      * @return The current score.
      */
     public int getScore() {
         return score;
     }
-
 
     /**
      * Sets whether the Speed Power-Up is active, controlling its display on the HUD.
@@ -326,5 +374,14 @@ public class Hud {
      */
     public void setSpeedPowerUpActive(boolean active) {
         this.speedPowerUpActive = active;
+    }
+
+    /**
+     * Sets whether the Arrow Power-Up is active, controlling its display on the HUD.
+     *
+     * @param active True to display the Arrow Power-Up icon, false to hide it.
+     */
+    public void setArrowPowerUpActive(boolean active) {
+        this.arrowPowerUpActive = active;
     }
 }

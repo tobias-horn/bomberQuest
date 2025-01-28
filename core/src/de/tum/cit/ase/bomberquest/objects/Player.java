@@ -1,7 +1,5 @@
 package de.tum.cit.ase.bomberquest.objects;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.*;
 import de.tum.cit.ase.bomberquest.map.GameMap;
@@ -26,11 +24,14 @@ public class Player extends GameObject implements Drawable {
     private float vx = 0, vy = 0; // Velocity components
 
     private List<Arrow> activeArrows = new ArrayList<>();
-    private boolean canShootArrows = false; // set true once player picks up ArrowPowerUp
+    private boolean canShootArrows = false; // Indicates if the player can shoot arrows
 
-
+    // -- SPEED Power-Up Handling --
     private float speedMultiplier = 1.0f;
     private float speedTimer = 0f;
+
+    // -- ARROW Power-Up Handling --
+    private float arrowTimer = 0f;  // Tracks remaining Arrow Power-Up time
 
     // player directions
     public enum PlayerDirection {
@@ -41,8 +42,8 @@ public class Player extends GameObject implements Drawable {
      * Constructs a Player object at the specified tile coordinates.
      *
      * @param world The Box2D world to create the player in.
-     * @param x The tile X-coordinate.
-     * @param y The tile Y-coordinate.
+     * @param x     The tile X-coordinate.
+     * @param y     The tile Y-coordinate.
      */
     public Player(World world, float x, float y) {
         super(world, x, y); // Call the GameObject constructor
@@ -52,9 +53,9 @@ public class Player extends GameObject implements Drawable {
     /**
      * Overrides the default hitbox creation to make the player's hitbox circular.
      *
-     * @param world The Box2D world to create the hitbox in.
-     * @param tileX The tile X-coordinate.
-     * @param tileY The tile Y-coordinate.
+     * @param world  The Box2D world to create the hitbox in.
+     * @param tileX  The tile X-coordinate.
+     * @param tileY  The tile Y-coordinate.
      */
     @Override
     protected void createHitbox(World world, float tileX, float tileY) {
@@ -73,7 +74,6 @@ public class Player extends GameObject implements Drawable {
         body.createFixture(fixtureDef);
         circle.dispose();
 
-        // Prevent rotation so the player stays upright if you want.
         body.setFixedRotation(true);
 
         // Associate this Player object with the Box2D body:
@@ -87,7 +87,6 @@ public class Player extends GameObject implements Drawable {
      */
     public void tick(float frameTime) {
         this.elapsedTime += frameTime;
-
     }
 
     /**
@@ -113,6 +112,11 @@ public class Player extends GameObject implements Drawable {
         }
     }
 
+    /**
+     * Updates all active arrows, removing them when they should be destroyed.
+     *
+     * @param deltaTime The time elapsed since the last frame.
+     */
     public void updateArrows(float deltaTime) {
         Iterator<Arrow> it = activeArrows.iterator();
         while (it.hasNext()) {
@@ -127,24 +131,33 @@ public class Player extends GameObject implements Drawable {
 
     /**
      * The main update method called every frame.
-     * Handles the speed power-up timer and applies the final velocity to the Box2D body.
+     * Handles the speed and arrow power-up timers and applies the final velocity to the Box2D body.
      *
      * @param deltaTime The time elapsed since the last frame.
      */
-
     public void update(float deltaTime) {
         this.elapsedTime += deltaTime;
 
-
+        // -- Handle SPEED power-up timer --
         if (speedTimer > 0f) {
             speedTimer -= deltaTime;
             if (speedTimer <= 0f) {
-
                 speedMultiplier = 1.0f;
                 speedTimer = 0f;
             }
         }
 
+        // -- Handle ARROW power-up timer --
+        if (arrowTimer > 0f) {
+            arrowTimer -= deltaTime;
+            if (arrowTimer <= 0f) {
+                arrowTimer = 0f;
+                canShootArrows = false;
+                System.out.println("update: Arrow Power-Up ended. Can no longer shoot arrows.");
+            }
+        }
+
+        // Apply velocity to player's body
         if (body != null) {
             body.setLinearVelocity(vx * speedMultiplier, vy * speedMultiplier);
         }
@@ -160,11 +173,30 @@ public class Player extends GameObject implements Drawable {
         this.speedTimer = durationSeconds;
     }
 
-    public void enableArrowShooting() {
-        canShootArrows = true;
-        System.out.println("[enableArrowShooting] Player can now shoot arrows.");
+    /**
+     * Activates the Arrow Power-Up, allowing the player to shoot arrows for a limited duration.
+     *
+     * @param durationSeconds The duration (in seconds) for the arrow shooting ability.
+     */
+    public void activateArrowPowerUp(float durationSeconds) {
+        this.arrowTimer = durationSeconds;
+        this.canShootArrows = true;
+        System.out.println("[activateArrowPowerUp] Player can now shoot arrows for " + durationSeconds + " seconds.");
     }
 
+    /**
+     * Enables permanent arrow shooting without a duration timer LEGACY CODE
+     */
+    public void enableArrowShooting() {
+        canShootArrows = true;
+        System.out.println("[enableArrowShooting] Player can now shoot arrows (no timer).");
+    }
+
+    /**
+     * Attempts to shoot an arrow in the current direction if the Arrow Power-Up is active.
+     *
+     * @param map The current {@link GameMap} to add the arrow to.
+     */
     public void shootArrow(GameMap map) {
         System.out.println("[shootArrow] Arrow shooting method called.");
 
@@ -181,10 +213,10 @@ public class Player extends GameObject implements Drawable {
             return;
         }
 
-
         float spawnX = body.getPosition().x;
         float spawnY = body.getPosition().y;
 
+        // Adjust spawn positions based on direction
         switch (currentDirection) {
             case RIGHT:
                 spawnY -= 0.5f;
@@ -212,7 +244,6 @@ public class Player extends GameObject implements Drawable {
         System.out.println("[shootArrow] Arrow shot in direction: " + currentDirection);
     }
 
-
     /**
      * Provides the current appearance of the player based on its state and animation.
      *
@@ -236,7 +267,23 @@ public class Player extends GameObject implements Drawable {
         }
     }
 
+    // -------------------------
+    // Getters for power-up timers
+    // -------------------------
+
+    /**
+     * Gets the remaining duration of the Speed Power-Up.
+     * @return Remaining speed power-up time in seconds.
+     */
     public float getSpeedTimer() {
         return speedTimer;
+    }
+
+    /**
+     * Gets the remaining duration of the Arrow Power-Up.
+     * @return Remaining arrow power-up time in seconds.
+     */
+    public float getArrowTimer() {
+        return arrowTimer;
     }
 }
