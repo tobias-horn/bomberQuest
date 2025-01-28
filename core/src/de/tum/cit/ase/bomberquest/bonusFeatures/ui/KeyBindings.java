@@ -9,11 +9,10 @@ import com.badlogic.gdx.Preferences;
 // Implemented according to https://libgdx.com/wiki/preferences
 
 /**
- * {@code KeyBindings} manages the key bindings for various actions within the BomberQuest game.
- * It allows retrieval and modification of key mappings, and persists these settings using libGDX's {@link Preferences}.
- * <p>
+ * KeyBindings manages the key bindings for various actions within the BomberQuest game.
+ * It allows retrieval and modification of key mappings, and persists these settings using libGDX's Preferences.
+ *
  * The class defines default key bindings and provides methods to get and set keys for specific actions.
- * </p>
  */
 public class KeyBindings {
     // Action identifiers
@@ -44,7 +43,7 @@ public class KeyBindings {
     /**
      * Retrieves the display name for a given action.
      *
-     * @param action the action identifier (e.g., {@link #MOVE_UP})
+     * @param action the action identifier
      * @return a user-friendly name for the action (e.g., "Move Up")
      */
     public static String getActionName(String action) {

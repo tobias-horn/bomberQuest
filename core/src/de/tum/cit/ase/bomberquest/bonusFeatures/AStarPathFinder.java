@@ -159,12 +159,6 @@ public class AStarPathFinder {
     /**
      * Calculates the Manhattan distance between two points.
      * This heuristic assumes movement is only allowed along grid lines (horizontal/vertical).
-     *
-     * @param x1 The x-coordinate of the first point
-     * @param y1 The y-coordinate of the first point
-     * @param x2 The x-coordinate of the second point
-     * @param y2 The y-coordinate of the second point
-     * @return The Manhattan distance between the two points
      */
     private static float calculateManhattanDistance(int x1, int y1, int x2, int y2) {
         return Math.abs(x1 - x2) + Math.abs(y1 - y2);

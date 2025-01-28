@@ -275,6 +275,16 @@ public class GameMap {
     }
 
     /**
+     * Checks if a tile is on the border of the map.
+     * @param x X-coordinate (in tiles).
+     * @param y Y-coordinate (in tiles).
+     * @return True if the tile is on the border, false otherwise.
+     */
+    private boolean isOnBorder(int x, int y) {
+        return x == 0 || y == 0 || x == width - 1 || y == height - 1;
+    }
+
+    /**
      * Adds a bomb to the game, if the player has not exceeded their bomb limit.
      * @param bomb The bomb to add.
      */
@@ -293,16 +303,6 @@ public class GameMap {
         }
         bombs.add(bomb);
         bombPlacedSound.play();
-    }
-
-    /**
-     * Checks if a tile is on the border of the map.
-     * @param x X-coordinate (in tiles).
-     * @param y Y-coordinate (in tiles).
-     * @return True if the tile is on the border, false otherwise.
-     */
-    private boolean isOnBorder(int x, int y) {
-        return x == 0 || y == 0 || x == width - 1 || y == height - 1;
     }
 
     /**

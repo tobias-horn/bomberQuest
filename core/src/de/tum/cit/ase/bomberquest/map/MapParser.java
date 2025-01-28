@@ -4,12 +4,19 @@ import com.badlogic.gdx.files.FileHandle;
 
 import java.util.*;
 
+/**
+ * Parses map files and initializes game objects based on the map data.
+ */
 public class MapParser {
 
-
+    /**
+     * Parses the map file and populates the provided GameMap with objects.
+     *
+     * @param gameMap    the GameMap instance to populate with objects
+     * @param fileHandle the file handle pointing to the map file
+     */
     public static void parseMap(GameMap gameMap, FileHandle fileHandle){
         boolean containsExit = false;
-
 
         HashMap<String, Integer> tileMap = new HashMap<>();
 
@@ -34,20 +41,19 @@ public class MapParser {
 
         addSpeedPowerUps(tileMap);
 
-
-
         for(Map.Entry<String, Integer> entry : tileMap.entrySet()){
-                int x = Integer.parseInt(entry.getKey().split(",")[0]);
-                int y = Integer.parseInt(entry.getKey().split(",")[1]);
+            int x = Integer.parseInt(entry.getKey().split(",")[0]);
+            int y = Integer.parseInt(entry.getKey().split(",")[1]);
 
-
-
-                gameMap.createObject(x, y, entry.getValue());
+            gameMap.createObject(x, y, entry.getValue());
         }
-
-
     }
 
+    /**
+     * Places a random exit on one of the destructible walls if no exit exists.
+     *
+     * @param tileMap the map of tile coordinates to their corresponding types
+     */
     public static void placeRandomExit(HashMap<String, Integer> tileMap){
         HashMap<String, Integer> destructibleWalls = new HashMap<>();
 
@@ -62,20 +68,21 @@ public class MapParser {
         String selectedKey = keys.get(randomExit);
 
         tileMap.put(selectedKey, 4);
-
-
     }
 
+    /**
+     * Adds speed power-ups to random destructible wall positions on the map.
+     *
+     * @param tileMap the map of tile coordinates to their corresponding types
+     */
     public static void addSpeedPowerUps(HashMap<String, Integer> tileMap) {
         List<String> possiblePositions = new ArrayList<>();
 
         for (Map.Entry<String, Integer> entry : tileMap.entrySet()) {
             if (entry.getValue() == 1) {
-
                 possiblePositions.add(entry.getKey());
             }
         }
-
 
         Collections.shuffle(possiblePositions);
         int maxSpeedPowerUps = Math.min(4, possiblePositions.size());

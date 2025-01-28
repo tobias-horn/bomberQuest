@@ -12,17 +12,16 @@ import com.badlogic.gdx.Preferences;
  * - For each power-up collected: +85 points
  * - For each second remaining when the player wins: +2 points
  *
- * Also maintains a persistent high score across game sessions.
  */
 public class Score {
 
 
-    // Current in-game score (not persisted across sessions)
+
     private int score;
 
     public Score() {
         this.score = 0;
-        // Initialize Preferences here to ensure Gdx.app is not null
+
     }
 
     /**

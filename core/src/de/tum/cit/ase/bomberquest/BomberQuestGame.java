@@ -38,7 +38,7 @@ public class BomberQuestGame extends Game {
     /**
      * Constructs a new BomberQuestGame instance with the specified file chooser.
      *
-     * @param fileChooser the {@link NativeFileChooser} used for selecting files within the game
+     * @param fileChooser the NativeFileChooser used for selecting files within the game
      */
     public BomberQuestGame(NativeFileChooser fileChooser) {
         this.fileChooser = fileChooser;
@@ -87,7 +87,7 @@ public class BomberQuestGame extends Game {
      * Sets the active screen based on the provided {@code ScreenState}.
      * Handles the transition logic and ensures proper resource management during screen changes.
      *
-     * @param newState the {@link ScreenState} to transition to
+     * @param newState the ScreenState to transition to
      */
     public void setScreenWithState(ScreenState newState) {
         // Record previous screen state:
@@ -127,7 +127,7 @@ public class BomberQuestGame extends Game {
     /**
      * Plays the specified music track, handling the transition from any currently playing track.
      *
-     * @param track the {@link MusicTrack} to be played
+     * @param track the MusicTrack to be played
      */
     private void playMusic(MusicTrack track) {
         if (currentMusicTrack != track) {
@@ -208,7 +208,7 @@ public class BomberQuestGame extends Game {
     /**
      * Sets the active screen and ensures that the previous screen is properly disposed of to free resources.
      *
-     * @param screen the new {@link Screen} to set as active
+     * @param screen the new Screen to set as active
      */
     @Override
     public void setScreen(Screen screen) {
@@ -245,7 +245,7 @@ public class BomberQuestGame extends Game {
             // Clear previousScreenState to avoid bouncing back and forth
             previousScreenState = null;
 
-            // Now set our screen to that previous state
+            // Set our screen to that previous state
             setScreenWithState(targetState);
         } else {
             System.out.println("No previous state found. Returning to MENU.");
@@ -254,8 +254,7 @@ public class BomberQuestGame extends Game {
         }
     }
 
-    // Getters and Setters for various components (omitted for brevity)
-    // These methods are considered trivial and thus are not documented.
+
 
     public Skin getSkin() {
         return skin;
