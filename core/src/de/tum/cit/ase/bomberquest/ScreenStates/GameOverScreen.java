@@ -103,7 +103,7 @@ public class GameOverScreen extends BaseScreen {
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.restartGame();  // Make sure this method resets the game properly
+                game.restartGame();
                 super.clicked(event, x, y);
             }
         });

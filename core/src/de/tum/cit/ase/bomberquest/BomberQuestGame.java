@@ -348,4 +348,12 @@ public class BomberQuestGame extends Game {
     public NativeFileChooser getFileChooser() {
         return fileChooser;
     }
+
+    public Score getScore() {
+        return score;
+    }
+
+    public void setScore(Score score) {
+        this.score = score;
+    }
 }

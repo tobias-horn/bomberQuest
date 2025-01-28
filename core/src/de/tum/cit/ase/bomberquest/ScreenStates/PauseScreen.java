@@ -88,6 +88,7 @@ public class PauseScreen {
                 Gdx.app.log("PauseScreen", "To main menu clicked");
                 game.setScreen(new MenuScreen(game, font));
                 game.setScreenWithState(ScreenState.MENU);
+                game.getScore().resetScore();
                 super.clicked(event, x, y);
             }
         });
