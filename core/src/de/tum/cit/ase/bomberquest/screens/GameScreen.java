@@ -134,13 +134,16 @@ public class GameScreen implements Screen {
 
         int minutes = (int) (remainingTime / 60);
         int seconds = (int) (remainingTime % 60);
+
+        // Format the timer as "MM:SS", where minutes and seconds are zero-padded to 2 digits using %02d
         String timerText = String.format("%02d:%02d", minutes, seconds);
 
         Hud.PanelState state = Hud.PanelState.BLACK;
+
         if (remainingTime < 10) {
             blinkAccumulator += deltaTime;
             if (blinkAccumulator >= 0.5f) {
-                blinkToggle = !blinkToggle;
+                blinkToggle = false;
                 blinkAccumulator = 0f;
             }
             if(!map.getEnemies().isEmpty()) {
@@ -217,46 +220,84 @@ public class GameScreen implements Screen {
     /**
      * Updates the camera position to follow the player while keeping the camera within map bounds.
      */
+    /**
+     * Updates the position of the game camera based on the player's position.
+     * Ensures the camera follows the player while keeping the player within
+     * a specified margin of the viewport. Additionally, clamps the camera
+     * position to prevent it from moving beyond the boundaries of the map.
+     */
     private void updateCamera() {
+        // Calculate half of the camera's viewport width and height.
+        // This is used to determine the camera's boundaries relative to its center position.
         float halfW = mapCamera.viewportWidth * 0.5f;
         float halfH = mapCamera.viewportHeight * 0.5f;
+
+        // Determine the left, right, bottom, and top edges of the camera's viewport.
+        // These values represent the current visible area in the game world.
         float cameraLeft = mapCamera.position.x - halfW;
         float cameraRight = mapCamera.position.x + halfW;
         float cameraBottom = mapCamera.position.y - halfH;
         float cameraTop = mapCamera.position.y + halfH;
 
+        // Define margins as a percentage of the viewport size.
+        // These margins determine how close the player can get to the edge of the screen
+        // before the camera starts to move to keep the player within the margin.
         float marginX = 0.2f * mapCamera.viewportWidth;
         float marginY = 0.2f * mapCamera.viewportHeight;
 
+        // Retrieve the player's current position in tile coordinates,
+        // then convert it to pixel coordinates by multiplying with TILE_SIZE_PX and SCALE.
+        // This gives the player's position in the same coordinate system as the camera.
         float playerX = map.getPlayer().getX() * TILE_SIZE_PX * SCALE;
         float playerY = map.getPlayer().getY() * TILE_SIZE_PX * SCALE;
 
+        // Check if the player's X position is to the left of the left margin.
         if (playerX < cameraLeft + marginX) {
+            // Move the camera to the left so that the player is within the left margin.
+            // The camera's new X position is set such that the player is 'marginX' units from the left edge.
             mapCamera.position.x = playerX + (halfW - marginX);
-        } else if (playerX > cameraRight - marginX) {
+        }
+        // Check if the player's X position is to the right of the right margin.
+        else if (playerX > cameraRight - marginX) {
+            // Move the camera to the right so that the player is within the right margin.
+            // The camera's new X position is set such that the player is 'marginX' units from the right edge.
             mapCamera.position.x = playerX - (halfW - marginX);
         }
 
+        // Check if the player's Y position is below the bottom margin.
         if (playerY < cameraBottom + marginY) {
+            // Move the camera downward so that the player is within the bottom margin.
+            // The camera's new Y position is set such that the player is 'marginY' units from the bottom edge.
             mapCamera.position.y = playerY + (halfH - marginY);
-        } else if (playerY > cameraTop - marginY) {
+        }
+        // Check if the player's Y position is above the top margin.
+        else if (playerY > cameraTop - marginY) {
+            // Move the camera upward so that the player is within the top margin.
+            // The camera's new Y position is set such that the player is 'marginY' units from the top edge.
             mapCamera.position.y = playerY - (halfH - marginY);
         }
 
+        // Calculate the total width and height of the map in pixels.
+        // This is done by multiplying the map's dimensions in tiles by TILE_SIZE_PX and SCALE.
         float mapWidthInPx = map.getWidth() * TILE_SIZE_PX * SCALE;
         float mapHeightInPx = map.getHeight() * TILE_SIZE_PX * SCALE;
 
-        float minCameraX = halfW;
-        float maxCameraX = mapWidthInPx - halfW;
-        float minCameraY = halfH;
-        float maxCameraY = mapHeightInPx - halfH;
+        // Determine the minimum and maximum allowed camera positions to prevent
+        // the camera from showing areas outside the map boundaries.
+        float minCameraX = halfW; // The camera's X position should not be less than half the viewport width.
+        float maxCameraX = mapWidthInPx - halfW; // The camera's X position should not exceed the map width minus half the viewport width.
+        float minCameraY = halfH; // The camera's Y position should not be less than half the viewport height.
+        float maxCameraY = mapHeightInPx - halfH; // The camera's Y position should not exceed the map height minus half the viewport height.
 
+        // Clamp the camera's X position to ensure it stays within the map boundaries.
         if (mapCamera.position.x < minCameraX) {
             mapCamera.position.x = minCameraX;
         }
         if (mapCamera.position.x > maxCameraX) {
             mapCamera.position.x = maxCameraX;
         }
+
+        // Clamp the camera's Y position to ensure it stays within the map boundaries.
         if (mapCamera.position.y < minCameraY) {
             mapCamera.position.y = minCameraY;
         }
@@ -264,12 +305,17 @@ public class GameScreen implements Screen {
             mapCamera.position.y = maxCameraY;
         }
 
+        // After adjusting the camera's position, update the camera to apply the changes.
+        // This typically recalculates the camera's matrices and ensures the new position is rendered.
         mapCamera.update();
     }
+
 
     /**
      * Renders all drawable objects on the map, including the player, enemies, bombs, and explosions.
      */
+//    Logic explained here https://stackoverflow.com/questions/33703663/understanding-the-libgdx-projection-matrix
+
     private void renderMap() {
         spriteBatch.setProjectionMatrix(mapCamera.combined);
         spriteBatch.begin();
@@ -396,22 +442,18 @@ public class GameScreen implements Screen {
 
     @Override
     public void pause() {
-        // Not implemented
     }
 
     @Override
     public void resume() {
-        // Not implemented
     }
 
     @Override
     public void show() {
-        // Not implemented
     }
 
     @Override
     public void hide() {
-        // Not implemented
     }
 
     /**
@@ -420,6 +462,6 @@ public class GameScreen implements Screen {
      * @param b True if the game is over, false otherwise.
      */
     public void setGameOver(boolean b) {
-        // Implementation can be added as needed
+
     }
 }

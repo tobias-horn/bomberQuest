@@ -15,13 +15,6 @@ public class DesktopLauncher {
 		config.setTitle("Bomber Quest");
 
 
-		// Graphics.DisplayMode displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
-		// config.setWindowedMode(
-		//     Math.round(0.8f * displayMode.width),
-		//     Math.round(0.8f * displayMode.height)
-		// );
-
-
 		config.setWindowedMode(1024, 768);
 
 		config.useVsync(true);

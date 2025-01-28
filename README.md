@@ -336,6 +336,7 @@ AI tools were utilized during the development of this project to assist with spe
 - Advising on edge cases and best practices that extend beyond the course's scope, such as:
     - Proper disposal of native resources for improved performance and memory management.
     - Cross plattform support
+    - Frame rate independence for consistent performance
 
 ---
 
