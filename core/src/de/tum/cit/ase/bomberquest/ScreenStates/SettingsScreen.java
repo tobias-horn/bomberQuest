@@ -146,6 +146,21 @@ public class SettingsScreen extends BaseScreen {
             }
         });
 
+        MenuButton shootButton = new MenuButton(
+                KeyBindings.getActionName(KeyBindings.SHOOT_ARROW) + ": " + Input.Keys.toString(KeyBindings.getKey(KeyBindings.SHOOT_ARROW)),
+                desiredWidth, desiredHeight,
+                font,
+                upDrawable,
+                overDrawable
+        );
+        shootButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                waitForKeyPress(KeyBindings.SHOOT_ARROW, shootButton);
+                super.clicked(event, x, y);
+            }
+        });
+
         MenuButton pauseGameButton = new MenuButton(
                 KeyBindings.getActionName(KeyBindings.PAUSE_GAME) + ": " + Input.Keys.toString(KeyBindings.getKey(KeyBindings.PAUSE_GAME)),
                 desiredWidth, desiredHeight,
@@ -169,8 +184,10 @@ public class SettingsScreen extends BaseScreen {
             public void clicked(InputEvent event, float x, float y) {
                 if (muteCheckBox.isChecked()) {
                     MusicTrack.BACKGROUND.mute();
+                    MusicTrack.GAMEPLAY_MUSIC.mute();
                 } else {
                     MusicTrack.BACKGROUND.unmute();
+                    MusicTrack.GAMEPLAY_MUSIC.unmute();
                 }
                 super.clicked(event, x, y);
             }
@@ -207,13 +224,11 @@ public class SettingsScreen extends BaseScreen {
                 super.clicked(event, x, y);
             }
         });
-
         
         Table table = new Table();
         table.setFillParent(true);
         table.center();
         stage.addActor(table);
-
 
         table.row().pad(10);
         table.add(upButton).size(desiredWidth, desiredHeight).center().pad(10);
@@ -225,6 +240,8 @@ public class SettingsScreen extends BaseScreen {
         table.add(rightButton).size(desiredWidth, desiredHeight).center().pad(10);
         table.row().pad(10);
         table.add(placeBombButton).size(desiredWidth, desiredHeight).center().pad(10);
+        table.row().pad(10);
+        table.add(shootButton).size(desiredWidth, desiredHeight).center().pad(10);
         table.row().pad(10);
         table.add(pauseGameButton).size(desiredWidth, desiredHeight).center().pad(10);
         table.row().pad(10);

@@ -172,6 +172,7 @@ public class BomberQuestGame extends Game {
         } else {
             Gdx.app.error("BomberQuestGame", "No map selected to restart the game.");
         }
+        playMusic(MusicTrack.GAMEPLAY_MUSIC);
     }
 
     /**
