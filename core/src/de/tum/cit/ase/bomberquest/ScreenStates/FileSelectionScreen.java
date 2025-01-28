@@ -89,6 +89,8 @@ public class FileSelectionScreen extends BaseScreen {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             game.loadMap(file.path());
+                            game.getCurrentMusicTrack().stop();
+                            game.getCurrentMusicTrack().play();
                             super.clicked(event, x, y);
                         }
                     });

@@ -93,6 +93,21 @@ public class PauseScreen {
             }
         });
 
+        MenuButton loadMap = new MenuButton(
+                "Load Map",
+                desiredWidth, desiredHeight,
+                font,
+                upDrawable,
+                overDrawable
+        );
+        loadMap.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new FileSelectionScreen(game, font));
+                super.clicked(event, x, y);
+            }
+        });
+
         // Settings Button
         MenuButton settingsButton = new MenuButton(
                 "Settings",
@@ -141,6 +156,8 @@ public class PauseScreen {
         table.add(resumeButton).size(desiredWidth, desiredHeight).center().padBottom(10);
         table.row();
         table.add(menuButton).size(desiredWidth, desiredHeight).center().padBottom(10);
+        table.row();
+        table.add(loadMap).size(desiredWidth, desiredHeight).center().padBottom(10);
         table.row();
         table.add(settingsButton).size(desiredWidth, desiredHeight).center().padBottom(10);
         table.row();
