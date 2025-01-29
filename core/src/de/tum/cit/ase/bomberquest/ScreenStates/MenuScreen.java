@@ -66,6 +66,7 @@ public class MenuScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new FileSelectionScreen(game, font));
+                game.resetTime();
                 super.clicked(event, x, y);
             }
         });

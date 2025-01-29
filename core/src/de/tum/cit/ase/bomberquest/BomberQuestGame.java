@@ -162,6 +162,7 @@ public class BomberQuestGame extends Game {
     public void restartGame() {
         Screen currentScreen = getScreen();
         score.resetScore();
+        resetTime();
         if (currentScreen instanceof GameScreen) {
             ((GameScreen) currentScreen).setGameOver(false);
             currentScreen.dispose();
@@ -266,6 +267,10 @@ public class BomberQuestGame extends Game {
 
     public void setSavedTime(float savedTime) {
         this.savedTime = savedTime;
+    }
+
+    public void resetTime(){
+        savedTime = 5*60f;
     }
 
 

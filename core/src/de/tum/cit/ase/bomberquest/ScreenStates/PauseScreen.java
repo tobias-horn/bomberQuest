@@ -89,6 +89,7 @@ public class PauseScreen {
                 game.setScreen(new MenuScreen(game, font));
                 game.setScreenWithState(ScreenState.MENU);
                 game.getScore().resetScore();
+                game.resetTime();
                 super.clicked(event, x, y);
             }
         });
@@ -104,6 +105,7 @@ public class PauseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new FileSelectionScreen(game, font));
+                game.resetTime();
                 super.clicked(event, x, y);
             }
         });
