@@ -60,7 +60,7 @@ public class BomberQuestGame extends Game {
         this.skin = new Skin(Gdx.files.internal("skin/craftacular/craftacular-ui.json")); // Load UI skin
 
         gameWonSound = Gdx.audio.newSound(Gdx.files.internal("audio/gameWon.mp3"));
-        gameOverSound = Gdx.audio.newSound(Gdx.files.internal("assets/audio/background.mp3"));
+        gameOverSound = Gdx.audio.newSound(Gdx.files.internal("assets/audio/death.mp3"));
 
         this.font = skin.getFont("font");
 
@@ -115,6 +115,7 @@ public class BomberQuestGame extends Game {
             }
             case GAME_OVER -> {
                 setScreen(new GameOverScreen(this, font));
+                currentMusicTrack.stop();
                 gameOverSound.play();
             }
             case GAME_WON -> {
@@ -141,9 +142,8 @@ public class BomberQuestGame extends Game {
             if (track == MusicTrack.GAMEPLAY_MUSIC) {
                 track.setLooping(false);
             }
-
-            track.play();
             currentMusicTrack = track;
+            track.play();
         }
     }
 
@@ -172,7 +172,7 @@ public class BomberQuestGame extends Game {
         } else {
             Gdx.app.error("BomberQuestGame", "No map selected to restart the game.");
         }
-        playMusic(MusicTrack.GAMEPLAY_MUSIC);
+        currentMusicTrack.play();
     }
 
     /**
