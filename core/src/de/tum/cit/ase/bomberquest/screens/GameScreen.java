@@ -38,7 +38,6 @@ public class GameScreen implements Screen {
 
     private boolean paused = false; // Tracks whether the game is paused
     private float remainingTime; // Remaining time for the level
-    private final float initialTime = 5 * 60f; // Initial time for the level (5 minutes)
     private float blinkAccumulator = 0f; // Accumulates time for blink effects
     private boolean blinkToggle = false; // Toggles the blink state
     private boolean isGameOver = false; // Tracks whether the game is over
@@ -50,7 +49,7 @@ public class GameScreen implements Screen {
      *
      * @param game The main game instance.
      */
-    public GameScreen(BomberQuestGame game, Score score) {
+    public GameScreen(BomberQuestGame game, Score score, float timeLeft) {
         this.game = game;
         this.spriteBatch = game.getSpriteBatch();
         this.map = game.getMap();
@@ -58,7 +57,7 @@ public class GameScreen implements Screen {
         this.mapCamera = new OrthographicCamera();
         this.mapCamera.setToOrtho(false);
         this.pauseScreen = new PauseScreen(game, game.getSkin().getFont("font"));
-        this.remainingTime = initialTime;
+        this.remainingTime = timeLeft; // use passed-in time
         this.score = score;
     }
 
@@ -71,6 +70,7 @@ public class GameScreen implements Screen {
     public void render(float deltaTime) {
         if (!paused) {
 
+            game.setSavedTime(remainingTime);
 
             map.tick(deltaTime);
 

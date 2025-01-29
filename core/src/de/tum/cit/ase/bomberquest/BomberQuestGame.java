@@ -111,7 +111,7 @@ public class BomberQuestGame extends Game {
                 playMusic(MusicTrack.BACKGROUND);
             }
             case GAME -> {
-                setScreen(new GameScreen(this, score));
+                setScreen(new GameScreen(this, score, savedTime));
                 playMusic(MusicTrack.GAMEPLAY_MUSIC);
             }
             case GAME_OVER -> {
@@ -254,6 +254,18 @@ public class BomberQuestGame extends Game {
             // If we have no recorded previous screen, let's default to the menu
             setScreenWithState(ScreenState.MENU);
         }
+    }
+
+    // Time management
+
+    private float savedTime = 5 * 60f;
+
+    public float getSavedTime() {
+        return savedTime;
+    }
+
+    public void setSavedTime(float savedTime) {
+        this.savedTime = savedTime;
     }
 
 
