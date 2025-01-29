@@ -55,7 +55,7 @@ public class GameWonScreen extends BaseScreen {
      * @param font The BitmapFont to use for text rendering.
      */
     public GameWonScreen(BomberQuestGame game, BitmapFont font) {
-        super(game, font, "assets/startScreen/start_background.jpg", true);
+        super(game, font, "assets/background/gameWonBackground.jpg", true);
 
         Random random = new Random();
         this.winMessage = WIN_MESSAGES[random.nextInt(WIN_MESSAGES.length)];
@@ -76,15 +76,11 @@ public class GameWonScreen extends BaseScreen {
         table.add(messageLabel).padBottom(50f);
         table.row();
 
-        // --- New logic for final score and high score ---
-        int finalScore = 0;
-        int highScore  = 0;
-        if (game.getMap() != null && game.getMap().getScore() != null) {
-            // Update/check if we have a new high score
 
-            // Retrieve final score
+        int finalScore = 0;
+
+        if (game.getMap() != null && game.getMap().getScore() != null) {
             finalScore = game.getMap().getScore().getScore();
-            // Retrieve current high score
         }
 
         // Display final score

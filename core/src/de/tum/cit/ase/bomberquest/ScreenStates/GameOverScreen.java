@@ -56,7 +56,7 @@ public class GameOverScreen extends BaseScreen {
      */
     public GameOverScreen(BomberQuestGame game, BitmapFont font) {
 
-        super(game, font, "assets/startScreen/start_background.jpg", true);
+        super(game, font, "assets/background/gameOverBackground.jpg", true);
 
         Random random = new Random();
         this.gameOverMessage = MESSAGES[random.nextInt(MESSAGES.length)];
@@ -83,7 +83,6 @@ public class GameOverScreen extends BaseScreen {
             finalScore = game.getMap().getScore().getScore();
         }
 
-        // Display final score
         Label scoreLabel = new Label("Score: " + finalScore, new Label.LabelStyle(font, font.getColor()));
         table.add(scoreLabel).padBottom(30f);
         table.row();

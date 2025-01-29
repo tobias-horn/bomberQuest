@@ -1,7 +1,6 @@
 package de.tum.cit.ase.bomberquest.map;
 
 import com.badlogic.gdx.files.FileHandle;
-
 import java.util.*;
 
 /**

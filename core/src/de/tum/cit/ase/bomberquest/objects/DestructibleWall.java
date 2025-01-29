@@ -30,7 +30,7 @@ public class DestructibleWall extends GameObject implements Drawable {
     /**
      * Checks if there is an exit underneath the wall.
      *
-     * @return {@code true} if an exit is underneath, {@code false} otherwise.
+     * @return true if an exit is underneath, false otherwise.
      */
     public boolean isExitUnderneath() {
         return exitUnderneath;

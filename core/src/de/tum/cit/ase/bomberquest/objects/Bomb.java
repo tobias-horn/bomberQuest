@@ -39,13 +39,7 @@ public class Bomb extends GameObject implements Drawable {
     // Sound effect for the explosion
     private static final Sound explosionSound = Gdx.audio.newSound(Gdx.files.internal("assets/audio/explosionSound.mp3"));
 
-    // --------------------------------------------
-    // NEW FIELDS FOR EXPLOSION ANIMATION LIFESPAN
-    // --------------------------------------------
-    /** How long we keep this Bomb object around (for center animation) after it explodes. */
     private float explosionTimer = Animations.BOMB_CENTER_EXPLOSION.getAnimationDuration();
-
-    /** Whether we have already spawned the ExplosionTile objects for the plus-shape. */
     private boolean explosionInitialized = false;
 
     private Score score;
@@ -221,9 +215,7 @@ public class Bomb extends GameObject implements Drawable {
         }
     }
 
-    // ----------------------------------------------------------------------
     // Create ExplosionTile objects for the animation
-    // ----------------------------------------------------------------------
     private void spawnExplosionTiles() {
         int bombTileX = (int) Math.floor(getX());
         int bombTileY = (int) Math.floor(getY());
@@ -256,11 +248,6 @@ public class Bomb extends GameObject implements Drawable {
             ExplosionTile tile = new ExplosionTile(gameMap, tx, ty, type);
             gameMap.addExplosionTile(tile);
 
-            if (obj instanceof DestructibleWall) {
-                // We still break from drawing beyond this tile if we want
-                // the explosion to pass destructible walls, do not break
-                // but it’s your choice.
-            }
         }
     }
 

@@ -42,6 +42,7 @@ public class Hud {
     // Arrow Power-Up
     private boolean arrowPowerUpActive = false;
 
+    // the panel will dynamically adjust to screen size but only to a certain maximum height
     private static final float MAX_PANEL_HEIGHT = 100f;
 
     /**
@@ -157,7 +158,7 @@ public class Hud {
         // Render Speed Power-Up Next to Blast
 
         if (speedPowerUpActive) {
-            float speedOverlayWidth = iconSize + 2 * padding; // No text for speed
+            float speedOverlayWidth = iconSize + 2 * padding;
             float speedOverlayHeight = iconSize + 2 * padding;
 
             float speedOverlayX = blastOverlayX + blastOverlayWidth + padding; // Next to blast
@@ -215,20 +216,15 @@ public class Hud {
             float bombOverlayX = screenWidth - margin - bombOverlayWidth;
             float bombOverlayY = screenHeight - margin - bombOverlayHeight;
 
-
             float arrowOverlayX = bombOverlayX - (arrowOverlayWidth + padding);
             float arrowOverlayY = bombOverlayY;
-
 
             spriteBatch.draw(transparentBlackTexture, arrowOverlayX, arrowOverlayY, arrowOverlayWidth, arrowOverlayHeight);
 
             float arrowIconX = arrowOverlayX + padding;
             float arrowIconY = arrowOverlayY + padding;
 
-
             spriteBatch.draw(Textures.ARROW_POWER_UP_HUD, arrowIconX, arrowIconY, iconSize, iconSize);
-
-
             spriteBatch.draw(transparentBlackTexture, bombOverlayX, bombOverlayY, bombOverlayWidth, bombOverlayHeight);
 
             float bombIconX = bombOverlayX + padding;
@@ -312,7 +308,7 @@ public class Hud {
     /**
      * Sets the current state of the HUD panel, changing its appearance based on the specified state.
      *
-     * @param state The new {@code PanelState} to apply to the HUD panel.
+     * @param state The new PanelState to apply to the HUD panel.
      */
     public void setPanelState(PanelState state) {
         switch (state) {

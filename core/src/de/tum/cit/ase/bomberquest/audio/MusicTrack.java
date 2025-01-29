@@ -5,11 +5,7 @@ import com.badlogic.gdx.audio.Music;
 
 /**
  * This enum is used to manage the music tracks in the game.
- * Currently, only one track is used, but this could be extended to include multiple tracks.
- * Using an enum for this purpose is a good practice, as it allows for easy management of the music tracks
- * and prevents the same track from being loaded into memory multiple times.
  * See the assets/audio folder for the actual music files.
- * Feel free to add your own music tracks and use them in the game!
  */
 
 public enum MusicTrack {

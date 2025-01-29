@@ -57,7 +57,7 @@ public class GameScreen implements Screen {
         this.mapCamera = new OrthographicCamera();
         this.mapCamera.setToOrtho(false);
         this.pauseScreen = new PauseScreen(game, game.getSkin().getFont("font"));
-        this.remainingTime = timeLeft; // use passed-in time
+        this.remainingTime = timeLeft; // use passed-in time from bomberquest.java for consistent time across game screens
         this.score = score;
     }
 
@@ -139,9 +139,8 @@ public class GameScreen implements Screen {
         int minutes = (int) (remainingTime / 60);
         int seconds = (int) (remainingTime % 60);
 
-        // Format the timer as "MM:SS", where minutes and seconds are zero-padded to 2 digits using %02d
+        // Format the timer as "MM:SS", where minutes and seconds are zero-padded to 2 digits using %02d syntax
         String timerText = String.format("%02d:%02d", minutes, seconds);
-
         Hud.PanelState state = Hud.PanelState.BLACK;
 
         if (remainingTime < 10) {

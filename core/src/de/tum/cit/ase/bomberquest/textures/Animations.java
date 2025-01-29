@@ -6,13 +6,12 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * Contains all animation constants used in the game.
- * It is good practice to keep all textures and animations in constants to avoid loading them multiple times.
  * These can be referenced anywhere they are needed.
  */
 public class Animations {
 
     /**
-     * The animation for the character walking down.
+     * The animation for the character walking.
      */
 
     // CHARACTER WALKING DOWN
@@ -195,24 +194,5 @@ public class Animations {
             SpriteSheet.ORIGINAL_BOMBERMAN.at(14, 3),
             SpriteSheet.ORIGINAL_BOMBERMAN.at(14, 8)
     );
-
-    //Wall Animation
-    public static final Animation<TextureRegion> FALL_OF_THE_WALL = new Animation<>(0.1f,
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 6),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 7),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 8),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 9),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 10),
-            SpriteSheet.ORIGINAL_BOMBERMAN.at(4, 11)
-    );
-
-
-
-
-
-
-
-
-
 
 }

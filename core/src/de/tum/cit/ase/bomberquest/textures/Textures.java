@@ -66,6 +66,7 @@ public class Textures {
     public static final TextureRegion BUTTON_LONG_HOVER = new TextureRegion(
             new Texture(new FileHandle("assets/menu/button_long_hover.png")));
 
+    // Nine patch custom button. This defines the stretchable area of the button texture
     // left = 4, right = 4, top = 4, bottom = 6
     public static final NinePatch BUTTON_LONG_NINEPATCH_OFF =
             new NinePatch(BUTTON_LONG_OFF, 4, 4, 4, 6);

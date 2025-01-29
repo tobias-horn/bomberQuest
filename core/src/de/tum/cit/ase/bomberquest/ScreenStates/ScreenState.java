@@ -27,7 +27,7 @@ public enum ScreenState {
     SETTINGS,
 
     /**
-     * Represents the file selection screen, enabling players to select game maps or levels.
+     * Represents the file selection screen, enabling players to select game maps.
      */
     FILE_SELECTION,
 

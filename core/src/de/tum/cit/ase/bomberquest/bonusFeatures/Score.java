@@ -15,8 +15,6 @@ import com.badlogic.gdx.Preferences;
  */
 public class Score {
 
-
-
     private int score;
 
     public Score() {
