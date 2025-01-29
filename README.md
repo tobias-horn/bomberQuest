@@ -14,6 +14,7 @@ A Java/LibGDX game inspired by the classic **Bomberman**. Navigate through tiled
     1. [Menus & Screens](#menus--screens)
     2. [Settings & Key Bindings](#settings--key-bindings)
     3. [Map System](#map-system)
+    4. [HUD & Timer Indicators](#hud--timer-indicators)
 3. [Bonus Features](#bonus-features)
 4. [Project Structure](#project-structure)
     1. [Core Classes](#core-classes)
@@ -83,6 +84,20 @@ A custom **A\* pathfinding** algorithm is implemented to give enemies adaptive m
   Shows random “You Won” messages. Options:
     - **Start New Game** (restarts or selects a new map).
     - **Return to Menu**.
+
+### HUD & Timer Indicators
+
+- **Timer Color Changes**
+    1. When there are **still enemies alive** and the timer drops **below 60 seconds**, the timer text **turns red**.
+    2. If there are still enemies and the timer reaches **under 10 seconds**, the timer text **blinks red**.
+    3. **Once all enemies are destroyed**, the timer text **turns blue** immediately (indicating you can reach the exit).
+    4. If the timer then goes **under 10 seconds** but you **haven’t yet exited**, it **blinks blue**.
+
+- **Power-Up Icons**
+    - **Concurrent Bomb Power-Up**: Increases how many bombs you can place simultaneously (up to 8). Often depicted with multiple bomb icons.
+    - **Flame Power-Up**: Increases the bomb blast radius by 1 (up to 8). Depicted with a flame icon.
+    - **Arrow Power-Up**: Lets you shoot arrows for **30 seconds** once collected. Depicted with a bow/arrow or gun icon in the HUD.
+    - **Speed Power-Up**: Doubles your speed for **30 seconds**. Depicted with a running figure icon in the HUD.
 
 ### Settings & Key Bindings
 
