@@ -71,110 +71,34 @@ public class SettingsScreen extends BaseScreen {
         skin.add("customCheckBox", checkBoxStyle);
 
         // Create buttons for key bindings
-        MenuButton upButton = new MenuButton(
-                KeyBindings.getActionName(KeyBindings.MOVE_UP) + ": " + Input.Keys.toString(KeyBindings.getKey(KeyBindings.MOVE_UP)),
-                desiredWidth, desiredHeight,
-                font,
-                upDrawable,
-                overDrawable
-        );
-        upButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                waitForKeyPress(KeyBindings.MOVE_UP, upButton);
-                super.clicked(event, x, y);
-            }
-        });
+        MenuButton upButton = createKeyBindingButton(KeyBindings.MOVE_UP, upDrawable, overDrawable);
+        MenuButton downButton = createKeyBindingButton(KeyBindings.MOVE_DOWN, upDrawable, overDrawable);
+        MenuButton leftButton = createKeyBindingButton(KeyBindings.MOVE_LEFT, upDrawable, overDrawable);
+        MenuButton rightButton = createKeyBindingButton(KeyBindings.MOVE_RIGHT, upDrawable, overDrawable);
+        MenuButton placeBombButton = createKeyBindingButton(KeyBindings.PLACE_BOMB, upDrawable, overDrawable);
+        MenuButton shootButton = createKeyBindingButton(KeyBindings.SHOOT_ARROW, upDrawable, overDrawable);
+        MenuButton pauseGameButton = createKeyBindingButton(KeyBindings.PAUSE_GAME, upDrawable, overDrawable);
 
-        MenuButton downButton = new MenuButton(
-                KeyBindings.getActionName(KeyBindings.MOVE_DOWN) + ": " + Input.Keys.toString(KeyBindings.getKey(KeyBindings.MOVE_DOWN)),
-                desiredWidth, desiredHeight,
-                font,
-                upDrawable,
-                overDrawable
-        );
-        downButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                waitForKeyPress(KeyBindings.MOVE_DOWN, downButton);
-                super.clicked(event, x, y);
-            }
-        });
+        // Create a label for "Custom Keybindings"
+        Label keybindingsLabel = new Label("Custom Keybindings", skin, "default");
+        keybindingsLabel.setFontScale(1.2f);
 
-        MenuButton leftButton = new MenuButton(
-                KeyBindings.getActionName(KeyBindings.MOVE_LEFT) + ": " + Input.Keys.toString(KeyBindings.getKey(KeyBindings.MOVE_LEFT)),
-                desiredWidth, desiredHeight,
-                font,
-                upDrawable,
-                overDrawable
-        );
-        leftButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                waitForKeyPress(KeyBindings.MOVE_LEFT, leftButton);
-                super.clicked(event, x, y);
-            }
-        });
+        // Create a table for keybindings with two columns
+        Table keybindingsTable = new Table();
+        keybindingsTable.left();
 
-        MenuButton rightButton = new MenuButton(
-                KeyBindings.getActionName(KeyBindings.MOVE_RIGHT) + ": " + Input.Keys.toString(KeyBindings.getKey(KeyBindings.MOVE_RIGHT)),
-                desiredWidth, desiredHeight,
-                font,
-                upDrawable,
-                overDrawable
-        );
-        rightButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                waitForKeyPress(KeyBindings.MOVE_RIGHT, rightButton);
-                super.clicked(event, x, y);
-            }
-        });
+        keybindingsTable.add(upButton).size(desiredWidth, desiredHeight).pad(10);
+        keybindingsTable.add(downButton).size(desiredWidth, desiredHeight).pad(10);
+        keybindingsTable.row();
+        keybindingsTable.add(leftButton).size(desiredWidth, desiredHeight).pad(10);
+        keybindingsTable.add(rightButton).size(desiredWidth, desiredHeight).pad(10);
+        keybindingsTable.row();
+        keybindingsTable.add(placeBombButton).size(desiredWidth, desiredHeight).pad(10);
+        keybindingsTable.add(shootButton).size(desiredWidth, desiredHeight).pad(10);
+        keybindingsTable.row();
+        keybindingsTable.add(pauseGameButton).size(desiredWidth, desiredHeight).pad(10);
 
-        MenuButton placeBombButton = new MenuButton(
-                KeyBindings.getActionName(KeyBindings.PLACE_BOMB) + ": " + Input.Keys.toString(KeyBindings.getKey(KeyBindings.PLACE_BOMB)),
-                desiredWidth, desiredHeight,
-                font,
-                upDrawable,
-                overDrawable
-        );
-        placeBombButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                waitForKeyPress(KeyBindings.PLACE_BOMB, placeBombButton);
-                super.clicked(event, x, y);
-            }
-        });
 
-        MenuButton shootButton = new MenuButton(
-                KeyBindings.getActionName(KeyBindings.SHOOT_ARROW) + ": " + Input.Keys.toString(KeyBindings.getKey(KeyBindings.SHOOT_ARROW)),
-                desiredWidth, desiredHeight,
-                font,
-                upDrawable,
-                overDrawable
-        );
-        shootButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                waitForKeyPress(KeyBindings.SHOOT_ARROW, shootButton);
-                super.clicked(event, x, y);
-            }
-        });
-
-        MenuButton pauseGameButton = new MenuButton(
-                KeyBindings.getActionName(KeyBindings.PAUSE_GAME) + ": " + Input.Keys.toString(KeyBindings.getKey(KeyBindings.PAUSE_GAME)),
-                desiredWidth, desiredHeight,
-                font,
-                upDrawable,
-                overDrawable
-        );
-        pauseGameButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                waitForKeyPress(KeyBindings.PAUSE_GAME, pauseGameButton);
-                super.clicked(event, x, y);
-            }
-        });
 
 
         CheckBox muteCheckBox = new CheckBox("", skin, "customCheckBox");
@@ -198,9 +122,9 @@ public class SettingsScreen extends BaseScreen {
 
         // Create a horizontal table to contain the checkbox and label with padding
         Table muteTable = new Table();
-        muteTable.left(); // Align contents to the left
+        muteTable.left();
         muteTable.add(muteCheckBox).size(desiredHeight, desiredHeight).padRight(20f);
-        muteTable.add(muteLabel).left(); // Align label to the left
+        muteTable.add(muteLabel).left();
 
         // Create back button
         MenuButton backButton = new MenuButton(
@@ -224,30 +148,53 @@ public class SettingsScreen extends BaseScreen {
                 super.clicked(event, x, y);
             }
         });
-        
-        Table table = new Table();
-        table.setFillParent(true);
-        table.center();
-        stage.addActor(table);
 
-        table.row().pad(10);
-        table.add(upButton).size(desiredWidth, desiredHeight).center().pad(10);
-        table.row().pad(10);
-        table.add(downButton).size(desiredWidth, desiredHeight).center().pad(10);
-        table.row().pad(10);
-        table.add(leftButton).size(desiredWidth, desiredHeight).center().pad(10);
-        table.row().pad(10);
-        table.add(rightButton).size(desiredWidth, desiredHeight).center().pad(10);
-        table.row().pad(10);
-        table.add(placeBombButton).size(desiredWidth, desiredHeight).center().pad(10);
-        table.row().pad(10);
-        table.add(shootButton).size(desiredWidth, desiredHeight).center().pad(10);
-        table.row().pad(10);
-        table.add(pauseGameButton).size(desiredWidth, desiredHeight).center().pad(10);
-        table.row().pad(10);
-        table.add(muteTable).size(desiredWidth, desiredHeight).center().pad(10); // Add the muteTable with padding
-        table.row().pad(10);
-        table.add(backButton).size(desiredWidth, desiredHeight).center().pad(10);
+        // Create the main table
+        Table mainTable = new Table();
+        mainTable.setFillParent(true);
+        mainTable.center();
+        stage.addActor(mainTable);
+
+        // Add the "Custom Keybindings" label
+        mainTable.add(keybindingsLabel).colspan(2).padBottom(20f);
+        mainTable.row();
+
+        // Add the keybindings table
+        mainTable.add(keybindingsTable).colspan(2);
+        mainTable.row();
+
+        // Add the muteTable
+        mainTable.add(muteTable).colspan(2).padTop(20f);
+        mainTable.row();
+
+        // Add the back button
+        mainTable.add(backButton).colspan(2).size(desiredWidth, desiredHeight).padTop(20f);
+    }
+
+    /**
+     * Helper method to create a MenuButton for key bindings.
+     *
+     * @param action       The action identifier to bind (e.g., MOVE_UP).
+     * @param upDrawable   The drawable when the button is not hovered.
+     * @param overDrawable The drawable when the button is hovered.
+     * @return A configured MenuButton instance.
+     */
+    private MenuButton createKeyBindingButton(String action, NinePatchDrawable upDrawable, NinePatchDrawable overDrawable) {
+        MenuButton button = new MenuButton(
+                KeyBindings.getActionName(action) + ": " + Input.Keys.toString(KeyBindings.getKey(action)),
+                desiredWidth, desiredHeight,
+                font,
+                upDrawable,
+                overDrawable
+        );
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                waitForKeyPress(action, button);
+                super.clicked(event, x, y);
+            }
+        });
+        return button;
     }
 
     /**
@@ -264,7 +211,7 @@ public class SettingsScreen extends BaseScreen {
                 KeyBindings.setKey(action, keycode);
                 // Update button text to display the friendly action name and key
                 button.setText(KeyBindings.getActionName(action) + ": " + Input.Keys.toString(keycode));
-                Gdx.input.setInputProcessor(stage); // Restore input processor
+                Gdx.input.setInputProcessor(stage);
                 return true;
             }
         });

@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
  * Contains all texture constants used in the game.
- * It is good practice to keep all textures and animations in constants to avoid loading them multiple times.
  * These can be referenced anywhere they are needed.
  */
 public class Textures {

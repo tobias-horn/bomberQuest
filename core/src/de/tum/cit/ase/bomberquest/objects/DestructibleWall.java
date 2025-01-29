@@ -39,7 +39,7 @@ public class DestructibleWall extends GameObject implements Drawable {
     /**
      * Sets whether there is an exit underneath the wall.
      *
-     * @param exitUnderneath {@code true} to indicate an exit underneath, {@code false} otherwise.
+     * @param exitUnderneath true to indicate an exit underneath, false otherwise.
      */
     public void setExitUnderneath(boolean exitUnderneath) {
         this.exitUnderneath = exitUnderneath;
@@ -48,7 +48,7 @@ public class DestructibleWall extends GameObject implements Drawable {
     /**
      * Retrieves the power-up type underneath the wall.
      *
-     * @return The {@link PowerUpType} underneath, or {@code null} if none.
+     * @return The PowerUpType underneath, or null if none.
      */
     public PowerUpType getPowerUpUnderneath() {
         return powerUpUnderneath;
@@ -57,7 +57,7 @@ public class DestructibleWall extends GameObject implements Drawable {
     /**
      * Checks if the exit is open.
      *
-     * @return {@code true} if the exit is open, {@code false} otherwise.
+     * @return true if the exit is open, false otherwise.
      */
     public boolean isExitOpen() {
         return exitOpen;
@@ -66,7 +66,7 @@ public class DestructibleWall extends GameObject implements Drawable {
     /**
      * Sets the exit state.
      *
-     * @param exitOpen {@code true} to open the exit, {@code false} to close it.
+     * @param exitOpen true to open the exit, false to close it.
      */
     public void setExitOpen(boolean exitOpen) {
         this.exitOpen = exitOpen;

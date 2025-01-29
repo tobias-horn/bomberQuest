@@ -21,7 +21,7 @@ import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 
 /**
  * Main class for the BomberQuest game, responsible for initializing and managing game states, resources, and screen transitions.
- * Extends libGDX's {@link Game} class to leverage its game lifecycle management.
+ * Extends libGDX's Game class to leverage its game lifecycle management.
  */
 public class BomberQuestGame extends Game {
 
@@ -37,6 +37,7 @@ public class BomberQuestGame extends Game {
     private MusicTrack currentMusicTrack;
     private Hud hud;
     private Sound gameWonSound;
+    private Sound gameOverSound;
     private Score score = new Score();
 
     /**
@@ -58,14 +59,12 @@ public class BomberQuestGame extends Game {
         this.spriteBatch = new SpriteBatch(); // Create SpriteBatch for rendering
         this.skin = new Skin(Gdx.files.internal("skin/craftacular/craftacular-ui.json")); // Load UI skin
 
-        if (MusicTrack.BACKGROUND != null) {
-            // MusicTrack.BACKGROUND.play();
-        }
-
         gameWonSound = Gdx.audio.newSound(Gdx.files.internal("audio/gameWon.mp3"));
+        gameOverSound = Gdx.audio.newSound(Gdx.files.internal("assets/audio/background.mp3"));
 
         this.font = skin.getFont("font");
 
+        // this serves as a fallback in case the map loaded is corrupted
         FileHandle hardcodedMapFile = Gdx.files.internal("maps/Map 1.properties");
         this.hud = new Hud(spriteBatch, font);
         this.map = new GameMap(this, hardcodedMapFile, hud, score);
@@ -116,7 +115,7 @@ public class BomberQuestGame extends Game {
             }
             case GAME_OVER -> {
                 setScreen(new GameOverScreen(this, font));
-                playMusic(MusicTrack.BACKGROUND);
+                gameOverSound.play();
             }
             case GAME_WON -> {
                 setScreen(new GameWonScreen(this, font));
@@ -252,14 +251,16 @@ public class BomberQuestGame extends Game {
             setScreenWithState(targetState);
         } else {
             System.out.println("No previous state found. Returning to MENU.");
-            // If we have no recorded previous screen, let's default to the menu
             setScreenWithState(ScreenState.MENU);
         }
     }
 
     // Time management
-
+    // This design was necessary to maintain a consistent time reference across multiple game instances.
+    // The extensive game menu mechanics require synchronized timing between different screens, making it impractical
+    // to encapsulate the time management within individual objects or separate classes.
     private float savedTime = 5 * 60f;
+
 
     public float getSavedTime() {
         return savedTime;
