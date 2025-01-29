@@ -66,7 +66,7 @@ public class BomberQuestGame extends Game {
 
         this.font = skin.getFont("font");
 
-        FileHandle hardcodedMapFile = Gdx.files.internal("maps/map-1.properties");
+        FileHandle hardcodedMapFile = Gdx.files.internal("maps/Map 1.properties");
         this.hud = new Hud(spriteBatch, font);
         this.map = new GameMap(this, hardcodedMapFile, hud, score);
 

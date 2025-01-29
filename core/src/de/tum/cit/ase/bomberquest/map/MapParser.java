@@ -86,7 +86,7 @@ public class MapParser {
         }
 
         Collections.shuffle(possiblePositions);
-        int maxSpeedPowerUps = Math.min(4, possiblePositions.size());
+        int maxSpeedPowerUps = Math.min(10, possiblePositions.size());
 
         for (int i = 0; i < maxSpeedPowerUps; i++) {
             String key = possiblePositions.get(i);
@@ -105,8 +105,7 @@ public class MapParser {
         }
 
         Collections.shuffle(possiblePositions);
-        // Place up to 6 arrow power-ups (or whatever limit you need)
-        int maxArrowPowerUps = Math.min(6, possiblePositions.size());
+        int maxArrowPowerUps = Math.min(10, possiblePositions.size());
 
         for (int i = 0; i < maxArrowPowerUps; i++) {
             String key = possiblePositions.get(i);
